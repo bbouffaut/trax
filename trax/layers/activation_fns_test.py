@@ -25,30 +25,60 @@ import trax.layers as tl
 class ActivationFnsTest(absltest.TestCase):
 
   def test_relu(self):
+      """
+      Relu layer isochrone.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Relu()
     x = np.array([-2.0, -1.0, 0.0, 2.0, 3.0, 5.0])
     y = layer(x)
     self.assertEqual(tl.to_list(y), [0.0, 0.0, 0.0, 2.0, 3.0, 5.0])
 
   def test_parametric_relu(self):
+      """
+      Test if the layer.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.ParametricRelu(a=.25)
     x = np.array([-2.0, -1.0, 0.0, 2.0, 3.0, 5.0])
     y = layer(x)
     self.assertEqual(tl.to_list(y), [0.0, 0.0, 0.0, .5, .75, 1.25])
 
   def test_leaky_relu(self):
+      """
+      Test that the leaky left
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.LeakyRelu(a=.125)
     x = np.array([-2.0, -1.0, 0.0, 2.0, 3.0, 5.0])
     y = layer(x)
     self.assertEqual(tl.to_list(y), [-.25, -.125, 0.0, 2.0, 3.0, 5.0])
 
   def test_hard_sigmoid(self):
+      """
+      Test if the layer sigmoid.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.HardSigmoid()
     x = np.array([-1.5, -.5, -.25, 0.0, .25, .5, 1.5])
     y = layer(x)
     self.assertEqual(tl.to_list(y), [0.0, 0.5, 0.75, 1.0, 1.0, 1.0, 1.0])
 
   def test_hard_tanh(self):
+      """
+      Test if the layer is on a layer.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.HardTanh()
     x = np.array([-1.5, -.5, -.25, 0.0, .25, .5, 1.5])
     y = layer(x)

@@ -33,6 +33,12 @@ from trax.supervised import lr_schedules
 class ActorCriticJointTest(absltest.TestCase):
 
   def setUp(self):
+      """
+      Sets the test flag.
+
+      Args:
+          self: (todo): write your description
+      """
     super().setUp()
     test_utils.ensure_flag('test_tmpdir')
 

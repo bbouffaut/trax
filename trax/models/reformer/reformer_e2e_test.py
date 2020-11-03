@@ -33,12 +33,24 @@ _CONFIG_DIR = os.path.join(pkg_dir, '../../supervised/configs/')
 class ReformerE2ETest(absltest.TestCase):
 
   def setUp(self):
+      """
+      Set the config files.
+
+      Args:
+          self: (todo): write your description
+      """
     super().setUp()
     gin.clear_config()
     gin.add_config_file_search_path(_CONFIG_DIR)
     test_utils.ensure_flag('test_tmpdir')
 
   def test_reformer_wmt_ende(self):
+      """
+      Set of hyperparameters.
+
+      Args:
+          self: (todo): write your description
+      """
     batch_size_per_device = 2
     steps = 1
     n_layers = 2
@@ -57,6 +69,12 @@ class ReformerE2ETest(absltest.TestCase):
     _ = trainer_lib.train(output_dir=output_dir)
 
   def test_reformer2_wmt_ende(self):
+      """
+      Reformer - write.
+
+      Args:
+          self: (todo): write your description
+      """
     batch_size_per_device = 2
     steps = 1
     n_layers = 2
@@ -77,6 +95,12 @@ class ReformerE2ETest(absltest.TestCase):
     _ = trainer_lib.train(output_dir=output_dir)
 
   def test_reformer2_copy(self):
+      """
+      Create copy of hyperparameters
+
+      Args:
+          self: (todo): write your description
+      """
     batch_size_per_device = 2
     steps = 1
     n_layers = 2
@@ -95,6 +119,12 @@ class ReformerE2ETest(absltest.TestCase):
     _ = trainer_lib.train(output_dir=output_dir)
 
   def test_reformer_copy(self):
+      """
+      Create copy of hyperparameters.
+
+      Args:
+          self: (todo): write your description
+      """
     batch_size_per_device = 2
     steps = 1
     n_layers = 2

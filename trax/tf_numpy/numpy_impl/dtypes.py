@@ -66,15 +66,32 @@ _allow_float64 = True
 
 
 def is_allow_float64():
+    """
+    Returns a float64 - encoded string.
+
+    Args:
+    """
   return _allow_float64
 
 
 def set_allow_float64(b):
+    """
+    Set the global float6464 to a float.
+
+    Args:
+        b: (todo): write your description
+    """
   global _allow_float64
   _allow_float64 = b
 
 
 def canonicalize_dtype(dtype):
+    """
+    Return the canonicalize_dtype.
+
+    Args:
+        dtype: (str): write your description
+    """
   if not is_allow_float64():
     return _to_float32.get(dtype, dtype)
   else:
@@ -82,6 +99,12 @@ def canonicalize_dtype(dtype):
 
 
 def _result_type(*arrays_and_dtypes):
+    """
+    Return the dtypes_and_and_type.
+
+    Args:
+        arrays_and_dtypes: (todo): write your description
+    """
   dtype = np.result_type(*arrays_and_dtypes)
   return canonicalize_dtype(dtype)
 

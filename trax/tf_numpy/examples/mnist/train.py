@@ -79,6 +79,12 @@ def train(batch_size, learning_rate, num_training_iters, validation_steps):
 
 
 def main(unused_argv):
+    """
+    Main function.
+
+    Args:
+        unused_argv: (bool): write your description
+    """
   train(FLAGS.batch_size, FLAGS.learning_rate, FLAGS.num_training_iters,
         FLAGS.validation_steps)
 

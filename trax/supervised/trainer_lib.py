@@ -82,6 +82,26 @@ class Trainer(object):
                checkpoints_at=None, should_save_checkpoints=True,
                should_write_summaries=True,
                metrics=None, checkpoint_highest=None, checkpoint_lowest=None):
+      """
+      Initialize the model.
+
+      Args:
+          self: (todo): write your description
+          model: (todo): write your description
+          loss_fn: (todo): write your description
+          optimizer: (todo): write your description
+          lr_schedule: (todo): write your description
+          inputs: (list): write your description
+          output_dir: (str): write your description
+          random_seed: (int): write your description
+          n_devices: (todo): write your description
+          checkpoints_at: (dict): write your description
+          should_save_checkpoints: (todo): write your description
+          should_write_summaries: (todo): write your description
+          metrics: (todo): write your description
+          checkpoint_highest: (int): write your description
+          checkpoint_lowest: (dict): write your description
+      """
 
     self._is_chief, _, self._n_devices, rng = (
         training.init_host_and_devices(n_devices, random_seed))
@@ -163,14 +183,32 @@ class Trainer(object):
 
   @property
   def n_devices(self):
+      """
+      The number of - devices.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._n_devices
 
   @property
   def step(self):
+      """
+      Returns the current step.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._step
 
   @property
   def model_weights(self):
+      """
+      Get the model weights.
+
+      Args:
+          self: (todo): write your description
+      """
     # Currently we need to pick [0] as we ignore loss weights (empty).
     weights = self._opt_state.weights[0]
     if self.n_devices > 1:
@@ -180,6 +218,13 @@ class Trainer(object):
 
   @model_weights.setter
   def model_weights(self, weights):
+      """
+      Performats the model weights.
+
+      Args:
+          self: (todo): write your description
+          weights: (array): write your description
+      """
     new_model_weights = self._for_n_devices(weights)
     if isinstance(self._opt_state.weights, list):
       self._opt_state.weights[0] = new_model_weights
@@ -189,6 +234,12 @@ class Trainer(object):
 
   @property
   def model_state(self):
+      """
+      Return the state of the model.
+
+      Args:
+          self: (todo): write your description
+      """
     # Currently we need to pick [0] as we ignore loss state (empty).
     state = self._model_state[0]
     if self.n_devices > 1:
@@ -198,6 +249,13 @@ class Trainer(object):
 
   @model_state.setter
   def model_state(self, state):
+      """
+      Set the new device state.
+
+      Args:
+          self: (todo): write your description
+          state: (bool): write your description
+      """
     new_model_state = self._for_n_devices(state)
     if isinstance(self._model_state, list):
       self._model_state[0] = new_model_state
@@ -206,12 +264,24 @@ class Trainer(object):
 
   @property
   def state(self):
+      """
+      The state of - step
+
+      Args:
+          self: (todo): write your description
+      """
     return TrainerState(
         opt_state=self._opt_state, step=self._step, history=self._history,
         model_state=self._model_state)
 
   @property
   def learning_rate(self):
+      """
+      Compute the learning rate.
+
+      Args:
+          self: (todo): write your description
+      """
     with fastmath.use_backend(fastmath.Backend.NUMPY):
       return self._lr_schedule(self._step)
 
@@ -396,6 +466,14 @@ class Trainer(object):
               jaxboard.markdownify_operative_config_str(config_str))
 
   def _save_state_dict(self, trainer_state_dict, weights_file):
+      """
+      Save pickle to pickle file.
+
+      Args:
+          self: (todo): write your description
+          trainer_state_dict: (dict): write your description
+          weights_file: (str): write your description
+      """
     training.pickle_to_file(trainer_state_dict, weights_file, gzip=True)
     log('Model saved to %s' % weights_file, stdout=False)
 
@@ -442,6 +520,13 @@ class Trainer(object):
       f.write(forward_computation.as_hlo_dot_graph())
 
   def log_step(self, step_message):
+      """
+      Log a step
+
+      Args:
+          self: (todo): write your description
+          step_message: (str): write your description
+      """
     log('Step % 6d: %s' % (self.step, step_message))
 
   def log_metrics(self, metrics, summ_writer, log_prefix):
@@ -469,6 +554,12 @@ class Trainer(object):
     self.log_step('Total number of trainable weights: %d' % total_size)
 
   def _should_save_now(self):
+      """
+      Return true if the savepoints have changed.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._should_save_checkpoints and self._step in self._checkpoints_at
 
   def _current_step_is_best(self, high):
@@ -485,6 +576,12 @@ class Trainer(object):
     return cur_step and last_is_best
 
   def _should_log_now(self):
+      """
+      Check if the current step is valid.
+
+      Args:
+          self: (todo): write your description
+      """
     return (self._train_sw is not None
             and (self._step == 1 or self._step % 10 == 0))
 
@@ -493,6 +590,12 @@ class Trainer(object):
     return tl.for_n_devices(x, self.n_devices)  # pylint: disable=protected-access
 
   def close(self):
+      """
+      Close the swagger file.
+
+      Args:
+          self: (todo): write your description
+      """
     if self._train_sw is not None:
       self._train_sw.close()
       self._train_sw = None
@@ -645,10 +748,30 @@ def _jit_update_fn(predict_fn, loss_fn, optimizer, n_devices, jit=True):
   model_and_loss = tl.Serial(predict_fn, loss_fn)
   # Gradients are always wrt. the first argument, so putting weights first.
   def model_and_loss_call(weights, batch, state, rng):
+      """
+      Perform a model call.
+
+      Args:
+          weights: (array): write your description
+          batch: (todo): write your description
+          state: (todo): write your description
+          rng: (todo): write your description
+      """
     res = model_and_loss(batch, weights=weights, state=state, rng=rng)
     return res, model_and_loss.state
   if n_devices == 1:  # TODO(lukaszkaiser): remove branch when not needed.
     def single_update(weights_and_slots, i, opt_params, batch, state, rng):
+        """
+        Perform an objective function.
+
+        Args:
+            weights_and_slots: (float): write your description
+            i: (float): write your description
+            opt_params: (dict): write your description
+            batch: (todo): write your description
+            state: (todo): write your description
+            rng: (float): write your description
+        """
       weights, slots = weights_and_slots
       rng, subrng = jax_random.split(rng[0])
       grad_fn = fastmath.grad(model_and_loss_call, has_aux=True)
@@ -687,6 +810,17 @@ def _jit_update_fn(predict_fn, loss_fn, optimizer, n_devices, jit=True):
     return (new_weights, new_slots), stats, state, subrng
 
   def update(weights_and_slots, i, opt_params, batch, state, rng):
+      """
+      Updates the graph.
+
+      Args:
+          weights_and_slots: (array): write your description
+          i: (array): write your description
+          opt_params: (dict): write your description
+          batch: (todo): write your description
+          state: (todo): write your description
+          rng: (array): write your description
+      """
     return mapped_update(weights_and_slots, np.repeat(i, n_devices),
                          opt_params, batch, state, rng)
 
@@ -708,6 +842,15 @@ def _jit_compute_loss_fn(predict_fn, loss_fn, n_devices, jit=True):
   """Returns a (JIT-compiled) function that computes the loss for one step."""
   if n_devices == 1:  # TODO(lukaszkaiser): remove branch when not needed.
     def single_compute_loss(opt_state, batch, state, rng):
+        """
+        : paramater_state.
+
+        Args:
+            opt_state: (todo): write your description
+            batch: (todo): write your description
+            state: (todo): write your description
+            rng: (todo): write your description
+        """
       rng, subrng = jax_random.split(rng[0])
       loss_val, state = loss_fn(opt_state[0], batch, predict_fn, state, rng)
       return loss_val, state, [subrng]
@@ -723,6 +866,15 @@ def _jit_compute_loss_fn(predict_fn, loss_fn, n_devices, jit=True):
     return loss_val, state, subrng
 
   def compute_loss(opt_state, batch, state, rng):
+      """
+      Compute the loss loss.
+
+      Args:
+          opt_state: (todo): write your description
+          batch: (todo): write your description
+          state: (todo): write your description
+          rng: (todo): write your description
+      """
     return mapped_compute_loss(
         opt_state, _reshape_by_device(batch, n_devices), state, rng)
 
@@ -730,6 +882,13 @@ def _jit_compute_loss_fn(predict_fn, loss_fn, n_devices, jit=True):
 
 
 def log(s, stdout=True):
+    """
+    Log a message to sys.
+
+    Args:
+        s: (todo): write your description
+        stdout: (todo): write your description
+    """
   logging.info(s)
   if stdout:
     print(s)
@@ -855,6 +1014,12 @@ def _nested_reduce(f, x):
 def _sizes(x):
   """Get a structure of sizes for a structure of nested arrays."""
   def size(x):
+      """
+      Returns the size of x.
+
+      Args:
+          x: (array): write your description
+      """
     try:
       return x.size
     except Exception:  # pylint: disable=broad-except

@@ -42,11 +42,23 @@ _MAX_SKIP_EXAMPLES = 1e5
 
 
 def no_preprocess(dataset, training):
+    """
+    Preprocess a training dataset.
+
+    Args:
+        dataset: (todo): write your description
+        training: (todo): write your description
+    """
   del training
   return dataset
 
 
 def t2t_problems():
+    """
+    Return the number of - tensor for a given tensor.
+
+    Args:
+    """
   # Load t2t problems on request only, this should save some import time.
   from tensor2tensor import problems_colab as t2tp  # pylint: disable=g-import-not-at-top
   return t2tp
@@ -237,12 +249,24 @@ def TFDS(dataset_name, data_dir=None,  # pylint: disable=invalid-name
   dataset = train_data if train else eval_data
 
   def select_from(example):
+      """
+      Selects an example from a dictionary.
+
+      Args:
+          example: (int): write your description
+      """
     return tuple(example[k] for k in keys)
 
   dataset = dataset.map(select_from)
   dataset = dataset.repeat()
 
   def gen(generator=None):
+      """
+      Generates generator.
+
+      Args:
+          generator: (todo): write your description
+      """
     del generator
     for example in fastmath.dataset_as_numpy(dataset):
       yield example
@@ -256,6 +280,12 @@ def _select_features(example, feature_list=None):
 
 
 def _eager_dataset_iterator(dataset):
+    """
+    Iterate over all eagervector.
+
+    Args:
+        dataset: (todo): write your description
+    """
   for item in dataset:
     flat = tf.nest.flatten(item)
     flat = [el.numpy() for el in flat]
@@ -417,9 +447,23 @@ def _get_vocab(vocab_type='subword', vocab_file=None, vocab_dir=None):
 # Makes the function accessible in gin configs, even with all args blacklisted.
 @gin.configurable(blacklist=['dataset', 'training'])
 def cifar10_no_augmentation_preprocess(dataset, training):
+    """
+    Preprocess cifar10 cifation.
+
+    Args:
+        dataset: (todo): write your description
+        training: (todo): write your description
+    """
   del training
 
   def cast_image(features, targets):
+      """
+      Cast tensor to targets.
+
+      Args:
+          features: (todo): write your description
+          targets: (list): write your description
+      """
     features['image'] = tf.cast(features['image'], tf.float32) / 255.0
     return features, targets
 
@@ -449,10 +493,24 @@ def cifar10_augmentation_preprocess(dataset, training):
   """Preprocessing for cifar10 with augmentation (see below)."""
 
   def augment(features, targets):
+      """
+      Returns the segmentation of an image.
+
+      Args:
+          features: (todo): write your description
+          targets: (list): write your description
+      """
     features['image'] = _cifar_augment_image(features['image'])
     return features, targets
 
   def cast_image(features, targets):
+      """
+      Cast tensor to targets.
+
+      Args:
+          features: (todo): write your description
+          targets: (list): write your description
+      """
     features['image'] = tf.cast(features['image'], tf.float32) / 255.0
     return features, targets
 
@@ -468,6 +526,13 @@ def cifar10_augmentation_flatten_preprocess(dataset, training,
   """Preprocessing for cifar10 that flattens it and appends targets."""
 
   def augment(features, targets):
+      """
+      Returns the segmentation of an image.
+
+      Args:
+          features: (todo): write your description
+          targets: (list): write your description
+      """
     features['image'] = _cifar_augment_image(features['image'])
     return features, targets
 
@@ -499,6 +564,13 @@ def concat_preprocess(dataset, training, pad_symbol=0):
   del training
 
   def concat(features, targets):
+      """
+      Concatenate features.
+
+      Args:
+          features: (todo): write your description
+          targets: (list): write your description
+      """
     inp = features['inputs']
     pad = tf.expand_dims(tf.zeros_like(inp[0]) + pad_symbol, axis=0)
     concat = tf.concat([pad, inp, pad, targets], axis=0)
@@ -517,6 +589,13 @@ def squeeze_targets_preprocess(dataset, training):
   del training
 
   def squeeze(features, targets):
+      """
+      Squeeze features.
+
+      Args:
+          features: (todo): write your description
+          targets: (list): write your description
+      """
     if targets.shape[-1] == 1:
       targets = tf.squeeze(targets, axis=-1)
     return features, targets
@@ -531,9 +610,23 @@ def lm1b_preprocess(dataset, training,
   """Preprocessing for LM1B: filter out targets exceeding maximum length."""
 
   def target_right_length(_, target):
+      """
+      The length of the length.
+
+      Args:
+          _: (todo): write your description
+          target: (todo): write your description
+      """
     return tf.less(tf.shape(target)[0], max_target_length + 1)
 
   def eval_target_right_length(_, target):
+      """
+      Compute the length of target.
+
+      Args:
+          _: (str): write your description
+          target: (todo): write your description
+      """
     return tf.less(tf.shape(target)[0], max_eval_target_length + 1)
 
   if max_target_length > 0 and training:
@@ -552,10 +645,24 @@ def wmt_preprocess(dataset, training,
   """Preprocessing for LM1B: filter out targets exceeding maximum length."""
 
   def train_right_length(example, target):
+      """
+      Train the length of the tensor.
+
+      Args:
+          example: (dict): write your description
+          target: (str): write your description
+      """
     l = tf.maximum(tf.shape(example['inputs'])[0], tf.shape(target)[0])
     return tf.less(l, max_length + 1)
 
   def eval_right_length(example, target):
+      """
+      Compute the length of a tensor.
+
+      Args:
+          example: (int): write your description
+          target: (str): write your description
+      """
     l = tf.maximum(tf.shape(example['inputs'])[0], tf.shape(target)[0])
     return tf.less(l, max_eval_length + 1)
 
@@ -575,6 +682,13 @@ def wmt_concat_preprocess(dataset, training,
   dataset = wmt_preprocess(dataset, training, max_length, max_eval_length)
 
   def concat_and_add_mask(features, targets):
+      """
+      Concatenate features : paramets.
+
+      Args:
+          features: (todo): write your description
+          targets: (list): write your description
+      """
     inp = features['inputs']
     pad = tf.expand_dims(tf.zeros_like(inp[0]), axis=0)
     concat = tf.concat([inp, pad, targets], axis=0)
@@ -593,6 +707,12 @@ def lm_token_preprocessing(dataset, training):
   del training
 
   def concat_and_add_mask(x):
+      """
+      Concatenate the concatenation of x.
+
+      Args:
+          x: (todo): write your description
+      """
     inp = x['inputs']
     targets = x['targets']
     pad = tf.expand_dims(tf.zeros_like(inp[0]), axis=0)
@@ -611,6 +731,14 @@ def lm_token_preprocessing(dataset, training):
 def bair_robot_pushing_hparams(
     hparams=None, video_num_input_frames=1, video_num_target_frames=15
     ):
+    """
+    Bair hparams.
+
+    Args:
+        hparams: (dict): write your description
+        video_num_input_frames: (int): write your description
+        video_num_target_frames: (int): write your description
+    """
   if hparams is not None:
     hparams.video_num_input_frames = video_num_input_frames
     hparams.video_num_target_frames = video_num_target_frames
@@ -649,6 +777,13 @@ def c4_preprocess(dataset, training, max_target_length=-1,
   """Pre-processing function for C4 dataset."""
   del training
   def unicode_decode_chars(features, targets):
+      """
+      Decode targets.
+
+      Args:
+          features: (todo): write your description
+          targets: (list): write your description
+      """
     targets = tf.strings.unicode_decode(features['text'], 'UTF-8')
     targets = tf.cast(targets, tf.int64)
     features['targets'] = targets
@@ -656,6 +791,14 @@ def c4_preprocess(dataset, training, max_target_length=-1,
     return (features, targets)
 
   def spc_tokenize(tokenizer, features, targets):
+      """
+      Parameters ---------- tokenizer.
+
+      Args:
+          tokenizer: (todo): write your description
+          features: (todo): write your description
+          targets: (list): write your description
+      """
     del targets
     tokenized_text = tokenizer.tokenize(features['text'])
     features['targets'] = tf.cast(tokenized_text, tf.int64)
@@ -672,6 +815,13 @@ def c4_preprocess(dataset, training, max_target_length=-1,
     dataset = dataset.map(unicode_decode_chars)
 
   def target_right_length(_, target):
+      """
+      The length of the length.
+
+      Args:
+          _: (todo): write your description
+          target: (todo): write your description
+      """
     return tf.less(tf.shape(target)[0], max_target_length + 1)
 
   if max_target_length > 0:
@@ -759,6 +909,14 @@ def filter_dataset_on_len(dataset, training, len_map=None,
     # TODO(afrozm): Investigate `cell-var-from-loop` - since this is WAI and
     # there is a test too.
     def within_bounds(x, key, len_bounds):
+        """
+        Determine whether x is within the given bounds.
+
+        Args:
+            x: (int): write your description
+            key: (str): write your description
+            len_bounds: (int): write your description
+        """
       size = tf.shape(x[key])[0]
       min_len, max_len = len_bounds
       return (min_len <= size) and (size <= max_len)
@@ -789,6 +947,12 @@ def truncate_dataset_on_len(dataset, training, len_map=None,
 
   assert isinstance(len_map, dict)
   def truncate_example(x):
+      """
+      Truncate the truncated sequence.
+
+      Args:
+          x: (todo): write your description
+      """
     for key, max_len in len_map.items():
       x_len = tf.shape(x[key])[0]
       if x_len > max_len:
@@ -805,6 +969,12 @@ def pad_dataset_to_length(dataset, training, len_map=None):
   if len_map is None:
     return dataset
   def pad_to_len(x):
+      """
+      Pad x to_len_to_len.
+
+      Args:
+          x: (str): write your description
+      """
     for key, max_len in len_map.items():
       x_shape = tf.shape(x[key])
       x_len = x_shape[0]
@@ -825,6 +995,12 @@ def add_eos_to_output_features(dataset, training,
     output_features = [output_features]
 
   def add_eos(x):
+      """
+      Concatenate eos.
+
+      Args:
+          x: (todo): write your description
+      """
     for output_feature in output_features:
       x[output_feature] = tf.concat([x[output_feature], [eos]], axis=0)
     return x
@@ -876,6 +1052,12 @@ def generic_text_dataset_preprocess_fn(dataset,
   # Print debugging examples if needed before tokenization.
   if debug_print_examples:
     def print_examples(x):
+        """
+        Print samples.
+
+        Args:
+            x: (todo): write your description
+        """
       if np.random.uniform() < debug_print_examples_rate:
         tf.print(x, output_stream=logging.info)
       return x
@@ -899,6 +1081,12 @@ def generic_text_dataset_preprocess_fn(dataset,
 
   if debug_print_examples:
     def print_examples_and_shapes(x):
+        """
+        Prints examples.
+
+        Args:
+            x: (todo): write your description
+        """
       if np.random.uniform() < debug_print_examples_rate:
         tf.print({'inputs_shape': tf.size(x['inputs']),
                   'targets_shape': tf.size(x['targets']),

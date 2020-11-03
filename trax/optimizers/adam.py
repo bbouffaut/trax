@@ -63,11 +63,29 @@ class Adam(opt_base.Optimizer):
     )
 
   def init(self, weights):
+      """
+      Initialize the weights.
+
+      Args:
+          self: (todo): write your description
+          weights: (array): write your description
+      """
     m = jnp.zeros_like(weights)
     v = jnp.zeros_like(weights)
     return m, v
 
   def update(self, step, grads, weights, slots, opt_params):
+      """
+      Perform a single step.
+
+      Args:
+          self: (todo): write your description
+          step: (int): write your description
+          grads: (array): write your description
+          weights: (array): write your description
+          slots: (todo): write your description
+          opt_params: (dict): write your description
+      """
     m, v = slots
     learning_rate = opt_params['learning_rate']
     weight_decay_rate = opt_params['weight_decay_rate']

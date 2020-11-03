@@ -35,6 +35,12 @@ _TESTDATA = os.path.join(pkg_dir, "testdata")
 class TokenizerTest(tf.test.TestCase):
 
   def test_encode(self):
+      """
+      Create a new token.
+
+      Args:
+          self: (todo): write your description
+      """
     self.assertListEqual(
         [u"Dude", u" - ", u"that", u"'", u"s", u"so", u"cool", u"."],
         tokenizer.encode(u"Dude - that's so cool."))
@@ -47,12 +53,24 @@ class TokenizerTest(tf.test.TestCase):
                          tokenizer.encode(u"two. \nlines"))
 
   def test_decode(self):
+      """
+      Decode test test.
+
+      Args:
+          self: (todo): write your description
+      """
     self.assertEqual(
         u"Dude - that's so cool.",
         tokenizer.decode(
             [u"Dude", u" - ", u"that", u"'", u"s", u"so", u"cool", u"."]))
 
   def test_invertibility_on_random_strings(self):
+      """
+      : param random strings : attribute.
+
+      Args:
+          self: (todo): write your description
+      """
     for _ in range(1000):
       s = u"".join(six.unichr(random.randint(0, 65535)) for _ in range(10))
       self.assertEqual(s, tokenizer.decode(tokenizer.encode(s)))
@@ -61,11 +79,23 @@ class TokenizerTest(tf.test.TestCase):
 class TestTokenCounts(tf.test.TestCase):
 
   def setUp(self):
+      """
+      Sets the vocabulary.
+
+      Args:
+          self: (todo): write your description
+      """
     super(TestTokenCounts, self).setUp()
     self.corpus_path = os.path.join(_TESTDATA, "corpus-*.txt")
     self.vocab_path = os.path.join(_TESTDATA, "vocab-*.txt")
 
   def test_corpus_token_counts_split_on_newlines(self):
+      """
+      Reads the corpus to the corpus.
+
+      Args:
+          self: (todo): write your description
+      """
     token_counts = tokenizer.corpus_token_counts(
         self.corpus_path, corpus_max_lines=0, split_on_newlines=True)
 
@@ -88,12 +118,24 @@ class TestTokenCounts(tf.test.TestCase):
     self.assertNotIn(u"\n", token_counts)
 
   def test_corpus_token_counts_no_split_on_newlines(self):
+      """
+      Reads the corpus of the corpus.
+
+      Args:
+          self: (todo): write your description
+      """
     token_counts = tokenizer.corpus_token_counts(
         self.corpus_path, corpus_max_lines=0, split_on_newlines=False)
 
     self.assertDictContainsSubset({u".\n\n": 2, u"\n": 3}, token_counts)
 
   def test_corpus_token_counts_split_with_max_lines(self):
+      """
+      Split the corpus of the corpus.
+
+      Args:
+          self: (todo): write your description
+      """
     token_counts = tokenizer.corpus_token_counts(
         self.corpus_path, corpus_max_lines=5, split_on_newlines=True)
 
@@ -101,6 +143,12 @@ class TestTokenCounts(tf.test.TestCase):
     self.assertNotIn(u"Mitch", token_counts)
 
   def test_corpus_token_counts_no_split_with_max_lines(self):
+      """
+      Reads the corpus counts.
+
+      Args:
+          self: (todo): write your description
+      """
     token_counts = tokenizer.corpus_token_counts(
         self.corpus_path, corpus_max_lines=5, split_on_newlines=False)
 
@@ -113,6 +161,12 @@ class TestTokenCounts(tf.test.TestCase):
     }, token_counts)
 
   def test_vocab_token_counts(self):
+      """
+      Compute the vocab of all vocabulary.
+
+      Args:
+          self: (todo): write your description
+      """
     token_counts = tokenizer.vocab_token_counts(self.vocab_path, 0)
 
     expected = {
@@ -125,6 +179,12 @@ class TestTokenCounts(tf.test.TestCase):
     self.assertDictEqual(expected, token_counts)
 
   def test_vocab_token_counts_with_max_lines(self):
+      """
+      Computes the vocab vocabulary.
+
+      Args:
+          self: (todo): write your description
+      """
     # vocab-1 has 2 lines, vocab-2 has 3
     token_counts = tokenizer.vocab_token_counts(self.vocab_path, 5)
 

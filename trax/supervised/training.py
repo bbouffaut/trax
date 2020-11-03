@@ -237,6 +237,13 @@ class Loop:
       _log('Will not write evaluation metrics, because output_dir is None.')
 
     def task_output_dir(task_index, task_list):
+        """
+        Returns the full path of a task dir.
+
+        Args:
+            task_index: (str): write your description
+            task_list: (list): write your description
+        """
       if self._output_dir is not None:
         if len(task_list) < 2:
           output_dir = self._output_dir
@@ -423,6 +430,13 @@ class Loop:
     return tl.for_n_devices(x, self.n_devices)
 
   def _unreplicate(self, x):
+      """
+      Unreplicate a list of the given x.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+      """
     if self.n_devices == 1:
       return x
 
@@ -430,6 +444,13 @@ class Loop:
     return fastmath.nested_map(unreplicate_fn, x)
 
   def _reshape_by_device(self, x):
+      """
+      Reshape x by n_devices.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+      """
     if self.n_devices == 1:
       return x
     return tl.reshape_by_device(x, self.n_devices)
@@ -514,6 +535,12 @@ class Loop:
   def _log_n_weights(self):
     """"Logs the number of weights in the training model."""
     def _size(x):
+        """
+        Returns the size of x.
+
+        Args:
+            x: (array): write your description
+        """
       try:
         return x.size
       except Exception:  # pylint: disable=broad-except
@@ -537,6 +564,12 @@ class Loop:
     self._eval_model.state = self._model.state
 
     def recursively_look_for_printable_states(state):
+        """
+        Recursively iterable states of a state.
+
+        Args:
+            state: (dict): write your description
+        """
       if isinstance(state, (tuple, list)):
         for substate in state:
           for item in recursively_look_for_printable_states(substate):
@@ -863,10 +896,22 @@ class TrainTask:
 
   @property
   def labeled_data(self):
+      """
+      Returns the label data.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._labeled_data
 
   @property
   def sample_batch(self):
+      """
+      Sample the next batch.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._sample_batch
 
   def next_batch(self):
@@ -875,14 +920,32 @@ class TrainTask:
 
   @property
   def loss_layer(self):
+      """
+      Return the layer
+
+      Args:
+          self: (todo): write your description
+      """
     return self._loss_layer
 
   @property
   def n_steps_per_checkpoint(self):
+      """
+      Return the number of steps performs.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._n_steps_per_checkpoint
 
   @property
   def optimizer(self):
+      """
+      Return the optimizer.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._optimizer
 
   def learning_rate(self, step):
@@ -932,10 +995,22 @@ class EvalTask:
 
   @property
   def labeled_data(self):
+      """
+      Returns the label data.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._labeled_data
 
   @property
   def sample_batch(self):
+      """
+      Sample the next batch.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._sample_batch
 
   def next_batch(self):
@@ -944,20 +1019,50 @@ class EvalTask:
 
   @property
   def metrics(self):
+      """
+      Returns a list of metrics
+
+      Args:
+          self: (todo): write your description
+      """
     return self._metrics
 
   @property
   def metric_names(self):
+      """
+      Returns a list of metric names.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._metric_names
 
   @property
   def n_eval_batches(self):
+      """
+      Evaluate the evaluation of the evaluation.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._n_eval_batches
 
   def _default_names(self):
+      """
+      Return a list of default metrics.
+
+      Args:
+          self: (todo): write your description
+      """
     return [m.name for m in self._metrics]
 
   def _check_init_values(self):
+      """
+      Checks that the metric checks the values.
+
+      Args:
+          self: (todo): write your description
+      """
     if len(self._metrics) != len(self._metric_names):
       raise ValueError(
           f'Number of metrics ({len(self._metrics)}) does not equal '
@@ -973,11 +1078,24 @@ def _never(*args):
 def _at_step_1_and_every_nth_step(period):
   """A function that's true at 1 and n when n % period == 0."""
   def _at_1_and_periodically(step_n):
+      """
+      Return true if step_n_n.
+
+      Args:
+          step_n: (int): write your description
+      """
     return (step_n == 1) or (step_n > 0 and (step_n % period == 0))
   return _at_1_and_periodically
 
 
 def _log(s, stdout=True):
+    """
+    Logs a message to sys.
+
+    Args:
+        s: (todo): write your description
+        stdout: (todo): write your description
+    """
   logging.info(s)
   if stdout:
     print(s)
@@ -1062,6 +1180,15 @@ def init_host_and_devices(n_devices=None, random_seed=None):
 
 def _accelerate_model_with_metrics(model_with_metrics, n_devices,
                                    accelerate=True, do_mean=True):
+    """
+    Perform a model metrics.
+
+    Args:
+        model_with_metrics: (todo): write your description
+        n_devices: (int): write your description
+        accelerate: (todo): write your description
+        do_mean: (todo): write your description
+    """
   if not accelerate:
     return model_with_metrics.pure_fn
 

@@ -29,16 +29,34 @@ from trax.shapes import ShapeDtype
 class ShapesTest(absltest.TestCase):
 
   def test_constructor_and_read_properties(self):
+      """
+      Constructs the properties and properties of the properties.
+
+      Args:
+          self: (todo): write your description
+      """
     sd = ShapeDtype((2, 3), np.int32)
     self.assertEqual(sd.shape, (2, 3))
     self.assertEqual(sd.dtype, np.int32)
 
   def test_default_dtype_is_float32(self):
+      """
+      Check if dtype of dtype is a 2.
+
+      Args:
+          self: (todo): write your description
+      """
     sd = ShapeDtype((2, 3))
     self.assertEqual(sd.shape, (2, 3))
     self.assertEqual(sd.dtype, np.float32)
 
   def test_signature_on_ndarray(self):
+      """
+      Test if the array of shape is a ndarray.
+
+      Args:
+          self: (todo): write your description
+      """
     array = np.array([[2, 3, 5, 7],
                       [11, 13, 17, 19]],
                      dtype=np.int16)
@@ -47,12 +65,24 @@ class ShapesTest(absltest.TestCase):
     self.assertEqual(sd.dtype, np.int16)
 
   def test_shape_dtype_repr(self):
+      """
+      Set shape string shape.
+
+      Args:
+          self: (todo): write your description
+      """
     sd = ShapeDtype((2, 3))
     repr_string = '{}'.format(sd)
     self.assertEqual(repr_string,
                      "ShapeDtype{shape:(2, 3), dtype:<class 'numpy.float32'>}")
 
   def test_splice_signatures(self):
+      """
+      Test if the splice of the splice.
+
+      Args:
+          self: (todo): write your description
+      """
     sd1 = ShapeDtype((1,))
     sd2 = ShapeDtype((2,))
     sd3 = ShapeDtype((3,))

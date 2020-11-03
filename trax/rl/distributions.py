@@ -85,14 +85,35 @@ class Categorical(Distribution):
 
   @property
   def n_inputs(self):
+      """
+      Return a numpy array.
+
+      Args:
+          self: (todo): write your description
+      """
     return np.prod(self._shape, dtype=jnp.int32) * self._n_categories
 
   def _unflatten_inputs(self, inputs):
+      """
+      Unflatten the inputs.
+
+      Args:
+          self: (todo): write your description
+          inputs: (array): write your description
+      """
     return jnp.reshape(
         inputs, inputs.shape[:-1] + self._shape + (self._n_categories,)
     )
 
   def sample(self, inputs, temperature=1.0):
+      """
+      Sample the input tensor.
+
+      Args:
+          self: (todo): write your description
+          inputs: (array): write your description
+          temperature: (todo): write your description
+      """
     # No need for LogSoftmax with sampling - softmax normalization is
     # subtracting a constant from every logit, and sampling is taking
     # a max over logits plus noise, so invariant to adding a constant.
@@ -101,6 +122,14 @@ class Categorical(Distribution):
     return tl.logsoftmax_sample(self._unflatten_inputs(inputs), temperature)
 
   def log_prob(self, inputs, point):
+      """
+      Log probability.
+
+      Args:
+          self: (todo): write your description
+          inputs: (array): write your description
+          point: (todo): write your description
+      """
     inputs = tl.LogSoftmax()(self._unflatten_inputs(inputs))
     return jnp.sum(
         # Select the logits specified by point.
@@ -110,6 +139,13 @@ class Categorical(Distribution):
     )
 
   def entropy(self, inputs):
+      """
+      Compute the entropy of the model.
+
+      Args:
+          self: (todo): write your description
+          inputs: (array): write your description
+      """
     log_probs = inputs
     probs = jnp.exp(log_probs)
     return -jnp.sum(probs * log_probs, axis=-1)
@@ -135,6 +171,12 @@ class Gaussian(Distribution):
 
   @property
   def _n_dims(self):
+      """
+      Returns the number of dimensions.
+
+      Args:
+          self: (todo): write your description
+      """
     return np.prod(self._shape, dtype=jnp.int32)
 
   def _params(self, inputs):
@@ -156,6 +198,12 @@ class Gaussian(Distribution):
 
   @property
   def n_inputs(self):
+      """
+      A dictionary of the inputs for this module.
+
+      Args:
+          self: (todo): write your description
+      """
     n_dims = self._n_dims
     return {
         None: n_dims,
@@ -164,6 +212,14 @@ class Gaussian(Distribution):
     }[self._learn_std]
 
   def sample(self, inputs, temperature=1.0):
+      """
+      Sample from the model
+
+      Args:
+          self: (todo): write your description
+          inputs: (array): write your description
+          temperature: (todo): write your description
+      """
     (mean, std) = self._params(inputs)
     mean = jnp.reshape(mean, mean.shape[:-1] + self._shape)
     std = jnp.reshape(std, std.shape[:-1] + self._shape)
@@ -175,6 +231,14 @@ class Gaussian(Distribution):
       return np.random.normal(loc=mean, scale=(std * temperature))
 
   def log_prob(self, inputs, point):
+      """
+      Calculate the probability of the probability.
+
+      Args:
+          self: (todo): write your description
+          inputs: (array): write your description
+          point: (array): write your description
+      """
     point = point.reshape(inputs.shape[:-1] + (-1,))
     (mean, std) = self._params(inputs)
     return -jnp.sum(
@@ -186,6 +250,13 @@ class Gaussian(Distribution):
     )
 
   def entropy(self, inputs):
+      """
+      Compute entropy of entropy.
+
+      Args:
+          self: (todo): write your description
+          inputs: (array): write your description
+      """
     (_, std) = self._params(inputs)
     return jnp.sum(jnp.exp(std) + .5 * jnp.log(2.0 * jnp.pi * jnp.e), axis=-1)
 

@@ -219,6 +219,12 @@ def DotProductAttention(queries, keys, values, mask, dropout, mode, rng):
 def SplitIntoHeads(n_heads, merged_batch_and_head=True):
   """Returns a layer that reshapes tensors for multi-headed computation."""
   def f(x):
+      """
+      Return a function. f.
+
+      Args:
+          x: (array): write your description
+      """
     batch_size, seq_len, d_feature = x.shape
 
     if d_feature % n_heads != 0:
@@ -243,6 +249,12 @@ def SplitIntoHeads(n_heads, merged_batch_and_head=True):
 def MergeHeads(n_heads, merged_batch_and_head=True):
   """Returns a layer that undoes splitting, after multi-head computation."""
   def f(x):
+      """
+      Return a function f.
+
+      Args:
+          x: (array): write your description
+      """
     if merged_batch_and_head:
       batchheads, seq_len, d_head = x.shape
       assert batchheads % n_heads == 0
@@ -261,6 +273,17 @@ def MergeHeads(n_heads, merged_batch_and_head=True):
 @assert_shape('bld->bld')
 def ConfigurableAttention(q_layer, k_layer, v_layer, final_layer,  # pylint: disable=invalid-name
                           qkv_attention_layer, n_heads=1):
+    """
+    Config attention.
+
+    Args:
+        q_layer: (todo): write your description
+        k_layer: (todo): write your description
+        v_layer: (todo): write your description
+        final_layer: (str): write your description
+        qkv_attention_layer: (todo): write your description
+        n_heads: (int): write your description
+    """
   return cb.Serial(
       cb.Branch(
           [q_layer, SplitIntoHeads(n_heads)],
@@ -376,6 +399,12 @@ def ShiftRight(n_positions=1, mode='train'):
   """
   # TODO(jonni): Include pad arg, like PaddingMask, to allow non-default pads?
   def f(x):
+      """
+      Return the f ( x ) of x.
+
+      Args:
+          x: (int): write your description
+      """
     if mode == 'predict':
       return x
     padded = _zero_pad(x, (n_positions, 0), 1)
@@ -399,6 +428,12 @@ def PaddingMask(pad=0):
     pad: Integer that represents padding rather than a token/content ID.
   """
   def f(x):
+      """
+      Create a batch length.
+
+      Args:
+          x: (int): write your description
+      """
     if len(x.shape) != 2:
       raise ValueError(
           f'Input to PaddingMask must be a rank 2 tensor with shape '
@@ -425,6 +460,13 @@ def EncoderDecoderMask():
   cover any number of attention heads.
   """
   def f(decoder_input, mask):
+      """
+      Fully decoder.
+
+      Args:
+          decoder_input: (todo): write your description
+          mask: (array): write your description
+      """
     if len(decoder_input.shape) != 3:
       raise ValueError(
           f'Decoder input to EncoderDecoderMask must be a rank 3 tensor with '
@@ -542,6 +584,13 @@ def _zero_pad(x, pad, axis):
 def _fast_inference_init_state(input_signature, buffer_length):
   """Returns an initial state for causal attention layer fast inference."""
   def zeros_for(batch_size, shape_dtype):
+      """
+      Create a numpy array of the given shape.
+
+      Args:
+          batch_size: (int): write your description
+          shape_dtype: (str): write your description
+      """
     shape, dtype = shape_dtype.as_tuple()
     d_feature = shape[-1]
     return jnp.zeros((batch_size, buffer_length, d_feature), dtype=dtype)

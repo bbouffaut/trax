@@ -40,6 +40,12 @@ from trax.models.reformer import reformer
 class ReformerMemoryTest(absltest.TestCase):
 
   def test_reformer_lm_memory(self):
+      """
+      Reformer lm memory.
+
+      Args:
+          self: (todo): write your description
+      """
     lsh_self_attention = functools.partial(
         tl.LSHSelfAttention,
         attention_dropout=0.0,
@@ -83,7 +89,22 @@ class ReformerMemoryTest(absltest.TestCase):
 
     @jax.jit
     def mock_training_step(x, weights, state, rng):
+        """
+        Perform an optimizer.
+
+        Args:
+            x: (todo): write your description
+            weights: (array): write your description
+            state: (todo): write your description
+            rng: (todo): write your description
+        """
       def compute_mock_loss(weights):
+          """
+          Compute the loss loss : math : rng \ rng_ { rng }.
+
+          Args:
+              weights: (array): write your description
+          """
         logits, new_state = model.pure_fn(x, weights, state, rng)
         loss = jnp.mean(logits[..., 0])
         return loss, (new_state, logits)

@@ -45,6 +45,14 @@ class DistributionsTest(parameterized.TestCase):
       ),
   )
   def test_shapes(self, space, gin_config):
+      """
+      Test for a set of shapes of the inputs.
+
+      Args:
+          self: (todo): write your description
+          space: (todo): write your description
+          gin_config: (todo): write your description
+      """
     gin.parse_config(gin_config)
 
     batch_shape = (2, 3)
@@ -62,6 +70,13 @@ class DistributionsTest(parameterized.TestCase):
 
   @parameterized.named_parameters(('1d', 1), ('2d', 2))
   def test_gaussian_probability_sums_to_one(self, n_dims):
+      """
+      Test if the probability of a gaussian distribution.
+
+      Args:
+          self: (todo): write your description
+          n_dims: (int): write your description
+      """
     std = 1.0
     n_samples = 10000
 

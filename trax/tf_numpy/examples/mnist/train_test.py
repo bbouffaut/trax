@@ -30,6 +30,12 @@ from trax.tf_numpy.examples.mnist import train
 class TFNumpyMnistExampleTest(tf.test.TestCase):
 
   def testRuns(self):
+      """
+      Train the test dataset.
+
+      Args:
+          self: (todo): write your description
+      """
     with mock.patch.object(dataset, 'load', new=fake_mnist_data):
       train.train(
           batch_size=1,
@@ -49,8 +55,19 @@ class TFNumpyMnistExampleTest(tf.test.TestCase):
 
 
 def fake_mnist_data():
+    """
+    Generate random samples.
+
+    Args:
+    """
 
   def gen_examples(num_examples):
+      """
+      Generate examples.
+
+      Args:
+          num_examples: (int): write your description
+      """
     x = np.array(
         np.random.randn(num_examples, 784), copy=False, dtype=np.float32)
     y = np.zeros((num_examples, 10), dtype=np.float32)

@@ -41,6 +41,11 @@ from trax.layers.rnn import *
 
 # Ginify
 def layer_configure(*args, **kwargs):
+    """
+    Configure external layer.
+
+    Args:
+    """
   kwargs['module'] = 'trax.layers'
   return gin.external_configurable(*args, **kwargs)
 

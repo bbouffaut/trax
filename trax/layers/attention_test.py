@@ -27,6 +27,12 @@ import trax.layers as tl
 class AttentionTest(absltest.TestCase):
 
   def test_simple_call(self):
+      """
+      Perform self - attention.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.CausalAttention(d_feature=4, n_heads=2)
     x = [np.array([[[2, 5, 3, 4],
                     [0, 1, 2, 3],
@@ -39,6 +45,12 @@ class AttentionTest(absltest.TestCase):
     self.assertEqual(mask.shape, (1, 1, 1, 3))
 
   def test_shift_right(self):
+      """
+      Test the right shift.
+
+      Args:
+          self: (todo): write your description
+      """
     # Test shifts right on axis=1
     layer = tl.ShiftRight()
     x = np.array([[[9, 9, 9],
@@ -61,6 +73,12 @@ class AttentionTest(absltest.TestCase):
                                       [93, 92, 91]]])
 
   def test_shift_right_float(self):
+      """
+      Test the shift shift.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.ShiftRight()
     x = np.array([[[9, 9, 9],
                    [8, 8, 8],
@@ -85,6 +103,12 @@ class AttentionTest(absltest.TestCase):
                                       [46.5, 46.0, 45.5]]])
 
   def test_padding_mask(self):
+      """
+      Test if the mask.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.PaddingMask()
     x = np.array([
         [1., 2., 3., 4., 0.],
@@ -102,6 +126,12 @@ class AttentionTest(absltest.TestCase):
 class CausalAttentionTest(absltest.TestCase):
 
   def test_simple_call(self):
+      """
+      Perform layer - layer layer.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.CausalAttention(d_feature=4, n_heads=2)
     x = np.array([[[2, 5, 3, 4],
                    [0, 1, 2, 3],

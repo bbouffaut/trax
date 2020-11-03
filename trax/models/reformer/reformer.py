@@ -337,6 +337,12 @@ def EncoderBlock(d_model, d_ff, n_heads, attention_type, dropout, ff_activation,
   # return the mask to be compatible with the EfficientAttention API.
   if attention.n_out == 2:
     def reshape_mask(mask):
+        """
+        Reshape a 2d array.
+
+        Args:
+            mask: (array): write your description
+        """
       return jnp.reshape(mask, (mask.shape[0], 1, 1, mask.shape[1]))
     attention = tl.Serial(
         tl.Fn('ReshapeMask', lambda x, y: (x, reshape_mask(y)), n_out=2),

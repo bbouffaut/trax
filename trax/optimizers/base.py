@@ -90,18 +90,44 @@ class Optimizer(object):
 
   @property
   def slots(self):
+      """
+      Return a list of slots associated with this object.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._slots
 
   @slots.setter
   def slots(self, slots):
+      """
+      Set slots todo.
+
+      Args:
+          self: (todo): write your description
+          slots: (bool): write your description
+      """
     self._slots = slots
 
   @property
   def opt_params(self):
+      """
+      Returns a list of params.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._init_opt_params
 
   @opt_params.setter
   def opt_params(self, opt_params):
+      """
+      Initialize command line parameters.
+
+      Args:
+          self: (todo): write your description
+          opt_params: (dict): write your description
+      """
     self._init_opt_params = opt_params
 
   def tree_init(self, weight_tree):
@@ -190,9 +216,27 @@ class SGD(Optimizer):
   """
 
   def init(self, weights):
+      """
+      Initialize and set of weights.
+
+      Args:
+          self: (todo): write your description
+          weights: (array): write your description
+      """
     return None
 
   def update(self, step, grads, weights, slots, opt_params):
+      """
+      Updates the weights.
+
+      Args:
+          self: (todo): write your description
+          step: (int): write your description
+          grads: (array): write your description
+          weights: (array): write your description
+          slots: (todo): write your description
+          opt_params: (dict): write your description
+      """
     del step, slots
     lr = opt_params['learning_rate']
     new_weights = weights - (lr * grads).astype(weights.dtype)

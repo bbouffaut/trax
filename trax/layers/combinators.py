@@ -52,6 +52,15 @@ class Serial(base.Layer):
   """
 
   def __init__(self, *sublayers, name=None, sublayers_to_print=None):
+      """
+      Initialize the graph.
+
+      Args:
+          self: (todo): write your description
+          sublayers: (list): write your description
+          name: (str): write your description
+          sublayers_to_print: (todo): write your description
+      """
     super().__init__(
         name=name, sublayers_to_print=sublayers_to_print)
 
@@ -114,6 +123,13 @@ class Serial(base.Layer):
   # pylint: enable=protected-access
 
   def _n_inputs_n_outputs(self, layers):
+      """
+      Returns the number of outputs in the network.
+
+      Args:
+          self: (todo): write your description
+          layers: (list): write your description
+      """
     del self
     running_max = 0
     running_total = 0
@@ -124,6 +140,13 @@ class Serial(base.Layer):
     return running_max, (running_max - running_total)
 
   def _validate_forward_inputs(self, xs):
+      """
+      Validate inputs. inputs.
+
+      Args:
+          self: (todo): write your description
+          xs: (todo): write your description
+      """
     if not isinstance(xs, (tuple, list)) and self._n_in != 1:
       raise TypeError(f'Serial.forward input must be a tuple or list; '
                       f'instead got {type(xs)}.')
@@ -231,6 +254,13 @@ class Parallel(base.Layer):
       self.weights = weights
 
   def _validate(self, layers):
+      """
+      Validate layers.
+
+      Args:
+          self: (todo): write your description
+          layers: (list): write your description
+      """
     if not layers or len(layers) < 2:
       raise ValueError(
           f'layers ({layers}) must be a list with at least two elements')
@@ -289,6 +319,14 @@ class Concatenate(base.Layer):
   """
 
   def __init__(self, n_items=2, axis=-1):
+      """
+      Initialize the items.
+
+      Args:
+          self: (todo): write your description
+          n_items: (int): write your description
+          axis: (int): write your description
+      """
     name = 'Concatenate' if axis == -1 else f'Concatenate_axis{axis}'
     super().__init__(n_in=n_items, name=name)
     self._n_items = n_items
@@ -303,6 +341,14 @@ class Split(base.Layer):
   """Splits the input into n items along an axis."""
 
   def __init__(self, n_items=2, axis=-1):
+      """
+      Initializes the items.
+
+      Args:
+          self: (todo): write your description
+          n_items: (int): write your description
+          axis: (int): write your description
+      """
     super().__init__(n_out=n_items)
     self._n_items = n_items
     self._axis = axis
@@ -337,6 +383,12 @@ def _scan(f, xs, init_value, axis=0, remat=False):
     A pair (ys, last_value) as described above.
   """
   def swapaxes(x):
+      """
+      Swap the axes of x.
+
+      Args:
+          x: (todo): write your description
+      """
     transposed_axes = list(range(len(x.shape)))
     transposed_axes[axis] = 0
     transposed_axes[0] = axis
@@ -344,6 +396,13 @@ def _scan(f, xs, init_value, axis=0, remat=False):
   if axis != 0:
     xs = fastmath.nested_map(swapaxes, xs)
   def transposed_f(c, x):
+      """
+      Transposed function.
+
+      Args:
+          c: (array): write your description
+          x: (array): write your description
+      """
     y, d = f(x, c)
     return d, y
   if remat:
@@ -386,6 +445,16 @@ class Scan(base.Layer):
   """
 
   def __init__(self, layer, axis=0, n_carry=1, remat=False):
+      """
+      Initialize the layer.
+
+      Args:
+          self: (todo): write your description
+          layer: (todo): write your description
+          axis: (int): write your description
+          n_carry: (int): write your description
+          remat: (todo): write your description
+      """
     super().__init__(n_in=layer.n_in, n_out=layer.n_out)
     self._sublayers = [layer]
     self._n_carry = n_carry
@@ -406,6 +475,13 @@ class Scan(base.Layer):
       inputs = tuple(inputs)  # so that inputs structure matches outputs
     n_carry = self._n_carry
     def scannable_fn(x, carry_and_state):  # pylint: disable=invalid-name
+        """
+        Scannable function.
+
+        Args:
+            x: (todo): write your description
+            carry_and_state: (todo): write your description
+        """
       carry, state, i = carry_and_state
       x_and_carry = x + carry if n_carry > 0 else x
       rng = fastmath.random.fold_in(self.rng, i)
@@ -469,6 +545,16 @@ class Cond(base.Layer):
   """
 
   def __init__(self, cond, true, false=None, name=None):
+      """
+      Init the initial initialization.
+
+      Args:
+          self: (todo): write your description
+          cond: (todo): write your description
+          true: (todo): write your description
+          false: (array): write your description
+          name: (str): write your description
+      """
     super(Cond, self).__init__(name=name)
 
     if false is None:
@@ -535,6 +621,13 @@ class Cond(base.Layer):
     # pylint: enable=protected-access
 
   def _validate_forward_inputs(self, xs):
+      """
+      Validate inputs.
+
+      Args:
+          self: (todo): write your description
+          xs: (todo): write your description
+      """
     xs = _make_tuple(xs)
     if len(xs) < self.n_in:
       raise ValueError(
@@ -567,12 +660,24 @@ class Cond(base.Layer):
                        .format(len(layers_state)))
 
     def true_func(t):
+        """
+        Returns the state.
+
+        Args:
+            t: (todo): write your description
+        """
       outputs, new_true_state = self._true.pure_fn(
           t[0][0], t[1][0], t[2][0], t[3][0])
       # t[2][1] is old_false_state which is not changing if true is executed.
       return outputs, (new_true_state, t[2][1])
 
     def false_func(t):
+        """
+        Evaluate the false state.
+
+        Args:
+            t: (todo): write your description
+        """
       if self._identity_false_fun:
         # Memory optimization: we don't need pure_fn call.
         return t[0][1], t[2]
@@ -616,6 +721,12 @@ def Chunk(layer, chunk_size, pass_unchunkable=True):
   if chunk_size < 1:
     return layer
   def reshape_to_chunks(x):
+      """
+      Reshape array into chunks.
+
+      Args:
+          x: (str): write your description
+      """
     chunk_batch = x.shape[0]
     size = chunk_size
     n_chunks = chunk_batch // size
@@ -631,6 +742,12 @@ def Chunk(layer, chunk_size, pass_unchunkable=True):
       lambda xs: fastmath.nested_map(reshape_to_chunks, xs),
       n_in=layer.n_in, n_out=layer.n_in, name='ReshapeToChunks')
   def reshape_from_chunks(x):
+      """
+      Reshape x into chunks.
+
+      Args:
+          x: (todo): write your description
+      """
     batch_size = x.shape[0] * x.shape[1]
     return jnp.reshape(x, [batch_size] + list(x.shape[2:]))
   reshape_from_chunks_layer = base.PureLayer(
@@ -726,6 +843,12 @@ def Select(indices, n_in=None, name=None):
     name = f'Select{indices}'.replace(' ', '')
 
   def select(xs):  # pylint: disable=invalid-name
+      """
+      Return the indices of an iterable item *.
+
+      Args:
+          xs: (todo): write your description
+      """
     if not isinstance(xs, (tuple, list)):
       xs = (xs,)
     selected = tuple(xs[i] for i in indices)
@@ -850,6 +973,13 @@ class Cache(base.Layer):
   """Applies a layer on the first run and returns the outputs on next calls."""
 
   def __init__(self, layer):
+      """
+      Initialize the layer.
+
+      Args:
+          self: (todo): write your description
+          layer: (todo): write your description
+      """
     super().__init__(n_in=layer.n_in, n_out=layer.n_out)
     self._sublayers = [layer]
 
@@ -909,6 +1039,14 @@ class BatchLeadingAxes(base.Layer):
   """
 
   def __init__(self, layer, n_last_axes_to_keep=1):
+      """
+      Initialize the layer.
+
+      Args:
+          self: (todo): write your description
+          layer: (todo): write your description
+          n_last_axes_to_keep: (bool): write your description
+      """
     if layer.n_in != 1 or layer.n_out != 1:
       raise ValueError('BatchLeadingAxes currently only works for layers with '
                        f'n_in = n_out = 1, got {(layer.n_in, layer.n_out)}.')
@@ -965,6 +1103,12 @@ def _deep_flatten(items):
     A list of non-list, non-tuple objects.
   """
   def _flat_gen(xs):
+      """
+      Yields a generator.
+
+      Args:
+          xs: (todo): write your description
+      """
     for x in xs:
       if isinstance(x, (list, tuple)):
         for y in _flat_gen(x):
@@ -998,6 +1142,13 @@ def _ensure_sublayers(layers):
 
 
 def _split_rngs(rng, n_copies):
+    """
+    Split a list of n_copies.
+
+    Args:
+        rng: (str): write your description
+        n_copies: (int): write your description
+    """
   if rng is None:
     return (None,) * n_copies
   return fastmath.random.split(rng, n_copies)
@@ -1033,6 +1184,13 @@ def _make_singleitem_or_original(xs):
 
 
 def _shape_without_axis(x, axis):
+    """
+    Return the indices of axis.
+
+    Args:
+        x: (todo): write your description
+        axis: (int): write your description
+    """
   return x.shape[:axis] + x.shape[axis + 1:]
 
 

@@ -45,6 +45,12 @@ def _test_inputs(n_classes, with_weights=False, input_shape=(6, 6, 3)):
   batch_size = 2 * xla_bridge.device_count()
 
   def input_stream(n_devices):
+      """
+      Generate n_devices.
+
+      Args:
+          n_devices: (int): write your description
+      """
     del n_devices
     key = fastmath.random.get_prng(0)
     while True:
@@ -61,6 +67,12 @@ def _test_inputs(n_classes, with_weights=False, input_shape=(6, 6, 3)):
         yield inputs, targets
 
   def input_stream_masked(n_devices):
+      """
+      Return a list of masked masked to the given input stream.
+
+      Args:
+          n_devices: (int): write your description
+      """
     return inputs_lib.add_loss_weights(input_stream(n_devices))
 
   return inputs_lib.Inputs(input_stream_masked)
@@ -71,7 +83,19 @@ def _test_inputs_lm(vocab_size, seq_len, per_device_batch_size=2):
   batch_size = per_device_batch_size * xla_bridge.device_count()
 
   def input_stream(_):
+      """
+      Generate a random samples.
+
+      Args:
+          _: (todo): write your description
+      """
     def make_batch(key):
+        """
+        Generate a random batch.
+
+        Args:
+            key: (str): write your description
+        """
       return fastmath.random.randint(
           key, [batch_size, seq_len], dtype=jnp.int32, minval=0,
           maxval=vocab_size)
@@ -84,6 +108,12 @@ def _test_inputs_lm(vocab_size, seq_len, per_device_batch_size=2):
       yield inputs, targets
 
   def input_stream_masked(n_devices):
+      """
+      Return a list of masked masked to the given input stream.
+
+      Args:
+          n_devices: (int): write your description
+      """
     return inputs_lib.add_loss_weights(input_stream(n_devices))
 
   return inputs_lib.Inputs(input_stream_masked)
@@ -94,6 +124,12 @@ BACKENDS = [fastmath.Backend.JAX, fastmath.Backend.TFNP]
 
 
 def short_name(b):
+    """
+    Returns short short name of a short name.
+
+    Args:
+        b: (str): write your description
+    """
   if b == fastmath.Backend.JAX:
     return 'jax'
   else:
@@ -101,6 +137,12 @@ def short_name(b):
 
 
 def opt_name(opt):
+    """
+    Returns the name of the option
+
+    Args:
+        opt: (todo): write your description
+    """
   if opt is None:
     return 'None'
   return opt.__name__
@@ -109,6 +151,13 @@ def opt_name(opt):
 class TraxTest(parameterized.TestCase):
 
   def __init__(self, methodName='runTest'):  # pylint: disable=invalid-name
+      """
+      Initialize the tpu.
+
+      Args:
+          self: (todo): write your description
+          methodName: (str): write your description
+      """
     super().__init__(methodName)
     if npe.tpu_devices():
       # Initialize TPU for TF
@@ -116,17 +165,38 @@ class TraxTest(parameterized.TestCase):
       tf.tpu.experimental.initialize_tpu_system(resolver)
 
   def setUp(self):
+      """
+      Determines whether this function is enabled.
+
+      Args:
+          self: (todo): write your description
+      """
     super().setUp()
     test_utils.ensure_flag('test_tmpdir')
     self._old_is_allow_float64 = tf_np.is_allow_float64()
     tf_np.set_allow_float64(False)
 
   def tearDown(self):
+      """
+      Tear down the next tensor.
+
+      Args:
+          self: (todo): write your description
+      """
     tf_np.set_allow_float64(self._old_is_allow_float64)
     super().tearDown()
 
   def _test_train_eval_predict(self, backend, model_name='Simple',
                                optimizer=None):
+      """
+      Test for evaluator.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+          model_name: (str): write your description
+          optimizer: (todo): write your description
+      """
     with fastmath.use_backend(backend):
       # Prepare model and inputs
       steps = 2
@@ -136,6 +206,12 @@ class TraxTest(parameterized.TestCase):
         n_classes = 4
         # Adds Dropout and BatchNorm to test state handling.
         def model_fn(mode='train'):
+            """
+            Return a model function.
+
+            Args:
+                mode: (str): write your description
+            """
           return tl.Serial(
               tl.Dropout(mode=mode, rate=0.1), tl.BatchNorm(mode=mode),
               models.MLP(d_hidden=16, n_output_classes=n_classes, mode=mode))
@@ -198,14 +274,37 @@ class TraxTest(parameterized.TestCase):
                                    ('Transformer', trax_opt.Adam)])]
       for model_name, opt in configs)
   def test_train_eval_predict(self, backend, model_name, opt):
+      """
+      Evaluate the model.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+          model_name: (str): write your description
+          opt: (todo): write your description
+      """
     self._test_train_eval_predict(backend, model_name, opt)
 
   @parameterized.parameters(BACKENDS)
   def test_train_eval_predict_sm3(self, backend):
+      """
+      Evaluate the model.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+      """
     self._test_train_eval_predict(backend, 'Simple', trax_opt.SM3)
 
   @parameterized.parameters(BACKENDS)
   def test_train_restart(self, backend):
+      """
+      Test for a model
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+      """
     with fastmath.use_backend(backend):
       # Prepare model and inputs
       n_classes = 4
@@ -240,6 +339,13 @@ class TraxTest(parameterized.TestCase):
 
   @parameterized.parameters(BACKENDS)
   def test_train_with_weights(self, backend):
+      """
+      Test for the model.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+      """
     with fastmath.use_backend(backend):
       # Prepare model and inputs
       n_classes = 4
@@ -263,6 +369,13 @@ class TraxTest(parameterized.TestCase):
 
   @parameterized.parameters(BACKENDS)
   def test_reset_twice(self, backend):
+      """
+      Initialize the model to the given backend.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+      """
     with fastmath.use_backend(backend):
       n_classes = 4
       model_fn = functools.partial(
@@ -285,6 +398,12 @@ class TraxTest(parameterized.TestCase):
       trainer.evaluate(1)
 
   def test_tf_xla_forced_compile(self):
+      """
+      Compile and set of tf.
+
+      Args:
+          self: (todo): write your description
+      """
     # TODO(wangpeng): re-enable this test
     self.skipTest('Needs --config=cuda to pass this test')
     old_flag = fastmath.tf_math.tf_xla_forced_compile_enabled()
@@ -328,16 +447,34 @@ class TraxTest(parameterized.TestCase):
 class EpochsTest(absltest.TestCase):
 
   def test_cuts_epoch_when_total_steps_reached(self):
+      """
+      Test the epoch epochs.
+
+      Args:
+          self: (todo): write your description
+      """
     epoch_steps = trainer_lib.epochs(
         total_steps=5, steps_to_skip=0, epoch_steps=[1, 2, 3])
     self.assertEqual(list(epoch_steps), [1, 2, 2])
 
   def test_skips_full_epoch(self):
+      """
+      Perform full epoch epoch.
+
+      Args:
+          self: (todo): write your description
+      """
     epoch_steps = trainer_lib.epochs(
         total_steps=4, steps_to_skip=2, epoch_steps=[2, 2])
     self.assertEqual(list(epoch_steps), [2])
 
   def test_skips_part_of_epoch(self):
+      """
+      Test if epochs.
+
+      Args:
+          self: (todo): write your description
+      """
     epoch_steps = trainer_lib.epochs(
         total_steps=4, steps_to_skip=1, epoch_steps=[2, 2])
     self.assertEqual(list(epoch_steps), [1, 2])

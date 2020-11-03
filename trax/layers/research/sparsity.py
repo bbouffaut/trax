@@ -50,12 +50,30 @@ class ReversibleReshapePermute(reversible.ReversibleLayer):
   """
 
   def forward(self, x):
+      """
+      Forward computation.
+
+      Args:
+          self: (todo): write your description
+          x: (array): write your description
+      """
     shape = x.shape
     x = x.reshape(shape[:-1]+(-1, self._get_multiplier(x)))
     t_x = np.einsum('...ab->...ba', x)  # transpose
     return t_x.reshape(shape)
 
   def reverse(self, x, weights=(), state=(), new_state=(), rng=None):
+      """
+      Reverse x.
+
+      Args:
+          self: (todo): write your description
+          x: (array): write your description
+          weights: (int): write your description
+          state: (todo): write your description
+          new_state: (todo): write your description
+          rng: (int): write your description
+      """
     del state, new_state, rng
     shape = x.shape
     x = x.reshape(shape[:-1]+(self._get_multiplier(x), -1))
@@ -88,6 +106,12 @@ class ReversibleReshapePermute(reversible.ReversibleLayer):
     last_dim = x.shape[-1]
 
     def big_relatively_prime(n):
+        """
+        Return the smallest number of the smallest n.
+
+        Args:
+            n: (todo): write your description
+        """
       # The longest possible cycle is achieved iff log2(multiplier) and
       # log2(dimension_size) are relatively prime. We choose the biggest such
       # number smaller than sqrt(dimension_size).
@@ -112,14 +136,39 @@ class ReversibleRandomPermute(reversible.ReversibleLayer):
   """
 
   def forward(self, x):
+      """
+      Forward computation. forward
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+      """
     permutation, _ = self._get_permutation_and_reverse_permutation(x)
     return x[..., permutation]
 
   def reverse(self, x, weights=(), state=(), new_state=(), rng=None):
+      """
+      Reverse permutation.
+
+      Args:
+          self: (todo): write your description
+          x: (int): write your description
+          weights: (int): write your description
+          state: (todo): write your description
+          new_state: (todo): write your description
+          rng: (int): write your description
+      """
     _, rev_permutation = self._get_permutation_and_reverse_permutation(x)
     return x[..., rev_permutation]
 
   def _get_permutation_and_reverse_permutation(self, x):
+      """
+      Get permutation permutation permutation.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+      """
     # TODO(jaszczur): random seed should be stored in state.
     # Currently there is no way of doing it reliably.
     last_dim = x.shape[-1]
@@ -132,12 +181,23 @@ class ReversibleRandomPermute(reversible.ReversibleLayer):
 
 @assert_shape('...a->...bc')
 def SplitLastAxis(num_splits):
+    """
+    Return the number of num_splits.
+
+    Args:
+        num_splits: (int): write your description
+    """
   return tl.Fn(f'SplitLastAxis_{num_splits}',
                lambda x: np.reshape(x, x.shape[:-1] + (num_splits, -1)))
 
 
 @assert_shape('...ab->...c')
 def MergeLastTwoAxes():
+    """
+    Return the last numpy array.
+
+    Args:
+    """
   return tl.Fn('SplitLastAxis',
                lambda x: np.reshape(x, x.shape[:-2] + (-1,)))
 
@@ -204,6 +264,11 @@ def ModularCausalAttention(d_feature, n_heads=1, sparsity=None, dropout=0.0,
   n_modules = n_heads if sparsity is None else sparsity
   @assert_shape('...a->...b')
   def ProcessingLayer():
+      """
+      Todo.
+
+      Args:
+      """
     assert d_feature % n_modules == 0
     return LocallyConnectedDense(n_modules, d_feature // n_modules,
                                  kernel_size=kernel_size)
@@ -265,6 +330,11 @@ def ConvCausalAttention(d_feature, n_heads=1, sparsity=None, dropout=0.0,
   n_modules = n_heads if sparsity is None else sparsity
   @assert_shape('...a->...b')
   def ProcessingLayer():
+      """
+      Todo : add documentation
+
+      Args:
+      """
     assert d_feature % n_modules == 0
     return LocallyConvDense(n_modules, d_feature // n_modules,
                             kernel_size=kernel_size)
@@ -298,6 +368,11 @@ def LowRankCausalAttention(d_feature, n_heads=1, dropout=0.0,
   """
   @assert_shape('...a->...a')
   def ProcessingLayer():
+      """
+      Returns the first dense of the dense.
+
+      Args:
+      """
     return tl.Serial(
         tl.Dense(lowrank),
         tl.Dense(d_feature)
@@ -516,7 +591,24 @@ def CausalFavor(d_feature, n_heads=1, dropout=0.0,
 
   def favor_numerator_fwd(init_prefix_sum_value, precision,
                           query_prime, key_prime, value):
+      """
+      R compute a function fwd function fwd.
+
+      Args:
+          init_prefix_sum_value: (str): write your description
+          precision: (int): write your description
+          query_prime: (str): write your description
+          key_prime: (str): write your description
+          value: (todo): write your description
+      """
     def body(p, qkv):
+        """
+        Calculate p - value p.
+
+        Args:
+            p: (int): write your description
+            qkv: (int): write your description
+        """
       (q, k, v) = qkv
       p += np.einsum('...m,...d->...md', k, v, precision=precision)
       x_slice = np.einsum('...m,...md->...d', q, p, precision=precision)
@@ -526,9 +618,23 @@ def CausalFavor(d_feature, n_heads=1, dropout=0.0,
     return w, (precision, p, query_prime, key_prime, value)
 
   def favor_numerator_bwd(pqkv, w_ct):
+      """
+      Calculate the fraction of mass and bwd.
+
+      Args:
+          pqkv: (todo): write your description
+          w_ct: (todo): write your description
+      """
     precision, p, qs, ks, vs = pqkv
 
     def body(carry, qkv_xct):
+        """
+        Calculate the body.
+
+        Args:
+            carry: (array): write your description
+            qkv_xct: (todo): write your description
+        """
       p, p_ct = carry
       q, k, v, x_ct = qkv_xct
       q_ct = np.einsum('...d,...md->...m', x_ct, p, precision=precision)
@@ -544,6 +650,16 @@ def CausalFavor(d_feature, n_heads=1, dropout=0.0,
 
   def favor_numerator(init_prefix_sum_value, precision, query_prime,
                       key_prime, value):
+      """
+      Creates a random number of random prefixes.
+
+      Args:
+          init_prefix_sum_value: (str): write your description
+          precision: (int): write your description
+          query_prime: (str): write your description
+          key_prime: (str): write your description
+          value: (todo): write your description
+      """
     w, _ = favor_numerator_fwd(init_prefix_sum_value, precision,
                                query_prime, key_prime, value)
     return w
@@ -553,7 +669,23 @@ def CausalFavor(d_feature, n_heads=1, dropout=0.0,
 
   def favor_denominator_fwd(init_prefix_sum_value, precision,
                             query_prime, key_prime):
+      """
+      Calculate the fwd function.
+
+      Args:
+          init_prefix_sum_value: (str): write your description
+          precision: (int): write your description
+          query_prime: (str): write your description
+          key_prime: (str): write your description
+      """
     def body(p, qk):
+        """
+        Calculate q - value q
+
+        Args:
+            p: (int): write your description
+            qk: (int): write your description
+        """
       q, k = qk
       p += k
       x = np.einsum('...m,...m->...', q, p, precision=precision)
@@ -563,9 +695,23 @@ def CausalFavor(d_feature, n_heads=1, dropout=0.0,
     return r, (precision, query_prime, key_prime, p)
 
   def favor_denominator_bwd(qkp, r_ct):
+      """
+      R calculate the favorator.
+
+      Args:
+          qkp: (todo): write your description
+          r_ct: (todo): write your description
+      """
     precision, qs, ks, p = qkp
 
     def body(carry, qkx):
+        """
+        Calculate body.
+
+        Args:
+            carry: (array): write your description
+            qkx: (int): write your description
+        """
       p, p_ct = carry
       q, k, x_ct = qkx
       q_ct = np.einsum('...,...m->...m', x_ct, p, precision=precision)
@@ -580,6 +726,15 @@ def CausalFavor(d_feature, n_heads=1, dropout=0.0,
 
   def favor_denominator(init_prefix_sum_value, precision, query_prime,
                         key_prime):
+      """
+      Generate a latex.
+
+      Args:
+          init_prefix_sum_value: (str): write your description
+          precision: (int): write your description
+          query_prime: (str): write your description
+          key_prime: (str): write your description
+      """
     r, _ = favor_denominator_fwd(init_prefix_sum_value, precision,
                                  query_prime, key_prime)
     return r
@@ -590,9 +745,23 @@ def CausalFavor(d_feature, n_heads=1, dropout=0.0,
   favor_denominator.defvjp(favor_denominator_fwd, favor_denominator_bwd)
 
   def relu(x):
+      """
+      Relu of x to - 1 if x is a ].
+
+      Args:
+          x: (todo): write your description
+      """
     return np.where(x <= 0, np.zeros_like(x), x)
 
   def favor(query, key, value):
+      """
+      Favorized query query.
+
+      Args:
+          query: (str): write your description
+          key: (str): write your description
+          value: (todo): write your description
+      """
     query_prime = relu(query) + numerical_stabilizer
     key_prime = relu(key) + numerical_stabilizer
     prefix_sum_tensor_shape = (key.shape[0], key.shape[-1], value.shape[-1])

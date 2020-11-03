@@ -26,6 +26,12 @@ from trax.models import rse
 class RSETest(absltest.TestCase):
 
   def test_rsu_forward_shape(self):
+      """
+      Generate rse shape.
+
+      Args:
+          self: (todo): write your description
+      """
     batch_size = 3
     seq_len = 32
     d_model = 17
@@ -37,6 +43,12 @@ class RSETest(absltest.TestCase):
     self.assertEqual(y.shape, (batch_size, seq_len, d_model))
 
   def test_shuffle_layer(self):
+      """
+      Shuffle the layer.
+
+      Args:
+          self: (todo): write your description
+      """
     shuffle_layer = rse.ShuffleLayer()
     x = np.array([[[0], [1], [2], [3], [4], [5], [6], [7]]])
     print(x.shape)
@@ -46,6 +58,12 @@ class RSETest(absltest.TestCase):
     self._assert_equal_tensors(y, expected_output)
 
   def test_shuffle_layer_log_times_is_identity(self):
+      """
+      Test if the log of the model.
+
+      Args:
+          self: (todo): write your description
+      """
     seq_len = 8
     d_model = 17
     shuffle_layer = rse.ShuffleLayer()
@@ -57,6 +75,12 @@ class RSETest(absltest.TestCase):
     self._assert_equal_tensors(x, y)
 
   def test_reverse_shuffle_layer(self):
+      """
+      Shuffle the reverse layer.
+
+      Args:
+          self: (todo): write your description
+      """
     reverse_shuffle_layer = rse.ReverseShuffleLayer()
     x = np.array([[[0], [1], [2], [3], [4], [5], [6], [7]]])
     print(x.shape)
@@ -66,6 +90,12 @@ class RSETest(absltest.TestCase):
     self._assert_equal_tensors(y, expected_output)
 
   def test_reverse_shuffle_layer_log_times_is_identity(self):
+      """
+      Shuffle the reverse of the integers.
+
+      Args:
+          self: (todo): write your description
+      """
     seq_len = 8
     d_model = 17
     reverse_shuffle_layer = rse.ReverseShuffleLayer()
@@ -77,6 +107,14 @@ class RSETest(absltest.TestCase):
     self._assert_equal_tensors(x, y)
 
   def _assert_equal_tensors(self, x, y):
+      """
+      Asserts that tensors are equal.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+          y: (todo): write your description
+      """
     self.assertEqual(y.shape, x.shape)
     for i in range(x.shape[0]):
       for j in range(x.shape[1]):

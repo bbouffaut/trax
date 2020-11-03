@@ -151,6 +151,16 @@ def ones_like(a, dtype=None):
 
 @utils.np_doc(np.eye)
 def eye(N, M=None, k=0, dtype=float):  # pylint: disable=invalid-name,missing-docstring
+    """
+    Return a new numpy.
+
+    Args:
+        N: (int): write your description
+        M: (int): write your description
+        k: (int): write your description
+        dtype: (todo): write your description
+        float: (todo): write your description
+    """
   if dtype:
     dtype = utils.result_type(dtype)
   if not M:
@@ -278,6 +288,12 @@ def array(val, dtype=None, copy=True, ndmin=0):  # pylint: disable=redefined-out
     # convert_to_tensor doesn't allow incompatible arguments such as (5.5, int)
     # while np.array allows them. We need to convert-then-cast.
     def maybe_data(x):
+        """
+        Ensure x if possible.
+
+        Args:
+            x: (todo): write your description
+        """
       if isinstance(x, arrays_lib.ndarray):
         return x.data
       return x
@@ -291,6 +307,11 @@ def array(val, dtype=None, copy=True, ndmin=0):  # pylint: disable=redefined-out
   ndims = tf.rank(result_t)
 
   def true_fn():
+      """
+      True if the tensor.
+
+      Args:
+      """
     old_shape = tf.shape(result_t)
     new_shape = tf.concat([tf.ones(ndmin - ndims, tf.int32), old_shape], axis=0)
     return tf.reshape(result_t, new_shape)
@@ -301,6 +322,13 @@ def array(val, dtype=None, copy=True, ndmin=0):  # pylint: disable=redefined-out
 
 @utils.np_doc(np.asarray)
 def asarray(a, dtype=None):
+    """
+    Return a numpy. ndarray to a numpy.
+
+    Args:
+        a: (array): write your description
+        dtype: (todo): write your description
+    """
   if dtype:
     dtype = utils.result_type(dtype)
   if isinstance(a, arrays_lib.ndarray) and (not dtype or dtype == a.dtype):
@@ -310,11 +338,25 @@ def asarray(a, dtype=None):
 
 @utils.np_doc(np.asanyarray)
 def asanyarray(a, dtype=None):
+    """
+    Convert an array to a numpy.
+
+    Args:
+        a: (array): write your description
+        dtype: (todo): write your description
+    """
   return asarray(a, dtype)
 
 
 @utils.np_doc(np.ascontiguousarray)
 def ascontiguousarray(a, dtype=None):
+    """
+    Return a ndtype of the array.
+
+    Args:
+        a: (array): write your description
+        dtype: (todo): write your description
+    """
   return array(a, dtype, ndmin=1)
 
 
@@ -361,6 +403,17 @@ def arange(start, stop=None, step=1, dtype=None):
 
 @utils.np_doc(np.geomspace)
 def geomspace(start, stop, num=50, endpoint=True, dtype=float):  # pylint: disable=missing-docstring
+    """
+    Geomspace tensor.
+
+    Args:
+        start: (todo): write your description
+        stop: (todo): write your description
+        num: (int): write your description
+        endpoint: (bool): write your description
+        dtype: (todo): write your description
+        float: (todo): write your description
+    """
   if dtype:
     dtype = utils.result_type(dtype)
   if num < 0:
@@ -396,12 +449,26 @@ def diag(v, k=0):  # pylint: disable=missing-docstring
       utils.logical_or(tf.equal(v_rank, 1), tf.equal(v_rank, 2)), [v_rank])
 
   def _diag(v, k):
+      """
+      Computes the diagonal of k.
+
+      Args:
+          v: (todo): write your description
+          k: (todo): write your description
+      """
     return utils.cond(
         tf.equal(tf.size(v), 0),
         lambda: tf.zeros([abs(k), abs(k)], dtype=v.dtype),
         lambda: tf.linalg.diag(v, k=k))
 
   def _diag_part(v, k):
+      """
+      Compute the diagonal of k.
+
+      Args:
+          v: (todo): write your description
+          k: (todo): write your description
+      """
     v_shape = tf.shape(v)
     v, k = utils.cond(
         utils.logical_or(
@@ -418,6 +485,15 @@ def diag(v, k=0):  # pylint: disable=missing-docstring
 
 @utils.np_doc(np.diagonal)
 def diagonal(a, offset=0, axis1=0, axis2=1):  # pylint: disable=missing-docstring
+    """
+    Computes the diagonal.
+
+    Args:
+        a: (array): write your description
+        offset: (int): write your description
+        axis1: (int): write your description
+        axis2: (int): write your description
+    """
   a = asarray(a).data
 
   maybe_rank = a.shape.rank
@@ -431,6 +507,11 @@ def diagonal(a, offset=0, axis1=0, axis2=1):  # pylint: disable=missing-docstrin
   a_shape = tf.shape(a)
 
   def _zeros():  # pylint: disable=missing-docstring
+      """
+      Concatenos tensor.
+
+      Args:
+      """
     return (tf.zeros(tf.concat([a_shape[:-1], [0]], 0), dtype=a.dtype), 0)
 
   # All zeros since diag_part doesn't handle all possible k (aka offset).
@@ -465,6 +546,12 @@ def diagflat(v, k=0):
 
 
 def _promote_dtype(*arrays):
+    """
+    Promote the dtype to a dtype.
+
+    Args:
+        arrays: (array): write your description
+    """
   dtype = utils.result_type(*arrays)
   return [asarray(a, dtype=dtype) for a in arrays]
 
@@ -567,6 +654,12 @@ def copy(a):
 
 
 def _maybe_promote_to_int(a):
+    """
+    Prompt for intsarray to int.
+
+    Args:
+        a: (todo): write your description
+    """
   if tf.as_dtype(a.dtype).is_integer:
     # If a is an integer type and its precision is less than that of `int`,
     # the output type will be `int`.
@@ -579,6 +672,14 @@ def _maybe_promote_to_int(a):
 
 @utils.np_doc(np.cumprod)
 def cumprod(a, axis=None, dtype=None):  # pylint: disable=missing-docstring
+    """
+    Cump a tensor.
+
+    Args:
+        a: (todo): write your description
+        axis: (int): write your description
+        dtype: (todo): write your description
+    """
   a = asarray(a, dtype=dtype)
 
   if dtype is None:
@@ -595,6 +696,14 @@ def cumprod(a, axis=None, dtype=None):  # pylint: disable=missing-docstring
 
 @utils.np_doc(np.cumsum)
 def cumsum(a, axis=None, dtype=None):  # pylint: disable=missing-docstring
+    """
+    Cums op.
+
+    Args:
+        a: (todo): write your description
+        axis: (int): write your description
+        dtype: (todo): write your description
+    """
   a = asarray(a, dtype=dtype)
 
   if dtype is None:
@@ -692,42 +801,101 @@ def _reduce(tf_fn, a, axis=None, dtype=None, keepdims=None,
 
 @utils.np_doc(np.sum)
 def sum(a, axis=None, dtype=None, keepdims=None):  # pylint: disable=redefined-builtin
+    """
+    Compute the sum of arr.
+
+    Args:
+        a: (todo): write your description
+        axis: (int): write your description
+        dtype: (todo): write your description
+        keepdims: (bool): write your description
+    """
   return _reduce(tf.reduce_sum, a, axis=axis, dtype=dtype, keepdims=keepdims,
                  tf_bool_fn=tf.reduce_any)
 
 
 @utils.np_doc(np.prod)
 def prod(a, axis=None, dtype=None, keepdims=None):
+    """
+    Compute the reduction op.
+
+    Args:
+        a: (todo): write your description
+        axis: (int): write your description
+        dtype: (todo): write your description
+        keepdims: (bool): write your description
+    """
   return _reduce(tf.reduce_prod, a, axis=axis, dtype=dtype, keepdims=keepdims,
                  tf_bool_fn=tf.reduce_all)
 
 
 @utils.np_doc(np.mean)
 def mean(a, axis=None, dtype=None, keepdims=None):
+    """
+    Compute the mean along an array axis.
+
+    Args:
+        a: (array): write your description
+        axis: (int): write your description
+        dtype: (todo): write your description
+        keepdims: (bool): write your description
+    """
   return _reduce(tf.math.reduce_mean, a, axis=axis, dtype=dtype,
                  keepdims=keepdims, promote_int=_TO_FLOAT)
 
 
 @utils.np_doc(np.amax)
 def amax(a, axis=None, keepdims=None):
+    """
+    Compute the reduction of the array.
+
+    Args:
+        a: (int): write your description
+        axis: (int): write your description
+        keepdims: (bool): write your description
+    """
   return _reduce(tf.reduce_max, a, axis=axis, dtype=None, keepdims=keepdims,
                  promote_int=None, tf_bool_fn=tf.reduce_any, preserve_bool=True)
 
 
 @utils.np_doc(np.amin)
 def amin(a, axis=None, keepdims=None):
+    """
+    Perform a function over a given axis.
+
+    Args:
+        a: (array): write your description
+        axis: (int): write your description
+        keepdims: (bool): write your description
+    """
   return _reduce(tf.reduce_min, a, axis=axis, dtype=None, keepdims=keepdims,
                  promote_int=None, tf_bool_fn=tf.reduce_all, preserve_bool=True)
 
 
 # TODO(wangpeng): Remove this workaround once b/157232284 is fixed
 def _reduce_variance_complex(input_tensor, axis, keepdims):
+    """
+    Reduce the dimension along a given axis.
+
+    Args:
+        input_tensor: (todo): write your description
+        axis: (int): write your description
+        keepdims: (bool): write your description
+    """
   f = functools.partial(tf.math.reduce_variance, axis=axis, keepdims=keepdims)
   return f(tf.math.real(input_tensor)) + f(tf.math.imag(input_tensor))
 
 
 # TODO(wangpeng): Remove this workaround once b/157232284 is fixed
 def _reduce_std_complex(input_tensor, axis, keepdims):
+    """
+    Compute the sum of a tensor along axis.
+
+    Args:
+        input_tensor: (todo): write your description
+        axis: (int): write your description
+        keepdims: (bool): write your description
+    """
   y = _reduce_variance_complex(input_tensor=input_tensor, axis=axis,
                                keepdims=keepdims)
   return tf.math.sqrt(y)
@@ -735,7 +903,23 @@ def _reduce_std_complex(input_tensor, axis, keepdims):
 
 @utils.np_doc(np.var)
 def var(a, axis=None, keepdims=None):
+    """
+    Compute the variance along an array.
+
+    Args:
+        a: (array): write your description
+        axis: (int): write your description
+        keepdims: (bool): write your description
+    """
   def f(input_tensor, axis, keepdims):
+      """
+      Compute the sum of a tensor.
+
+      Args:
+          input_tensor: (todo): write your description
+          axis: (int): write your description
+          keepdims: (bool): write your description
+      """
     if input_tensor.dtype in (tf.complex64, tf.complex128):
       # A workaround for b/157232284
       fn = _reduce_variance_complex
@@ -748,7 +932,23 @@ def var(a, axis=None, keepdims=None):
 
 @utils.np_doc(np.std)
 def std(a, axis=None, keepdims=None):
+    """
+    Compute the standard deviation along an array.
+
+    Args:
+        a: (array): write your description
+        axis: (int): write your description
+        keepdims: (bool): write your description
+    """
   def f(input_tensor, axis, keepdims):
+      """
+      Compute the f - 1 ) along axis.
+
+      Args:
+          input_tensor: (todo): write your description
+          axis: (int): write your description
+          keepdims: (bool): write your description
+      """
     if input_tensor.dtype in (tf.complex64, tf.complex128):
       # A workaround for b/157232284
       fn = _reduce_std_complex
@@ -761,6 +961,12 @@ def std(a, axis=None, keepdims=None):
 
 @utils.np_doc(np.ravel)
 def ravel(a):  # pylint: disable=missing-docstring
+    """
+    Return the first ndarray to a numpy array.
+
+    Args:
+        a: (todo): write your description
+    """
   a = asarray(a)
   if a.ndim == 1:
     return a
@@ -790,6 +996,14 @@ def real(val):
 
 @utils.np_doc(np.repeat)
 def repeat(a, repeats, axis=None):  # pylint: disable=missing-docstring
+    """
+    Reshape an array.
+
+    Args:
+        a: (todo): write your description
+        repeats: (int): write your description
+        axis: (int): write your description
+    """
   a = asarray(a).data
   original_shape = a._shape_as_list()  # pylint: disable=protected-access
   # Best effort recovery of the shape.
@@ -819,6 +1033,13 @@ def repeat(a, repeats, axis=None):  # pylint: disable=missing-docstring
 
 @utils.np_doc(np.around)
 def around(a, decimals=0):  # pylint: disable=missing-docstring
+    """
+    Returns a numpy.
+
+    Args:
+        a: (array): write your description
+        decimals: (int): write your description
+    """
   a = asarray(a)
   dtype = a.dtype
   factor = math.pow(10, decimals)
@@ -861,6 +1082,13 @@ def reshape(a, newshape, order='C'):
 
 
 def _reshape_method_wrapper(a, *newshape, **kwargs):
+    """
+    Reshape a method on a new array.
+
+    Args:
+        a: (todo): write your description
+        newshape: (int): write your description
+    """
   order = kwargs.pop('order', 'C')
   if kwargs:
     raise ValueError('Unsupported arguments: {}'.format(kwargs.keys()))
@@ -925,6 +1153,14 @@ def transpose(a, axes=None):
 
 @utils.np_doc(np.swapaxes)
 def swapaxes(a, axis1, axis2):  # pylint: disable=missing-docstring
+    """
+    Swap two tensors along a given axis.
+
+    Args:
+        a: (todo): write your description
+        axis1: (int): write your description
+        axis2: (int): write your description
+    """
   a = asarray(a)
 
   a_rank = tf.rank(a)
@@ -956,6 +1192,13 @@ def moveaxis(a, source, destination):  # pylint: disable=missing-docstring
   a_rank = utils._maybe_static(tf.rank(a))  # pylint: disable=protected-access
 
   def _correct_axis(axis, rank):
+      """
+      Correct the axis for the axis.
+
+      Args:
+          axis: (int): write your description
+          rank: (int): write your description
+      """
     if axis < 0:
       return axis + rank
     return axis
@@ -1142,6 +1385,14 @@ def where(condition, x=None, y=None):
 
 @utils.np_doc(np.select)
 def select(condlist, choicelist, default=0):  # pylint: disable=missing-docstring
+    """
+    Select the list of the default values from a list of choices.
+
+    Args:
+        condlist: (list): write your description
+        choicelist: (list): write your description
+        default: (todo): write your description
+    """
   if len(condlist) != len(choicelist):
     msg = 'condlist must have length equal to choicelist ({} vs {})'
     raise ValueError(msg.format(len(condlist), len(choicelist)))
@@ -1171,11 +1422,23 @@ def shape(a):
 
 
 def ndim(a):
+    """
+    Return a numpy.
+
+    Args:
+        a: (int): write your description
+    """
   a = asarray(a)
   return a.ndim
 
 
 def isscalar(a):
+    """
+    Calculate the scalar of a numpy array.
+
+    Args:
+        a: (array): write your description
+    """
   return ndim(a) == 0
 
 
@@ -1211,6 +1474,14 @@ def _boundaries_to_sizes(a, boundaries, axis):
 
 @utils.np_doc(np.split)
 def split(ary, indices_or_sections, axis=0):
+    """
+    Split a list of the given indices.
+
+    Args:
+        ary: (array): write your description
+        indices_or_sections: (int): write your description
+        axis: (int): write your description
+    """
   ary = asarray(ary)
   if not isinstance(indices_or_sections, six.integer_types):
     indices_or_sections = _boundaries_to_sizes(ary, indices_or_sections, axis)
@@ -1219,8 +1490,22 @@ def split(ary, indices_or_sections, axis=0):
 
 
 def _split_on_axis(np_fun, axis):
+    """
+    Parameters ---------- ndarray.
+
+    Args:
+        np_fun: (todo): write your description
+        axis: (int): write your description
+    """
   @utils.np_doc(np_fun)
   def f(ary, indices_or_sections):
+      """
+      Return the indices of the indices : param indices of the indices in the given indices ).
+
+      Args:
+          ary: (array): write your description
+          indices_or_sections: (int): write your description
+      """
     return split(ary, indices_or_sections, axis=axis)
   return f
 
@@ -1232,11 +1517,25 @@ dsplit = _split_on_axis(np.dsplit, axis=2)
 
 @utils.np_doc(np.broadcast_to)
 def broadcast_to(array, shape):  # pylint: disable=redefined-outer-name
+    """
+    Broadcast an array to new shape to new shape.
+
+    Args:
+        array: (array): write your description
+        shape: (tuple): write your description
+    """
   return full(shape, array)
 
 
 @utils.np_doc(np.stack)
 def stack(arrays, axis=0):
+    """
+    Stack arrays.
+
+    Args:
+        arrays: (array): write your description
+        axis: (int): write your description
+    """
   arrays = _promote_dtype(*arrays)  # pylint: disable=protected-access
   unwrapped_arrays = [
       a.data if isinstance(a, arrays_lib.ndarray) else a for a in arrays
@@ -1246,6 +1545,12 @@ def stack(arrays, axis=0):
 
 @utils.np_doc(np.hstack)
 def hstack(tup):
+    """
+    Concat op.
+
+    Args:
+        tup: (array): write your description
+    """
   arrays = [atleast_1d(a) for a in tup]
   arrays = _promote_dtype(*arrays)  # pylint: disable=protected-access
   unwrapped_arrays = [
@@ -1258,6 +1563,12 @@ def hstack(tup):
 
 @utils.np_doc(np.vstack)
 def vstack(tup):
+    """
+    Concatenate arrays.
+
+    Args:
+        tup: (todo): write your description
+    """
   arrays = [atleast_2d(a) for a in tup]
   arrays = _promote_dtype(*arrays)  # pylint: disable=protected-access
   unwrapped_arrays = [
@@ -1268,6 +1579,12 @@ def vstack(tup):
 
 @utils.np_doc(np.dstack)
 def dstack(tup):
+    """
+    Concatenate arrays of - placeholders.
+
+    Args:
+        tup: (array): write your description
+    """
   arrays = [atleast_3d(a) for a in tup]
   arrays = _promote_dtype(*arrays)  # pylint: disable=protected-access
   unwrapped_arrays = [
@@ -1277,6 +1594,13 @@ def dstack(tup):
 
 
 def _pad_left_to(n, old_shape):
+    """
+    Pad the left and right_shape.
+
+    Args:
+        n: (str): write your description
+        old_shape: (int): write your description
+    """
   old_shape = asarray(old_shape, dtype=np.int32).data
   new_shape = tf.pad(
       old_shape, [[tf.math.maximum(n - tf.size(old_shape), 0), 0]],
@@ -1298,6 +1622,12 @@ def _atleast_nd(n, new_shape, *arys):
   """
 
   def f(x):
+      """
+      Faster f ( x ).
+
+      Args:
+          x: (int): write your description
+      """
     # pylint: disable=g-long-lambda
     x = asarray(x)
     return asarray(
@@ -1315,18 +1645,43 @@ def _atleast_nd(n, new_shape, *arys):
 
 @utils.np_doc(np.atleast_1d)
 def atleast_1d(*arys):
+    """
+    Atleast - pad.
+
+    Args:
+        arys: (array): write your description
+    """
   return _atleast_nd(1, _pad_left_to, *arys)
 
 
 @utils.np_doc(np.atleast_2d)
 def atleast_2d(*arys):
+    """
+    Convert a 2d.
+
+    Args:
+        arys: (array): write your description
+    """
   return _atleast_nd(2, _pad_left_to, *arys)
 
 
 @utils.np_doc(np.atleast_3d)
 def atleast_3d(*arys):  # pylint: disable=missing-docstring
+    """
+    3d convolution of a tensor.
+
+    Args:
+        arys: (array): write your description
+    """
 
   def new_shape(_, old_shape):
+      """
+      Create a new shape.
+
+      Args:
+          _: (todo): write your description
+          old_shape: (int): write your description
+      """
     # pylint: disable=g-long-lambda
     ndim_ = tf.size(old_shape)
     return utils.cond(
@@ -1340,6 +1695,12 @@ def atleast_3d(*arys):  # pylint: disable=missing-docstring
 
 @utils.np_doc(np.nonzero)
 def nonzero(a):
+    """
+    Nonzero tensor.
+
+    Args:
+        a: (array): write your description
+    """
   a = atleast_1d(a).data
   if a.shape.rank is None:
     raise ValueError("The rank of `a` is unknown, so we can't decide how many "
@@ -1351,6 +1712,13 @@ def nonzero(a):
 
 @utils.np_doc(np.diag_indices)
 def diag_indices(n, ndim=2):  # pylint: disable=missing-docstring,redefined-outer-name
+    """
+    Return the indices of the diagonal indices.
+
+    Args:
+        n: (int): write your description
+        ndim: (int): write your description
+    """
   if n < 0:
     raise ValueError('n argument to diag_indices must be nonnegative, got {}'
                      .format(n))
@@ -1363,6 +1731,15 @@ def diag_indices(n, ndim=2):  # pylint: disable=missing-docstring,redefined-oute
 
 @utils.np_doc(np.tri)
 def tri(N, M=None, k=0, dtype=None):  # pylint: disable=invalid-name,missing-docstring
+    """
+    Returns a tensor.
+
+    Args:
+        N: (int): write your description
+        M: (int): write your description
+        k: (int): write your description
+        dtype: (todo): write your description
+    """
   M = M if M is not None else N
   if dtype is not None:
     dtype = utils.result_type(dtype)
@@ -1389,6 +1766,13 @@ def tri(N, M=None, k=0, dtype=None):  # pylint: disable=invalid-name,missing-doc
 
 @utils.np_doc(np.tril)
 def tril(m, k=0):  # pylint: disable=missing-docstring
+    """
+    Trilize a 2d array.
+
+    Args:
+        m: (int): write your description
+        k: (int): write your description
+    """
   m = asarray(m).data
   m_shape = m.shape.as_list()
 
@@ -1408,6 +1792,13 @@ def tril(m, k=0):  # pylint: disable=missing-docstring
 
 @utils.np_doc(np.triu)
 def triu(m, k=0):  # pylint: disable=missing-docstring
+    """
+    Triu function.
+
+    Args:
+        m: (int): write your description
+        k: (int): write your description
+    """
   m = asarray(m).data
   m_shape = m.shape.as_list()
 
@@ -1427,6 +1818,13 @@ def triu(m, k=0):  # pylint: disable=missing-docstring
 
 @utils.np_doc(np.flip)
 def flip(m, axis=None):  # pylint: disable=missing-docstring
+    """
+    Flip an array of a given axis.
+
+    Args:
+        m: (array): write your description
+        axis: (int): write your description
+    """
   m = asarray(m).data
 
   if axis is None:
@@ -1439,16 +1837,36 @@ def flip(m, axis=None):  # pylint: disable=missing-docstring
 
 @utils.np_doc(np.flipud)
 def flipud(m):  # pylint: disable=missing-docstring
+    """
+    Flipududududud function m ( n ).
+
+    Args:
+        m: (array): write your description
+    """
   return flip(m, 0)
 
 
 @utils.np_doc(np.fliplr)
 def fliplr(m):  # pylint: disable=missing-docstring
+    """
+    Fliplens a given a and - b.
+
+    Args:
+        m: (array): write your description
+    """
   return flip(m, 1)
 
 
 @utils.np_doc(np.roll)
 def roll(a, shift, axis=None):  # pylint: disable=missing-docstring
+    """
+    Rolls the array along a given axis.
+
+    Args:
+        a: (array): write your description
+        shift: (int): write your description
+        axis: (int): write your description
+    """
   a = asarray(a).data
 
   if axis is not None:
@@ -1462,6 +1880,14 @@ def roll(a, shift, axis=None):  # pylint: disable=missing-docstring
 
 @utils.np_doc(np.rot90)
 def rot90(m, k=1, axes=(0, 1)):  # pylint: disable=missing-docstring
+    """
+    Rotate the tensor.
+
+    Args:
+        m: (array): write your description
+        k: (array): write your description
+        axes: (todo): write your description
+    """
   m_rank = tf.rank(m)
   ax1, ax2 = utils._canonicalize_axes(axes, m_rank)  # pylint: disable=protected-access
 
@@ -1482,6 +1908,14 @@ def rot90(m, k=1, axes=(0, 1)):  # pylint: disable=missing-docstring
 
 @utils.np_doc(np.vander)
 def vander(x, N=None, increasing=False):  # pylint: disable=missing-docstring,invalid-name
+    """
+    Vander tensor.
+
+    Args:
+        x: (todo): write your description
+        N: (todo): write your description
+        increasing: (bool): write your description
+    """
   x = asarray(x).data
 
   x_shape = tf.shape(x)
@@ -1520,6 +1954,11 @@ def vander(x, N=None, increasing=False):  # pylint: disable=missing-docstring,in
 
 @utils.np_doc(np.ix_)
 def ix_(*args):  # pylint: disable=missing-docstring
+    """
+    Ix_ix tensor.
+
+    Args:
+    """
   n = len(args)
   output = []
   for i, a in enumerate(args):

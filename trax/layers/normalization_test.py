@@ -28,6 +28,12 @@ import trax.layers as tl
 class BatchNormTest(parameterized.TestCase):
 
   def test_forward_shape(self):
+      """
+      Test shape of the shape of the network.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.BatchNorm()
     x = np.ones((30, 20, 70)).astype(np.float32)
     _, _ = layer.init(shapes.signature(x))
@@ -40,6 +46,14 @@ class BatchNormTest(parameterized.TestCase):
       ('tf64', fastmath.Backend.TFNP, np.float64),
   )
   def test_forward_dtype(self, backend, dtype):
+      """
+      Test forward forward backward backward backward backward.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+          dtype: (todo): write your description
+      """
     with fastmath.use_backend(backend):
       layer = tl.BatchNorm()
       x = np.ones((3, 2, 7)).astype(dtype)
@@ -53,6 +67,13 @@ class BatchNormTest(parameterized.TestCase):
       ('momentum_800', .800),
   )
   def test_forward(self, momentum):
+      """
+      Perform forward computation.
+
+      Args:
+          self: (todo): write your description
+          momentum: (todo): write your description
+      """
     layer = tl.BatchNorm(momentum=momentum)
     x = np.array([[[0, 1, 2, 3],
                    [4, 5, 6, 7],
@@ -78,6 +99,12 @@ class BatchNormTest(parameterized.TestCase):
         y, (x - mean_of_x) / np.sqrt(var_of_x + eps), rtol=1e-6)
 
   def test_new_weights_and_state(self):
+      """
+      Create new weights and weights.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.BatchNorm()
     x = np.ones((3, 2, 7)).astype(np.float32)
     _, _ = layer.init(shapes.signature(x))
@@ -91,6 +118,12 @@ class BatchNormTest(parameterized.TestCase):
 class LayerNormTest(parameterized.TestCase):
 
   def test_forward_shape(self):
+      """
+      Test shape of the shape
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.LayerNorm()
     x = np.ones((3, 2, 7)).astype(np.float32)
     _, _ = layer.init(shapes.signature(x))
@@ -103,6 +136,14 @@ class LayerNormTest(parameterized.TestCase):
       ('tf64', fastmath.Backend.TFNP, np.float64),
   )
   def test_forward_dtype(self, backend, dtype):
+      """
+      Test forward backward backward backward backward backward.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+          dtype: (todo): write your description
+      """
     with fastmath.use_backend(backend):
       layer = tl.LayerNorm()
       x = np.ones((3, 2, 7)).astype(dtype)
@@ -118,6 +159,13 @@ class FilterResponseNormTest(parameterized.TestCase):
       ('learn_epsilon_true', True),
   )
   def test_forward_shape(self, learn_epsilon):
+      """
+      Test forward shape.
+
+      Args:
+          self: (todo): write your description
+          learn_epsilon: (float): write your description
+      """
     layer = tl.FilterResponseNorm(learn_epsilon=learn_epsilon)
 
     B, H, W, C = 64, 5, 7, 3  # pylint: disable=invalid-name

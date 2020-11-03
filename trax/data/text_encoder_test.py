@@ -31,6 +31,12 @@ from trax.data import text_encoder
 class NativeToUnicodeTest(tf.test.TestCase):
 
   def test_native_to_unicode(self):
+      """
+      Convert string to unicode
+
+      Args:
+          self: (todo): write your description
+      """
     s = r"foo bar"
     s_unicode = text_encoder.native_to_unicode(s)
     self.assertEqual(s_unicode, u"foo bar")
@@ -39,6 +45,12 @@ class NativeToUnicodeTest(tf.test.TestCase):
 class EscapeUnescapeTokenTest(tf.test.TestCase):
 
   def test_escape_token(self):
+      """
+      Escape a string.
+
+      Args:
+          self: (todo): write your description
+      """
     escaped = text_encoder._escape_token(
         "Foo! Bar.\nunder_score back\\slash",
         set("abcdefghijklmnopqrstuvwxyz .\n") | text_encoder._ESCAPE_CHARS)
@@ -47,6 +59,12 @@ class EscapeUnescapeTokenTest(tf.test.TestCase):
         "\\70;oo\\33; \\66;ar.\\10;under\\uscore back\\\\slash_", escaped)
 
   def test_unescape_token(self):
+      """
+      Escape a string.
+
+      Args:
+          self: (todo): write your description
+      """
     unescaped = text_encoder._unescape_token(
         "\\70;oo\\33; \\66;ar.\\10;under\\uscore back\\\\slash_")
 
@@ -108,6 +126,12 @@ class SubwordTextEncoderTest(tf.test.TestCase):
     tf.gfile.MakeDirs(cls.test_temp_dir)
 
   def test_encode_decode(self):
+      """
+      Convert a single string.
+
+      Args:
+          self: (todo): write your description
+      """
     corpus = (
         "This is a corpus of text that provides a bunch of tokens from which "
         "to build a vocabulary. It will be used when strings are encoded "
@@ -142,6 +166,12 @@ class SubwordTextEncoderTest(tf.test.TestCase):
       self.assertIn(a, encoder.all_subtoken_strings)
 
   def test_unicode(self):
+      """
+      Builds a corpus of a corpus.
+
+      Args:
+          self: (todo): write your description
+      """
     corpus = "Cat emoticons. \U0001F638 \U0001F639 \U0001F63A \U0001F63B"
     token_counts = collections.Counter(corpus.split(" "))
 
@@ -152,6 +182,12 @@ class SubwordTextEncoderTest(tf.test.TestCase):
     self.assertIn("\U0001F63B", encoder.all_subtoken_strings)
 
   def test_small_vocab(self):
+      """
+      Compute the corpus.
+
+      Args:
+          self: (todo): write your description
+      """
     corpus = "The quick brown fox jumps over the lazy dog"
     token_counts = collections.Counter(corpus.split(" "))
     alphabet = set(corpus) - {" "}
@@ -222,6 +258,12 @@ class SubwordTextEncoderTest(tf.test.TestCase):
     self.assertEqual(corpus, reconstructed_corpus)
 
   def test_encodable_when_not_in_alphabet(self):
+      """
+      Builds a string of tokenizing tokenizer.
+
+      Args:
+          self: (todo): write your description
+      """
     corpus = "the quick brown fox jumps over the lazy dog"
     token_counts = collections.Counter(corpus.split(" "))
 
@@ -240,6 +282,12 @@ class SubwordTextEncoderTest(tf.test.TestCase):
 
   @mock.patch.object(text_encoder, "_ESCAPE_CHARS", new=set("\\_;13579"))
   def test_raises_exception_when_not_encodable(self):
+      """
+      Builds a corpus.
+
+      Args:
+          self: (todo): write your description
+      """
     corpus = "the quick brown fox jumps over the lazy dog"
     token_counts = collections.Counter(corpus.split(" "))
 
@@ -254,6 +302,12 @@ class SubwordTextEncoderTest(tf.test.TestCase):
       encoder.encode(original)
 
   def test_load_from_file(self):
+      """
+      Loads a vocab vocabulary file.
+
+      Args:
+          self: (todo): write your description
+      """
     # Test a vocab file with words not wrapped with single quotes
     encoder = text_encoder.SubwordTextEncoder()
     correct_vocab = ["the", "and", "of"]
@@ -272,6 +326,12 @@ class SubwordTextEncoderTest(tf.test.TestCase):
     self.assertAllEqual(encoder.all_subtoken_strings, correct_vocab)
 
   def test_reserved_token_chars_not_in_alphabet(self):
+      """
+      Parameters ---------- token tokenizer tokenizer.
+
+      Args:
+          self: (todo): write your description
+      """
     corpus = "dog"
     token_counts = collections.Counter(corpus.split(" "))
     encoder1 = text_encoder.SubwordTextEncoder.build_to_target_size(
@@ -289,6 +349,12 @@ class SubwordTextEncoderTest(tf.test.TestCase):
         encoder2.encode(c)
 
   def test_save_and_reload(self):
+      """
+      Loads a corpus from a corpus.
+
+      Args:
+          self: (todo): write your description
+      """
     corpus = "the quick brown fox jumps over the lazy dog"
     token_counts = collections.Counter(corpus.split(" "))
 
@@ -309,6 +375,12 @@ class SubwordTextEncoderTest(tf.test.TestCase):
     self.assertEqual(encoder._max_subtoken_len, new_encoder._max_subtoken_len)
 
   def test_save_and_reload_no_single_quotes(self):
+      """
+      Builds a corpus. subtoken.
+
+      Args:
+          self: (todo): write your description
+      """
     corpus = "the quick brown fox jumps over the lazy dog"
     token_counts = collections.Counter(corpus.split(" "))
 
@@ -329,10 +401,21 @@ class SubwordTextEncoderTest(tf.test.TestCase):
     self.assertEqual(encoder._max_subtoken_len, new_encoder._max_subtoken_len)
 
   def test_build_from_generator(self):
+      """
+      Constructs a generator of a corpus.
+
+      Args:
+          self: (todo): write your description
+      """
 
     corpus = "The quick brown fox jumps over the lazy dog"
 
     def gen():
+        """
+        Generate a generator that yields a generator.
+
+        Args:
+        """
       for _ in range(3):
         yield corpus
 
@@ -358,6 +441,12 @@ class SubwordTextEncoderTest(tf.test.TestCase):
 class OneHotClassLabelEncoderTest(tf.test.TestCase):
 
   def test_one_hot_encode(self):
+      """
+      Encode one hot hot encoder.
+
+      Args:
+          self: (todo): write your description
+      """
     encoder = text_encoder.OneHotClassLabelEncoder(
         class_labels=["zero", "one", "two"])
     self.assertEqual(encoder.encode("zero"), [1, 0, 0])
@@ -365,6 +454,12 @@ class OneHotClassLabelEncoderTest(tf.test.TestCase):
     self.assertEqual(encoder.encode("two"), [0, 0, 1])
 
   def test_one_hot_decode(self):
+      """
+      Test that encoder.
+
+      Args:
+          self: (todo): write your description
+      """
     encoder = text_encoder.OneHotClassLabelEncoder(
         class_labels=["zero", "one", "two"])
     self.assertEqual(encoder.decode([1, 0, 0]), "zero")

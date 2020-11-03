@@ -27,6 +27,12 @@ from trax.layers import metrics
 class MetricsTest(absltest.TestCase):
 
   def test_cross_entropy(self):
+      """
+      Calculate cross entropy.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = metrics._CrossEntropy()
     xs = [np.ones((9, 4, 4, 20)),
           np.ones((9, 4, 4))]
@@ -34,6 +40,12 @@ class MetricsTest(absltest.TestCase):
     self.assertEqual(y.shape, (9, 4, 4))
 
   def test_accuracy(self):
+      """
+      Calculate accuracy.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = metrics._Accuracy()
     xs = [np.ones((9, 4, 4)),
           np.ones((9, 4, 4))]
@@ -41,6 +53,12 @@ class MetricsTest(absltest.TestCase):
     self.assertEqual(y.shape, (9, 4, 4))
 
   def test_weighted_mean_shape(self):
+      """
+      Test the weighted weight shape is_weight_shape.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = metrics._WeightedMean()
     xs = [np.ones((9, 4, 4, 20)),
           np.ones((9, 4, 4, 20))]
@@ -48,6 +66,12 @@ class MetricsTest(absltest.TestCase):
     self.assertEqual(y.shape, ())
 
   def test_weighted_mean_semantics(self):
+      """
+      Calculate the mean of the model.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = metrics._WeightedMean()
     sample_input = np.ones((3,))
     sample_weights = np.ones((3,))
@@ -67,6 +91,12 @@ class MetricsTest(absltest.TestCase):
     np.testing.assert_allclose(mean, 1.)
 
   def test_weighted_sequence_mean_semantics(self):
+      """
+      Test if the weighted weighted weighted weighted weighted weighted weighted weighted weighted mean.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = metrics._WeightedSequenceMean()
     sample_input = np.ones((2, 3))
     sample_weights = np.ones((3,))
@@ -83,6 +113,12 @@ class MetricsTest(absltest.TestCase):
     np.testing.assert_allclose(mean, 1.)
 
   def test_binary_cross_entropy_loss(self):
+      """
+      Test if the cross entropy of a binary.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.BinaryCrossEntropyLoss()
     xs = [np.ones((9, 1)),
           np.ones((9, 1)),
@@ -91,6 +127,12 @@ class MetricsTest(absltest.TestCase):
     self.assertEqual(y.shape, ())
 
   def test_cross_entropy_loss(self):
+      """
+      Calculate the loss.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.CrossEntropyLoss()
     xs = [np.ones((9, 4, 4, 20)),
           np.ones((9, 4, 4)),
@@ -99,18 +141,36 @@ class MetricsTest(absltest.TestCase):
     self.assertEqual(y.shape, ())
 
   def test_binary_classifier(self):
+      """
+      Test for classifier.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = metrics.BinaryClassifier()
     xs = [np.ones((9, 1))]
     y = layer(xs)
     self.assertEqual(y.shape, (9, 1))
 
   def test_multiclass_classifier(self):
+      """
+      Test for multiclass classifier.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = metrics.MulticlassClassifier()
     xs = [np.ones((9, 4, 4, 20))]
     y = layer(xs)
     self.assertEqual(y.shape, (9, 4, 4))
 
   def test_accuracy_binary_scalar(self):
+      """
+      Test if the accuracy is a scalar.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Accuracy(classifier=tl.BinaryClassifier())
     xs = [np.ones((9, 1)),
           np.ones((9, 1)),
@@ -119,6 +179,12 @@ class MetricsTest(absltest.TestCase):
     self.assertEqual(y.shape, ())
 
   def test_accuracy_multiclass_scalar(self):
+      """
+      Test for scalar_accuracy_scalar is a scalar.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Accuracy(classifier=tl.MulticlassClassifier())
     xs = [np.ones((9, 4, 4, 20)),
           np.ones((9, 4, 4)),
@@ -127,6 +193,12 @@ class MetricsTest(absltest.TestCase):
     self.assertEqual(y.shape, ())
 
   def test_accuracy_scalar(self):
+      """
+      Compute accuracy.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Accuracy()
     xs = [np.ones((9, 4, 4, 20)),
           np.ones((9, 4, 4)),
@@ -135,6 +207,12 @@ class MetricsTest(absltest.TestCase):
     self.assertEqual(y.shape, ())
 
   def test_l2_loss(self):
+      """
+      Test the l2 loss.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.L2Loss()
     sample_input = np.ones((2, 2))
     sample_target = np.ones((2, 2))
@@ -155,6 +233,12 @@ class MetricsTest(absltest.TestCase):
     np.testing.assert_allclose(loss, 0.5)
 
   def test_smooth_l1_loss(self):
+      """
+      Smooth loss.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.SmoothL1Loss()
     sample_input = np.ones((2, 2))
     sample_target = np.ones((2, 2))
@@ -185,6 +269,12 @@ class MetricsTest(absltest.TestCase):
     np.testing.assert_allclose(loss, 0.5*l1_dist**2/sum_weights)
 
   def test_names(self):
+      """
+      Method to get the namesifier
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.L2Loss()
     self.assertEqual('L2Loss_in3', str(layer))
     layer = tl.BinaryClassifier()

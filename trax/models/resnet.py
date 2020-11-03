@@ -88,12 +88,25 @@ def Resnet50(d_hidden=64, n_output_classes=1001, mode='train',
 
   # A ConvBlock configured with the given norm, non-linearity and mode.
   def Resnet50ConvBlock(filter_multiplier=1, strides=(2, 2)):
+      """
+      Construct a resnet50 network.
+
+      Args:
+          filter_multiplier: (todo): write your description
+          strides: (int): write your description
+      """
     filters = (
         [filter_multiplier * dim for dim in [d_hidden, d_hidden, 4 * d_hidden]])
     return ConvBlock(3, filters, strides, norm, non_linearity, mode)
 
   # Same as above for IdentityBlock.
   def Resnet50IdentityBlock(filter_multiplier=1):
+      """
+      Resnet50 network.
+
+      Args:
+          filter_multiplier: (str): write your description
+      """
     filters = (
         [filter_multiplier * dim for dim in [d_hidden, d_hidden, 4 * d_hidden]])
     return IdentityBlock(3, filters, norm, non_linearity, mode)
@@ -132,6 +145,16 @@ def WideResnetBlock(channels, strides=(1, 1), bn_momentum=0.9, mode='train'):
 
 
 def WideResnetGroup(n, channels, strides=(1, 1), bn_momentum=0.9, mode='train'):
+    """
+    Creates a channels with the given channel.
+
+    Args:
+        n: (todo): write your description
+        channels: (int): write your description
+        strides: (int): write your description
+        bn_momentum: (todo): write your description
+        mode: (str): write your description
+    """
   shortcut = [
       tl.Conv(channels, (3, 3), strides, padding='SAME'),
   ]

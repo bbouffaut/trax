@@ -106,6 +106,16 @@ class BoxSpaceSerializer(SpaceSerializer):
   space_type = gym.spaces.Box
 
   def __init__(self, space, vocab_size, precision=2, max_range=(-100.0, 100.0)):
+      """
+      Initialize the space.
+
+      Args:
+          self: (todo): write your description
+          space: (todo): write your description
+          vocab_size: (int): write your description
+          precision: (float): write your description
+          max_range: (int): write your description
+      """
     self._precision = precision
 
     # Some gym envs (e.g. CartPole) have unreasonably high bounds for
@@ -125,6 +135,13 @@ class BoxSpaceSerializer(SpaceSerializer):
     super().__init__(bounded_space, vocab_size)
 
   def serialize(self, data):
+      """
+      Serialize data into num_size samples.
+
+      Args:
+          self: (todo): write your description
+          data: (todo): write your description
+      """
     array = data
     batch_size = array.shape[0]
     array = (array - self._space.low) / (self._space.high - self._space.low)
@@ -141,6 +158,13 @@ class BoxSpaceSerializer(SpaceSerializer):
     return np.reshape(digits, (batch_size, -1))
 
   def deserialize(self, representation):
+      """
+      Deserialize a sequence.
+
+      Args:
+          self: (todo): write your description
+          representation: (todo): write your description
+      """
     digits = representation
     batch_size = digits.shape[0]
     digits = np.reshape(digits, (batch_size, -1, self._precision))
@@ -153,10 +177,22 @@ class BoxSpaceSerializer(SpaceSerializer):
 
   @property
   def representation_length(self):
+      """
+      The length of this space.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._precision * self._space.low.size
 
   @property
   def significance_map(self):
+      """
+      Significance matrix.
+
+      Args:
+          self: (todo): write your description
+      """
     return np.reshape(np.broadcast_to(
         np.arange(self._precision), self._space.shape + (self._precision,)), -1)
 
@@ -171,18 +207,46 @@ class DiscreteSpaceSerializer(SpaceSerializer):
   representation_length = 1
 
   def __init__(self, space, vocab_size):
+      """
+      Initialize vocab.
+
+      Args:
+          self: (todo): write your description
+          space: (todo): write your description
+          vocab_size: (int): write your description
+      """
     super().__init__(space, vocab_size)
     assert space.n <= vocab_size, (
         'Discrete space size should fit in the number of symbols.')
 
   def serialize(self, data):
+      """
+      Serialize numpy array.
+
+      Args:
+          self: (todo): write your description
+          data: (todo): write your description
+      """
     return np.reshape(data, (-1, 1)).astype(np.int32)
 
   def deserialize(self, representation):
+      """
+      Deserializes a given object.
+
+      Args:
+          self: (todo): write your description
+          representation: (todo): write your description
+      """
     return np.reshape(representation, -1)
 
   @property
   def significance_map(self):
+      """
+      Significance of this isificance.
+
+      Args:
+          self: (todo): write your description
+      """
     return np.zeros(1, dtype=np.int32)
 
 
@@ -196,6 +260,14 @@ class MultiDiscreteSpaceSerializer(SpaceSerializer):
   space_type = gym.spaces.MultiDiscrete
 
   def __init__(self, space, vocab_size):
+      """
+      Initialize vocab.
+
+      Args:
+          self: (todo): write your description
+          space: (todo): write your description
+          vocab_size: (int): write your description
+      """
     super().__init__(space, vocab_size)
     assert np.max(space.nvec) <= vocab_size, (
         'MultiDiscrete maximum number of categories should fit in the number '
@@ -203,15 +275,41 @@ class MultiDiscreteSpaceSerializer(SpaceSerializer):
     )
 
   def serialize(self, data):
+      """
+      Serialize data to numpy array.
+
+      Args:
+          self: (todo): write your description
+          data: (array): write your description
+      """
     return data.astype(np.int32)
 
   def deserialize(self, representation):
+      """
+      Deserializes a list of the given byte.
+
+      Args:
+          self: (todo): write your description
+          representation: (todo): write your description
+      """
     return representation
 
   @property
   def representation_length(self):
+      """
+      The length of this space.
+
+      Args:
+          self: (todo): write your description
+      """
     return len(self._space.nvec)
 
   @property
   def significance_map(self):
+      """
+      Significance matrix.
+
+      Args:
+          self: (todo): write your description
+      """
     return np.zeros(self.representation_length, dtype=np.int32)

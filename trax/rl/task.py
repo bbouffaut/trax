@@ -42,6 +42,18 @@ class _TimeStep(object):
       self, observation, action=None, reward=None, dist_inputs=None, done=None,
       mask=None
   ):
+      """
+      Initializes the initial state.
+
+      Args:
+          self: (todo): write your description
+          observation: (todo): write your description
+          action: (todo): write your description
+          reward: (todo): write your description
+          dist_inputs: (str): write your description
+          done: (int): write your description
+          mask: (array): write your description
+      """
     self.observation = observation
     self.action = action
     self.reward = reward
@@ -87,29 +99,67 @@ class Trajectory(object):
   """
 
   def __init__(self, observation):
+      """
+      Initialize the observation.
+
+      Args:
+          self: (todo): write your description
+          observation: (todo): write your description
+      """
     # TODO(lukaszkaiser): add support for saving and loading trajectories,
     # reuse code from base_trainer.dump_trajectories and related functions.
     if observation is not None:
       self._timesteps = [_TimeStep(observation)]
 
   def __len__(self):
+      """
+      Returns the length of the timesteps.
+
+      Args:
+          self: (todo): write your description
+      """
     return len(self._timesteps)
 
   def __str__(self):
+      """
+      Return the state of an action.
+
+      Args:
+          self: (todo): write your description
+      """
     return str([(ts.observation, ts.action, ts.reward, ts.done)
                 for ts in self._timesteps])
 
   def __repr__(self):
+      """
+      Return a single epoch.
+
+      Args:
+          self: (todo): write your description
+      """
     return repr([(ts.observation, ts.action, ts.reward, ts.done)
                  for ts in self._timesteps])
 
   def __getitem__(self, key):
+      """
+      Get the item at the given key.
+
+      Args:
+          self: (todo): write your description
+          key: (str): write your description
+      """
     t = Trajectory(None)
     t._timesteps = self._timesteps[key]  # pylint: disable=protected-access
     return t
 
   @property
   def timesteps(self):
+      """
+      Return the timesteps of the timesteps.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._timesteps
 
   @property
@@ -191,6 +241,12 @@ class Trajectory(object):
         masks.append(timestep_np.mask)
 
     def stack(x):
+        """
+        Convert a stack.
+
+        Args:
+            x: (str): write your description
+        """
       if not x:
         return None
       return fastmath.nested_stack(x)
@@ -263,6 +319,12 @@ def _zero_pad(x, pad, axis):
 
 
 def _random_policy(action_space):
+    """
+    Return a random policy.
+
+    Args:
+        action_space: (todo): write your description
+    """
   return lambda _: (action_space.sample(), None)
 
 
@@ -414,22 +476,52 @@ class RLTask:
 
   @property
   def env(self):
+      """
+      Returns the environment variable.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._env
 
   @property
   def env_name(self):
+      """
+      The name of the environment variable.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._env_name
 
   @property
   def max_steps(self):
+      """
+      Returns the maximum number of steps.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._max_steps
 
   @property
   def gamma(self):
+      """
+      Returns the gamma function.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._gamma
 
   @property
   def action_space(self):
+      """
+      The action space.
+
+      Args:
+          self: (todo): write your description
+      """
     if self._dm_suite:
       return gym.spaces.Discrete(self._env.action_spec().num_values)
     else:
@@ -450,14 +542,33 @@ class RLTask:
 
   @property
   def trajectories(self):
+      """
+      Return a list of directories.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._trajectories
 
   @property
   def timestep_to_np(self):
+      """
+      Return timestep timestep timestepep.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._timestep_to_np
 
   @timestep_to_np.setter
   def timestep_to_np(self, ts):
+      """
+      : param ts : class : timestep. timestep. timestep.
+
+      Args:
+          self: (todo): write your description
+          ts: (todo): write your description
+      """
     self._timestep_to_np = ts
 
   def _epoch_filename(self, base_filename, epoch):
@@ -467,6 +578,13 @@ class RLTask:
     return filename + '_epoch' + str(epoch) + ext
 
   def set_n_replay_epochs(self, n_replay_epochs):
+      """
+      Set epochs n_replays.
+
+      Args:
+          self: (todo): write your description
+          n_replay_epochs: (todo): write your description
+      """
     self._n_replay_epochs = n_replay_epochs
 
   def load_initial_trajectories_from_path(self,
@@ -619,12 +737,26 @@ class RLTask:
     return sum(returns) / float(len(returns))
 
   def n_trajectories(self, epochs=None):
+      """
+      R returns the number of the trajectories.
+
+      Args:
+          self: (todo): write your description
+          epochs: (int): write your description
+      """
     # TODO(henrykm) support selection of epochs if really necessary (will
     # require a dump of a list of lengths in save_to_file
     del epochs
     return self._n_trajectories
 
   def n_interactions(self, epochs=None):
+      """
+      Return a list of actions.
+
+      Args:
+          self: (todo): write your description
+          epochs: (int): write your description
+      """
     # TODO(henrykm) support selection of epochs if really necessary (will
     # require a dump of a list of lengths in save_to_file
     del epochs
@@ -665,6 +797,12 @@ class RLTask:
       return max(1, len(t) + margin - max_slice_length + 1 - end_offset)
 
     def extend_trajectory(t):
+        """
+        Extend a trajectory at time t.
+
+        Args:
+            t: (todo): write your description
+        """
       # TODO(pkozakowski) Refactor.
       if len(t) == 1:
         return t
@@ -757,6 +895,12 @@ class RLTask:
       epochs
     """
     def pad(tensor_list):
+        """
+        Pad tensor to a tensor.
+
+        Args:
+            tensor_list: (list): write your description
+        """
       # Replace Nones with valid tensors.
       not_none_tensors = [t for t in tensor_list if t is not None]
       assert not_none_tensors, 'All tensors to pad are None.'

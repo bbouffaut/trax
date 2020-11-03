@@ -29,6 +29,13 @@ class InputsTest(parameterized.TestCase):
       ('negative', -5),
   )
   def test_shuffle_data_raises_error_queue_size(self, queue_size):
+      """
+      Shuffle samples in - place_size.
+
+      Args:
+          self: (todo): write your description
+          queue_size: (int): write your description
+      """
     samples = iter(range(10))
     with self.assertRaises(ValueError):
       _ = list(data.shuffle(samples, queue_size))
@@ -39,6 +46,13 @@ class InputsTest(parameterized.TestCase):
       ('twenty', 20),
   )
   def test_shuffle_data_queue_size(self, queue_size):
+      """
+      Shuffle the queue size
+
+      Args:
+          self: (todo): write your description
+          queue_size: (int): write your description
+      """
     samples = iter(range(100, 200))
     shuffled_stream = data.shuffle(samples, queue_size)
     first_ten = [next(shuffled_stream) for _ in range(10)]
@@ -62,11 +76,25 @@ class InputsTest(parameterized.TestCase):
       ('qsize_100_n_199', 100, 199),
   )
   def test_shuffle_data_yields_all_samples(self, queue_size, n_samples):
+      """
+      Generate a generator that yields a generator of samples.
+
+      Args:
+          self: (todo): write your description
+          queue_size: (int): write your description
+          n_samples: (int): write your description
+      """
     samples = iter(range(n_samples))
     shuffled_stream = data.shuffle(samples, queue_size)
     self.assertLen(list(shuffled_stream), n_samples)
 
   def test_batch_data(self):
+      """
+      Batch data set of the data.
+
+      Args:
+          self: (todo): write your description
+      """
     dataset = ((i, i+1) for i in range(10))
     batches = data.batch(dataset, 10)
     batch = next(batches)
@@ -74,12 +102,24 @@ class InputsTest(parameterized.TestCase):
     self.assertEqual(batch[0].shape, (10,))
 
   def test_batch_exception_size(self):
+      """
+      Batch of the given dataset.
+
+      Args:
+          self: (todo): write your description
+      """
     dataset = ((i, i + 1) for i in range(10))
     with self.assertRaises(ValueError):
       batches = data.batch(dataset, 0)
       next(batches)
 
   def test_serial(self):
+      """
+      Test for serialized dataset.
+
+      Args:
+          self: (todo): write your description
+      """
     dataset = lambda _: ((i, i+1) for i in range(10))
     batches = data.Serial(dataset, data.Shuffle(3), data.Batch(10))
     batch = next(batches())
@@ -96,6 +136,12 @@ class InputsTest(parameterized.TestCase):
     self.assertEqual(batch[0].shape, (10,))
 
   def test_serial_with_python(self):
+      """
+      Test for serial number of python 2.
+
+      Args:
+          self: (todo): write your description
+      """
     dataset = lambda _: ((i, i+1) for i in range(10))
     batches = data.Serial(
         dataset,
@@ -114,6 +160,12 @@ class InputsTest(parameterized.TestCase):
     self.assertEqual(ys[1], 5)
 
   def test_pad_to_max_dims(self):
+      """
+      Reshape to max max max_max.
+
+      Args:
+          self: (todo): write your description
+      """
     tensors1 = [np.zeros((3, 10)), np.ones((3, 10))]
     padded1 = data.inputs.pad_to_max_dims(tensors1)
     self.assertEqual(padded1.shape, (2, 3, 10))
@@ -128,6 +180,12 @@ class InputsTest(parameterized.TestCase):
     self.assertEqual(padded4.shape, (2, 4, 12))
 
   def test_truncate_to_length(self):
+      """
+      Reshuncate to_function.
+
+      Args:
+          self: (todo): write your description
+      """
     tensors1 = [[np.zeros((1, 5)), np.ones((1, 5))]]
 
     truncate_to_length_function1 = data.inputs.TruncateToLength()
@@ -142,6 +200,12 @@ class InputsTest(parameterized.TestCase):
     self.assertEqual(truncated2[1].shape, (1, 2))
 
   def test_append_value(self):
+      """
+      Append a new value to the app.
+
+      Args:
+          self: (todo): write your description
+      """
     tensors1 = [[np.zeros((1, 5)), np.ones((1, 5))]]
 
     append_value_function1 = data.inputs.AppendValue()
@@ -160,6 +224,12 @@ class InputsTest(parameterized.TestCase):
                      np.array([[1., 1., 1., 1., 1., 4.]]).all())
 
   def test_pad_to_max_dims_boundary_list(self):
+      """
+      Test to pad to a list.
+
+      Args:
+          self: (todo): write your description
+      """
     tensors = [np.zeros((1, 15, 31)), np.ones((2, 10, 35)), np.ones((4, 2, 3))]
     padded_tensors = data.inputs.pad_to_max_dims(
         tensors, boundary=(None, 15, 20))
@@ -169,17 +239,42 @@ class InputsTest(parameterized.TestCase):
     self.assertEqual(padded_tensors.shape, (3, 4, 15, 40))
 
   def test_pad_to_max_dims_strict_pad_on_len(self):
+      """
+      Test to pad to max_to_dims.
+
+      Args:
+          self: (todo): write your description
+      """
     tensors = [np.ones((15,)), np.ones((12,)), np.ones((14,))]
     padded_tensors = data.inputs.pad_to_max_dims(
         tensors, boundary=10, strict_pad_on_len=True)
     self.assertEqual(padded_tensors.shape, (3, 20))
 
   def test_bucket_by_length(self):
+      """
+      Returns a generator of a bucket examples.
+
+      Args:
+          self: (todo): write your description
+      """
     def fake_generator(length, num_examples=1):
+        """
+        Generate a generator.
+
+        Args:
+            length: (int): write your description
+            num_examples: (int): write your description
+        """
       for _ in range(num_examples):
         yield (np.ones((length,)), np.ones((length,)))
 
     def length_function(example):
+        """
+        Return the length of a example.
+
+        Args:
+            example: (todo): write your description
+        """
       return max(example[0].shape[0], example[1].shape[0])
 
     batches = list(data.bucket_by_length(fake_generator(5, 6),

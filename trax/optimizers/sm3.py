@@ -39,10 +39,28 @@ class SM3(opt_base.Optimizer):
     )
 
   def init(self, weights):
+      """
+      Initialize weights.
+
+      Args:
+          self: (todo): write your description
+          weights: (array): write your description
+      """
     vs = [jnp.zeros(sz, dtype=weights.dtype) for sz in weights.shape]
     return (jnp.zeros_like(weights), vs)
 
   def _update_diagonal(self, grads, weights, m, v, opt_params):
+      """
+      Updates the diagonal weights.
+
+      Args:
+          self: (todo): write your description
+          grads: (array): write your description
+          weights: (array): write your description
+          m: (todo): write your description
+          v: (todo): write your description
+          opt_params: (dict): write your description
+      """
     learning_rate = opt_params['learning_rate']
     momentum = opt_params['momentum']
     v[0] += grads * grads
@@ -54,12 +72,27 @@ class SM3(opt_base.Optimizer):
     return weights, (m, v)
 
   def _expanded_shape(self, shape, axis):
+      """
+      Expands the shape of a shape.
+
+      Args:
+          self: (todo): write your description
+          shape: (int): write your description
+          axis: (int): write your description
+      """
     # Replaces a `shape` of [M, N, K] with 1 in all dimensions except for i.
     # For eg: i = 1 returns [1, N, 1].
     rank = len(shape)
     return [1] * axis + [shape[axis]] + [1] * (rank - axis - 1)
 
   def _minimum(self, tensor_list):
+      """
+      Return the minimum of the tensor_list.
+
+      Args:
+          self: (todo): write your description
+          tensor_list: (list): write your description
+      """
     minimum = tensor_list[0]
     for i in range(1, len(tensor_list)):
       minimum = jnp.minimum(minimum, tensor_list[i])
@@ -88,6 +121,17 @@ class SM3(opt_base.Optimizer):
     return weights, (m, v)
 
   def update(self, step, grads, weights, slots, opt_params):
+      """
+      Update the optimizer.
+
+      Args:
+          self: (todo): write your description
+          step: (int): write your description
+          grads: (array): write your description
+          weights: (array): write your description
+          slots: (todo): write your description
+          opt_params: (dict): write your description
+      """
     del step
     m, v = slots
     shape = weights.shape

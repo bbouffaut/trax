@@ -49,6 +49,12 @@ def MaxPool(pool_size=(2, 2), strides=None, padding='VALID'):
   """
   layer_name = f'MaxPool{pool_size}'.replace(' ', '')
   def f(x):
+      """
+      Faster pool of x.
+
+      Args:
+          x: (int): write your description
+      """
     return fastmath.max_pool(
         x, pool_size=pool_size, strides=strides, padding=padding)
   return Fn(layer_name, f)
@@ -82,6 +88,12 @@ def SumPool(pool_size=(2, 2), strides=None, padding='VALID'):
   """
   layer_name = f'SumPool{pool_size}'.replace(' ', '')
   def f(x):
+      """
+      Summarized version of x.
+
+      Args:
+          x: (int): write your description
+      """
     return fastmath.sum_pool(
         x, pool_size=pool_size, strides=strides, padding=padding)
   return Fn(layer_name, f)
@@ -115,6 +127,12 @@ def AvgPool(pool_size=(2, 2), strides=None, padding='VALID'):
   """
   layer_name = f'AvgPool{pool_size}'.replace(' ', '')
   def f(x):
+      """
+      Compute a pooling.
+
+      Args:
+          x: (int): write your description
+      """
     return fastmath.avg_pool(
         x, pool_size=pool_size, strides=strides, padding=padding)
   return Fn(layer_name, f)

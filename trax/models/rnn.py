@@ -201,6 +201,14 @@ def LSTMSeq2SeqAttn(input_vocab_size=256,
   def PrepareAttentionInputs():
     """Layer that prepares queries, keys, values and mask for attention."""
     def F(encoder_activations, decoder_activations, input_tokens):
+        """
+        Compute the decoder for the given encoder.
+
+        Args:
+            encoder_activations: (str): write your description
+            decoder_activations: (todo): write your description
+            input_tokens: (str): write your description
+        """
       keys = values = encoder_activations
       queries = decoder_activations
       # Mask is 1 where inputs are not padding (0) and 0 where they are padding.

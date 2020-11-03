@@ -123,6 +123,12 @@ def FastGelu():
   where :math:`a = 0.7978845608` and :math:`b = 0.044715`.
   """
   def f(x):  # pylint: disable=invalid-name
+      """
+      Evaluate f ( x ).
+
+      Args:
+          x: (int): write your description
+      """
     return 0.5 * x * (1 + jnp.tanh(x * 0.7978845608 * (1 + 0.044715 * x * x)))
   return Fn('FastGelu', f)
 

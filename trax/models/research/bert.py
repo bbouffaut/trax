@@ -29,14 +29,34 @@ from trax.fastmath import numpy as np
 class AddBias(tl.Layer):
 
   def forward(self, inputs):
+      """
+      Forward computation.
+
+      Args:
+          self: (todo): write your description
+          inputs: (todo): write your description
+      """
     x = inputs
     return x + self.weights
 
   def init_weights_and_state(self, input_signature):
+      """
+      Initialize the weights.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (bool): write your description
+      """
     self.weights = np.zeros(input_signature.shape[-1])
 
 
 def BERTClassifierHead(n_classes):
+    """
+    Create a convolutional classifier.
+
+    Args:
+        n_classes: (int): write your description
+    """
   return tl.Serial([
       tl.Select([0], n_in=2),
       tl.Dense(n_classes,
@@ -48,6 +68,11 @@ def BERTClassifierHead(n_classes):
 
 
 def BERTRegressionHead():
+    """
+    Create a convolutional kernel.
+
+    Args:
+    """
   return tl.Serial([
       tl.Select([0], n_in=2),
       tl.Dense(1,
@@ -130,6 +155,14 @@ class PretrainedBERT(tl.Serial):
   """Wrapper that always initializes weights from a pre-trained checkpoint."""
 
   def __init__(self, *sublayers, init_checkpoint=None):
+      """
+      Initialize the checkpoint.
+
+      Args:
+          self: (todo): write your description
+          sublayers: (list): write your description
+          init_checkpoint: (dict): write your description
+      """
     super().__init__(*sublayers)
 
     # TODO(kitaev): Support shorthand model names in the trax OSS release
@@ -139,6 +172,13 @@ class PretrainedBERT(tl.Serial):
     self.init_checkpoint = init_checkpoint
 
   def new_weights(self, input_signature):
+      """
+      Create a new weights.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (str): write your description
+      """
     weights = super().new_weights(input_signature)
     if self.init_checkpoint is None:
       return weights
@@ -147,12 +187,30 @@ class PretrainedBERT(tl.Serial):
     ckpt = tf.train.load_checkpoint(self.init_checkpoint)
 
     def reshape_qkv(name):
+        """
+        Reshape a tensor.
+
+        Args:
+            name: (str): write your description
+        """
       x = ckpt.get_tensor(name)
       return x.reshape((x.shape[0], -1, 64)).swapaxes(0, 1)
     def reshape_o(name):
+        """
+        Reshape a tensor.
+
+        Args:
+            name: (str): write your description
+        """
       x = ckpt.get_tensor(name)
       return x.reshape((-1, 64, x.shape[-1]))
     def reshape_bias(name):
+        """
+        Reshape a tensor.
+
+        Args:
+            name: (str): write your description
+        """
       x = ckpt.get_tensor(name)
       return x.reshape((-1, 64))
 

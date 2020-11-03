@@ -69,6 +69,12 @@ def SkippingTransformerLM(vocab_size,
 
   @assert_shape('...sd,->...sd,')
   def ConditionedBlock(current_layer_num):
+      """
+      Return the next layer.
+
+      Args:
+          current_layer_num: (int): write your description
+      """
     return tl.Serial(
         # stack: embedding, n_layers_to_keep
         tl.Select([1, 0, 1]),  # n_layers_to_keep, embedding, n_layers_to_keep
@@ -174,6 +180,12 @@ def EveryOtherLayerDropTransformerLM(vocab_size,
 
   @assert_shape('...sd,->...sd,')
   def ConditionedBlock(current_layer_num):
+      """
+      Return the next layer.
+
+      Args:
+          current_layer_num: (int): write your description
+      """
     return tl.Serial(
         # stack: embedding, n_layers_to_keep
         tl.Select([1, 0, 1]),  # n_layers_to_keep, embedding, n_layers_to_keep
@@ -278,6 +290,12 @@ def LayerDropTransformerLM(vocab_size,
 
   @assert_shape('...sd->...sd')
   def ConditionedBlock(current_layer_num):
+      """
+      Return the next layer.
+
+      Args:
+          current_layer_num: (int): write your description
+      """
     return tl.Serial(
         # stack: embedding
         tl.RandomUniform(0., 1, sync=True),

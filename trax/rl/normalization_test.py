@@ -26,6 +26,12 @@ from trax.rl import normalization
 class NormalizationTest(absltest.TestCase):
 
   def test_running_mean(self):
+      """
+      Perform the mean of the state.
+
+      Args:
+          self: (todo): write your description
+      """
     x = np.random.uniform(size=10)
     state = normalization.running_mean_init(shape=())
     for i in range(len(x)):
@@ -35,6 +41,12 @@ class NormalizationTest(absltest.TestCase):
       )
 
   def test_running_variance(self):
+      """
+      Initialize the variance.
+
+      Args:
+          self: (todo): write your description
+      """
     x = np.random.uniform(size=10)
     state = normalization.running_mean_and_variance_init(shape=())
     for i in range(len(x)):
@@ -45,6 +57,12 @@ class NormalizationTest(absltest.TestCase):
       )
 
   def test_normalize_collect(self):
+      """
+      Normalize a set of the population.
+
+      Args:
+          self: (todo): write your description
+      """
     x = np.random.uniform(size=(2, 3, 4, 5))
     normalize = normalization.Normalize(mode='collect')
     normalize.init(shapes.signature(x))
@@ -56,6 +74,12 @@ class NormalizationTest(absltest.TestCase):
       np.testing.assert_almost_equal(x, y)
 
   def test_normalize_train(self):
+      """
+      Normalize the model.
+
+      Args:
+          self: (todo): write your description
+      """
     x = np.random.uniform(size=(2, 3, 4, 5))
     normalize = normalization.Normalize(mode='train', epsilon=0.0)
     normalize.init(shapes.signature(x))

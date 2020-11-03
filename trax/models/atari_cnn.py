@@ -99,4 +99,10 @@ def FrameStackMLP(n_frames=4, hidden_sizes=(64,), output_size=64,
 
 
 def _shift_right(n):  # pylint: disable=invalid-name
+    """
+    Shift the right right right.
+
+    Args:
+        n: (array): write your description
+    """
   return [tl.ShiftRight()] * n

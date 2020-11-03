@@ -174,11 +174,23 @@ class ActorCriticAgent(rl_training.PolicyAgent):
     """The mean value of the value function."""
     # TODO(henrykm): A better solution would take into account the masks
     def f(values):
+        """
+        Calculate mean of values.
+
+        Args:
+            values: (str): write your description
+        """
       return jnp.mean(values)
     return tl.Fn('ValueMean', f)
 
   @property
   def _value_model_signature(self):
+      """
+      Return a tuple of the signature.
+
+      Args:
+          self: (todo): write your description
+      """
     obs_sig = shapes.signature(self._task.observation_space)
     target_sig = mask_sig = shapes.ShapeDtype(
         shape=(1, 1, 1),
@@ -191,6 +203,12 @@ class ActorCriticAgent(rl_training.PolicyAgent):
 
   @property
   def _replay_epochs(self):
+      """
+      Replay epochs.
+
+      Args:
+          self: (todo): write your description
+      """
     if self.on_policy:
       assert self._n_replay_epochs == 1, (
           'Non-unit replay buffer size only makes sense for off-policy '
@@ -199,6 +217,14 @@ class ActorCriticAgent(rl_training.PolicyAgent):
     return [-(ep + 1) for ep in range(self._n_replay_epochs)]
 
   def _run_value_model(self, observations, dist_inputs):
+      """
+      Calculate the model
+
+      Args:
+          self: (todo): write your description
+          observations: (array): write your description
+          dist_inputs: (todo): write your description
+      """
     if dist_inputs is None:
       dist_inputs = jnp.zeros(
           observations.shape[:2] + (self._policy_dist.n_inputs,)
@@ -241,6 +267,15 @@ class ActorCriticAgent(rl_training.PolicyAgent):
     return (values, actions, log_probs)
 
   def _aggregate_values(self, values, aggregate, act_log_probs):
+      """
+      Aggregate the values at the given values.
+
+      Args:
+          self: (todo): write your description
+          values: (array): write your description
+          aggregate: (todo): write your description
+          act_log_probs: (todo): write your description
+      """
     # Normalize the Q-values before aggragetion, so it can adapt to the scale
     # of the returns. This does not affect mean and max aggregation.
     scale = 1
@@ -419,6 +454,12 @@ class ActorCriticAgent(rl_training.PolicyAgent):
       )
 
   def close(self):
+      """
+      Closes the object.
+
+      Args:
+          self: (todo): write your description
+      """
     self._value_trainer.close()
     super().close()
 
@@ -467,6 +508,19 @@ class AdvantageBasedActorCriticAgent(ActorCriticAgent):
       added_policy_slice_length=0,
       **kwargs
   ):
+      """
+      Initialize internal internal initialization.
+
+      Args:
+          self: (todo): write your description
+          task: (str): write your description
+          advantage_estimator: (todo): write your description
+          rl_advantages: (todo): write your description
+          td_lambda: (float): write your description
+          advantage_normalization: (bool): write your description
+          advantage_normalization_epsilon: (bool): write your description
+          added_policy_slice_length: (todo): write your description
+      """
     self._advantage_estimator = advantage_estimator(
         gamma=task.gamma, margin=added_policy_slice_length
     )
@@ -522,6 +576,13 @@ class AdvantageBasedActorCriticAgent(ActorCriticAgent):
     raise NotImplementedError
 
   def _preprocess_advantages(self, advantages):
+      """
+      Preprocess the normalization.
+
+      Args:
+          self: (todo): write your description
+          advantages: (todo): write your description
+      """
     if self._advantage_normalization:
       advantages = (
           (advantages - jnp.mean(advantages)) /
@@ -548,6 +609,12 @@ class AdvantageBasedActorCriticAgent(ActorCriticAgent):
 
   @property
   def policy_metrics(self):
+      """
+      Calculate the metrics.
+
+      Args:
+          self: (todo): write your description
+      """
     metrics = super().policy_metrics
     metrics.update({
         'advantage_mean': self.advantage_mean,
@@ -557,6 +624,12 @@ class AdvantageBasedActorCriticAgent(ActorCriticAgent):
 
   @property
   def advantage_mean(self):
+      """
+      Returns the mean.
+
+      Args:
+          self: (todo): write your description
+      """
     return tl.Serial([
         # (dist_inputs, advantages, old_dist_inputs, mask)
         tl.Select([1]),  # Select just the advantages.
@@ -565,6 +638,12 @@ class AdvantageBasedActorCriticAgent(ActorCriticAgent):
 
   @property
   def advantage_std(self):
+      """
+      The standard deviation of the standard deviation.
+
+      Args:
+          self: (todo): write your description
+      """
     return tl.Serial([
         # (dist_inputs, advantages, old_dist_inputs, mask)
         tl.Select([1]),  # Select just the advantages.
@@ -590,6 +669,15 @@ class A2C(AdvantageBasedActorCriticAgent):
     # actor_critic.py and actor_critic_joint.py - requires change of inputs
     # in actor_critic_joint.py from dist_inputs to log_probs.
     def f(log_probs, advantages, old_log_probs, mask):
+        """
+        Compute the log - probability.
+
+        Args:
+            log_probs: (todo): write your description
+            advantages: (list): write your description
+            old_log_probs: (todo): write your description
+            mask: (array): write your description
+        """
       del old_log_probs  # Not used in A2C.
       # log_probs of the shape float32[128,1]
       # advantages of the shape int32[128,1]
@@ -632,6 +720,15 @@ class PPO(AdvantageBasedActorCriticAgent):
   def policy_loss_given_log_probs(self):
     """Definition of the Proximal Policy Optimization loss."""
     def f(new_log_probs, advantages, old_log_probs, mask):
+        """
+        Calculate the log - probability loss.
+
+        Args:
+            new_log_probs: (todo): write your description
+            advantages: (list): write your description
+            old_log_probs: (todo): write your description
+            mask: (array): write your description
+        """
       # new_log_probs of the shape float32[128,1]
       # advantages of the shape int32[128,1]
       # old_log_probs of the shape int32[128,1]
@@ -686,11 +783,25 @@ class PPO(AdvantageBasedActorCriticAgent):
 
 # AWR is an off-policy actor-critic RL algorithm.
 def awr_weights(advantages, beta):
+    """
+    Calculate the weight weights.
+
+    Args:
+        advantages: (array): write your description
+        beta: (array): write your description
+    """
   return jnp.exp(advantages / beta)
 
 
 # Helper functions for computing AWR metrics.
 def awr_metrics(beta, preprocess_layer=None):
+    """
+    Creates the beta statistics.
+
+    Args:
+        beta: (float): write your description
+        preprocess_layer: (todo): write your description
+    """
   return {  # pylint: disable=g-complex-comprehension
       'awr_weight_' + name: awr_weight_stat(name, fn, beta, preprocess_layer)
       for (name, fn) in [
@@ -703,6 +814,15 @@ def awr_metrics(beta, preprocess_layer=None):
 
 
 def awr_weight_stat(stat_name, stat_fn, beta, preprocess_layer):
+    """
+    Compute the beta beta.
+
+    Args:
+        stat_name: (str): write your description
+        stat_fn: (str): write your description
+        beta: (array): write your description
+        preprocess_layer: (bool): write your description
+    """
   # Select just the advantages if preprocess layer is not given.
   preprocess = tl.Select([1]) if preprocess_layer is None else preprocess_layer
   return tl.Serial([
@@ -717,6 +837,15 @@ def awr_weight_stat(stat_name, stat_fn, beta, preprocess_layer):
 def AWRLoss(beta, w_max):  # pylint: disable=invalid-name
   """Definition of the Advantage Weighted Regression (AWR) loss."""
   def f(log_probs, advantages, old_log_probs, mask):
+      """
+      Calculate the log - likelihood.
+
+      Args:
+          log_probs: (todo): write your description
+          advantages: (list): write your description
+          old_log_probs: (todo): write your description
+          mask: (array): write your description
+      """
     del old_log_probs  # Not used in AWR.
     weights = jnp.minimum(awr_weights(advantages, beta), w_max)
     return -jnp.sum(log_probs * weights * mask) / jnp.sum(mask)
@@ -741,6 +870,12 @@ class AWR(AdvantageBasedActorCriticAgent):
 
   @property
   def policy_metrics(self):
+      """
+      Return a list of metrics.
+
+      Args:
+          self: (todo): write your description
+      """
     metrics = super().policy_metrics
     metrics.update(awr_metrics(self._beta))
     return metrics
@@ -749,6 +884,15 @@ class AWR(AdvantageBasedActorCriticAgent):
 def SamplingAWRLoss(beta, w_max, reweight=False, sampled_all_discrete=False):  # pylint: disable=invalid-name
   """Definition of the Advantage Weighted Regression (AWR) loss."""
   def f(log_probs, advantages, old_log_probs, mask):
+      """
+      Calculate the probability of the log - likelihood.
+
+      Args:
+          log_probs: (todo): write your description
+          advantages: (list): write your description
+          old_log_probs: (todo): write your description
+          mask: (array): write your description
+      """
     if reweight:  # Use new policy weights for sampled actions instead.
       mask *= jnp.exp(fastmath.stop_gradient(log_probs) - old_log_probs)
     if sampled_all_discrete:  # Actions were sampled uniformly; weight them.
@@ -773,6 +917,16 @@ class SamplingAWR(AdvantageBasedActorCriticAgent):
   def _policy_inputs_to_advantages(self, preprocess):
     """A layer that computes advantages from policy inputs."""
     def fn(dist_inputs, actions, q_values, act_log_probs, mask):
+        """
+        Evaluate the distribution of distribution.
+
+        Args:
+            dist_inputs: (todo): write your description
+            actions: (list): write your description
+            q_values: (list): write your description
+            act_log_probs: (todo): write your description
+            mask: (array): write your description
+        """
       del dist_inputs, actions, mask
       q_values = jnp.swapaxes(q_values, 0, 1)
       act_log_probs = jnp.swapaxes(act_log_probs, 0, 1)
@@ -788,6 +942,12 @@ class SamplingAWR(AdvantageBasedActorCriticAgent):
 
   @property
   def policy_metrics(self):
+      """
+      Calculate the outputs for each layer outputs.
+
+      Args:
+          self: (todo): write your description
+      """
     metrics = {
         'policy_loss': self.policy_loss,
         'advantage_mean': tl.Serial(

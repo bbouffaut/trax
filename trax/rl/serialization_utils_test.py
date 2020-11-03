@@ -43,6 +43,12 @@ from trax.supervised import trainer_lib
 def TestModel(extra_dim):
   """Dummy sequence model for testing."""
   def f(inputs):
+      """
+      Broadcast the input to ).
+
+      Args:
+          inputs: (array): write your description
+      """
     # Cast the input to float32 - this is for simulating discrete-input models.
     inputs = inputs.astype(np.float32)
     # Add an extra dimension if requested, e.g. the logit dimension for output
@@ -56,7 +62,21 @@ def TestModel(extra_dim):
 
 
 def signal_inputs(seq_len, batch_size, depth=1):
+    """
+    Signal generator of examples.
+
+    Args:
+        seq_len: (todo): write your description
+        batch_size: (int): write your description
+        depth: (int): write your description
+    """
   def stream_fn(num_devices):
+      """
+      Yields a generator that yields chunks.
+
+      Args:
+          num_devices: (int): write your description
+      """
     del num_devices
     while True:
       x = np.random.uniform(size=(batch_size, seq_len, depth))
@@ -73,6 +93,12 @@ def signal_inputs(seq_len, batch_size, depth=1):
 class SerializationTest(parameterized.TestCase):
 
   def setUp(self):
+      """
+      Sets the serialization.
+
+      Args:
+          self: (todo): write your description
+      """
     super().setUp()
     self._serializer = space_serializer.create(
         gym.spaces.Discrete(2), vocab_size=2
@@ -86,6 +112,12 @@ class SerializationTest(parameterized.TestCase):
     test_utils.ensure_flag('test_tmpdir')
 
   def test_serialized_model_discrete(self):
+      """
+      Serialize a model for the model.
+
+      Args:
+          self: (todo): write your description
+      """
     vocab_size = 3
     obs = np.array([[[0, 1], [1, 1], [1, 0], [0, 0]]])
     act = np.array([[1, 0, 0]])
@@ -95,7 +127,18 @@ class SerializationTest(parameterized.TestCase):
 
     # pylint: disable=invalid-name
     def TestModelSavingInputs():
+        """
+        BroadModel model.
+
+        Args:
+        """
       def f(inputs):
+          """
+          Compute the model to model inputs.
+
+          Args:
+              inputs: (array): write your description
+          """
         # Save the inputs for a later check.
         test_model_inputs.append(inputs)
         # Change type to np.float32 and add the logit dimension.
@@ -146,6 +189,12 @@ class SerializationTest(parameterized.TestCase):
     )
 
   def test_train_model_with_serialization(self):
+      """
+      Train the model.
+
+      Args:
+          self: (todo): write your description
+      """
     # Serializer handles discretization of the data.
     precision = 2
     number_of_time_series = 2
@@ -158,6 +207,12 @@ class SerializationTest(parameterized.TestCase):
     )
 
     def model(mode):
+        """
+        Construct a model.
+
+        Args:
+            mode: (str): write your description
+        """
       return serialization_utils.SerializedModel(
           trax_models.TransformerLM(
               mode=mode,
@@ -181,6 +236,12 @@ class SerializationTest(parameterized.TestCase):
     self.assertEqual(2, state.step)
 
   def test_serialized_model_continuous(self):
+      """
+      Create a serialized model.
+
+      Args:
+          self: (todo): write your description
+      """
     precision = 3
     gin.bind_parameter('BoxSpaceSerializer.precision', precision)
 
@@ -213,6 +274,12 @@ class SerializationTest(parameterized.TestCase):
     self.assertEqual(obs_repr.shape, weights.shape)
 
   def test_extract_inner_model(self):
+      """
+      Extracts the inner model.
+
+      Args:
+          self: (todo): write your description
+      """
     vocab_size = 3
 
     inner_model = transformer.TransformerLM(
@@ -245,6 +312,13 @@ class SerializationTest(parameterized.TestCase):
 
   @parameterized.named_parameters(('raw', None), ('serialized', 32))
   def test_wrapped_policy_continuous(self, vocab_size):
+      """
+      Generate the policy.
+
+      Args:
+          self: (todo): write your description
+          vocab_size: (int): write your description
+      """
     precision = 3
     n_controls = 2
     n_actions = 4
@@ -267,12 +341,24 @@ class SerializationTest(parameterized.TestCase):
     self.assertEqual(values.shape, obs.shape[:2])
 
   def test_analyzes_discrete_action_space(self):
+      """
+      Test whether the action space.
+
+      Args:
+          self: (todo): write your description
+      """
     space = gym.spaces.Discrete(n=5)
     (n_controls, n_actions) = serialization_utils.analyze_action_space(space)
     self.assertEqual(n_controls, 1)
     self.assertEqual(n_actions, 5)
 
   def test_analyzes_multi_discrete_action_space_with_equal_categories(self):
+      """
+      Analyzes the action.
+
+      Args:
+          self: (todo): write your description
+      """
     space = gym.spaces.MultiDiscrete(nvec=(3, 3))
     (n_controls, n_actions) = serialization_utils.analyze_action_space(space)
     self.assertEqual(n_controls, 2)
@@ -281,11 +367,23 @@ class SerializationTest(parameterized.TestCase):
   def test_doesnt_analyze_multi_disccrete_action_space_with_inequal_categories(
       self
   ):
+      """
+      Analyze action action space.
+
+      Args:
+          self: (todo): write your description
+      """
     space = gym.spaces.MultiDiscrete(nvec=(2, 3))
     with self.assertRaises(AssertionError):
       serialization_utils.analyze_action_space(space)
 
   def test_doesnt_analyze_box_action_space(self):
+      """
+      Analyze the action space.
+
+      Args:
+          self: (todo): write your description
+      """
     space = gym.spaces.Box(shape=(2, 3), low=0, high=1)
     with self.assertRaises(AssertionError):
       serialization_utils.analyze_action_space(space)

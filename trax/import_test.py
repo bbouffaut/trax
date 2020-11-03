@@ -22,6 +22,12 @@ from absl.testing import absltest
 class ImportTest(absltest.TestCase):
 
   def test_import_trax(self):
+      """
+      Test if the given directories exist
+
+      Args:
+          self: (todo): write your description
+      """
     try:
       # Import trax
       import trax  # pylint: disable=g-import-not-at-top

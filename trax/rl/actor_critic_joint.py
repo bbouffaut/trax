@@ -118,6 +118,12 @@ class ActorCriticJointAgent(rl_training.Agent):
     self._eval_model.init(example_batch)
 
   def close(self):
+      """
+      Closes the connection.
+
+      Args:
+          self: (todo): write your description
+      """
     self._trainer.close()
     super().close()
 
@@ -134,6 +140,14 @@ class ActorCriticJointAgent(rl_training.Agent):
   def advantage_mean(self):
     """Mean of advantages."""
     def f(dist_inputs, values, returns):
+        """
+        Calculate the mean of a list of values.
+
+        Args:
+            dist_inputs: (todo): write your description
+            values: (str): write your description
+            returns: (todo): write your description
+        """
       del dist_inputs
       return jnp.mean(returns - values)
     return tl.Fn('AdvantageMean', f)
@@ -142,6 +156,14 @@ class ActorCriticJointAgent(rl_training.Agent):
   def advantage_norm(self):
     """Norm of advantages."""
     def f(dist_inputs, values, returns):
+        """
+        Calculate the fft of - dimensional array.
+
+        Args:
+            dist_inputs: (todo): write your description
+            values: (str): write your description
+            returns: (todo): write your description
+        """
       del dist_inputs
       return jnp.linalg.norm(returns - values)
     return tl.Fn('AdvantageNorm', f)
@@ -150,6 +172,14 @@ class ActorCriticJointAgent(rl_training.Agent):
   def value_loss(self):
     """Value loss - so far generic for all A2C."""
     def f(dist_inputs, values, returns):
+        """
+        Compute the loss function.
+
+        Args:
+            dist_inputs: (todo): write your description
+            values: (str): write your description
+            returns: (todo): write your description
+        """
       del dist_inputs
       return rl_layers.ValueLoss(values, returns, self._value_loss_coeff)
     return tl.Fn('ValueLoss', f)
@@ -158,6 +188,14 @@ class ActorCriticJointAgent(rl_training.Agent):
   def explained_variance(self):
     """Explained variance metric."""
     def f(dist_inputs, values, returns):
+        """
+        Evaluates of a list of values.
+
+        Args:
+            dist_inputs: (todo): write your description
+            values: (str): write your description
+            returns: (todo): write your description
+        """
       del dist_inputs
       return rl_layers.ExplainedVariance(values, returns)
     return tl.Fn('ExplainedVariance', f)
@@ -166,6 +204,13 @@ class ActorCriticJointAgent(rl_training.Agent):
   def log_probs_mean(self):
     """Mean of log_probs aka dist_inputs."""
     def f(dist_inputs, values):
+        """
+        Mean distance between values.
+
+        Args:
+            dist_inputs: (todo): write your description
+            values: (str): write your description
+        """
       del values
       return jnp.mean(dist_inputs)
     return tl.Fn('LogProbsMean', f)
@@ -174,6 +219,13 @@ class ActorCriticJointAgent(rl_training.Agent):
   def preferred_move(self):
     """Preferred move - the mean of selected moves."""
     def f(dist_inputs, values):
+        """
+        Returns the transformation function.
+
+        Args:
+            dist_inputs: (todo): write your description
+            values: (str): write your description
+        """
       del values
       return rl_layers.PreferredMove(dist_inputs, self._policy_dist.sample)
     return tl.Fn('PreferredMove', f)
@@ -350,6 +402,18 @@ class PPOJoint(ActorCriticJointAgent):
       return jnp.mean(probs_ratio)
 
     def f(dist_inputs, values, returns, dones, rewards, actions, old_log_probs):
+        """
+        Evaluate_inputsamples.
+
+        Args:
+            dist_inputs: (todo): write your description
+            values: (str): write your description
+            returns: (todo): write your description
+            dones: (str): write your description
+            rewards: (float): write your description
+            actions: (list): write your description
+            old_log_probs: (todo): write your description
+        """
       del values, returns, dones, rewards
       return ProbsRatioMean(dist_inputs, actions, old_log_probs)
     return tl.Fn('ProbsRatioMean', f)
@@ -365,6 +429,18 @@ class PPOJoint(ActorCriticJointAgent):
       return jnp.mean(jnp.abs(probs_ratio - 1) > self._epsilon)
 
     def f(dist_inputs, values, returns, dones, rewards, actions, old_log_probs):
+        """
+        Compute the fraction of the distribution.
+
+        Args:
+            dist_inputs: (todo): write your description
+            values: (str): write your description
+            returns: (todo): write your description
+            dones: (str): write your description
+            rewards: (float): write your description
+            actions: (list): write your description
+            old_log_probs: (todo): write your description
+        """
       del values, returns, dones, rewards
       return ClipFraction(dist_inputs, actions, old_log_probs)
     return tl.Fn('ClipFraction', f)
@@ -374,6 +450,17 @@ class PPOJoint(ActorCriticJointAgent):
   def entropy_loss(self):
     """Entropy layer."""
     def f(dist_inputs, values, returns, dones, rewards, actions):
+        """
+        Calculate the probability distribution.
+
+        Args:
+            dist_inputs: (todo): write your description
+            values: (str): write your description
+            returns: (todo): write your description
+            dones: (str): write your description
+            rewards: (float): write your description
+            actions: (list): write your description
+        """
       del values, returns, dones, rewards
       return rl_layers.EntropyLoss(
           dist_inputs, actions, log_prob_fun=self._policy_dist.log_prob,
@@ -386,6 +473,18 @@ class PPOJoint(ActorCriticJointAgent):
     """Approximate KL divergence."""
     def f(dist_inputs, values, returns, dones, rewards,
           actions, old_log_probs):
+        """
+        Evaluate the distribution.
+
+        Args:
+            dist_inputs: (todo): write your description
+            values: (str): write your description
+            returns: (todo): write your description
+            dones: (str): write your description
+            rewards: (float): write your description
+            actions: (list): write your description
+            old_log_probs: (todo): write your description
+        """
       del values, returns, dones, rewards
       return rl_layers.ApproximateKLDivergence(
           dist_inputs,
@@ -396,6 +495,12 @@ class PPOJoint(ActorCriticJointAgent):
 
   @property
   def unclipped_objective_mean(self):
+      """
+      Compute the objective function.
+
+      Args:
+          self: (todo): write your description
+      """
     def f(dist_inputs, values, returns, dones, rewards, actions, old_log_probs):
       """Unclipped objective Mean from the PPO algorithm."""
       del dones, rewards
@@ -414,6 +519,12 @@ class PPOJoint(ActorCriticJointAgent):
 
   @property
   def clipped_objective_mean(self):
+      """
+      Compute the objective function.
+
+      Args:
+          self: (todo): write your description
+      """
     def f(dist_inputs, values, returns, dones, rewards, actions, old_log_probs):
       """Clipped objective from the PPO algorithm."""
       del dones, rewards
@@ -434,6 +545,18 @@ class PPOJoint(ActorCriticJointAgent):
   def ppo_objective(self):
     """PPO objective with local parameters."""
     def f(dist_inputs, values, returns, dones, rewards, actions, old_log_probs):
+        """
+        Evaluate the model.
+
+        Args:
+            dist_inputs: (todo): write your description
+            values: (str): write your description
+            returns: (todo): write your description
+            dones: (str): write your description
+            rewards: (float): write your description
+            actions: (list): write your description
+            old_log_probs: (todo): write your description
+        """
       return rl_layers.PPOObjective(
           dist_inputs, values, returns, dones, rewards, actions, old_log_probs,
           log_prob_fun=self._policy_dist.log_prob,
@@ -564,6 +687,17 @@ class A2CJoint(ActorCriticJointAgent):
   def entropy_loss(self):
     """Entropy layer."""
     def f(dist_inputs, values, returns, dones, rewards, actions):
+        """
+        Calculate the probability distribution.
+
+        Args:
+            dist_inputs: (todo): write your description
+            values: (str): write your description
+            returns: (todo): write your description
+            dones: (str): write your description
+            rewards: (float): write your description
+            actions: (list): write your description
+        """
       del values, returns, dones, rewards
       return rl_layers.EntropyLoss(
           dist_inputs, actions, log_prob_fun=self._policy_dist.log_prob,
@@ -576,6 +710,18 @@ class A2CJoint(ActorCriticJointAgent):
     """Approximate KL divergence."""
     def f(dist_inputs, values, returns, dones, rewards,
           actions, old_log_probs):
+        """
+        Evaluate the distribution.
+
+        Args:
+            dist_inputs: (todo): write your description
+            values: (str): write your description
+            returns: (todo): write your description
+            dones: (str): write your description
+            rewards: (float): write your description
+            actions: (list): write your description
+            old_log_probs: (todo): write your description
+        """
       del values, returns, dones, rewards
       return rl_layers.ApproximateKLDivergence(
           dist_inputs,
@@ -646,6 +792,16 @@ class AWRJoint(ActorCriticJointAgent):
     """Joint policy and value loss."""
 
     def f(preds, values, returns, actions, mask):
+        """
+        Compute the probability of the fft ).
+
+        Args:
+            preds: (array): write your description
+            values: (str): write your description
+            returns: (todo): write your description
+            actions: (list): write your description
+            mask: (array): write your description
+        """
       advantages = jnp.squeeze(returns - stop_gradient(values), axis=-1)
       logps = self._policy_dist.log_prob(preds, actions)
       awr_loss = actor_critic.AWRLoss(beta=self._beta, w_max=self._w_max)(

@@ -44,6 +44,15 @@ class Trainer(object):
   """
 
   def __init__(self, loss_layer, optimizer, n_devices=None):
+      """
+      Initialize the optimizer.
+
+      Args:
+          self: (todo): write your description
+          loss_layer: (todo): write your description
+          optimizer: (todo): write your description
+          n_devices: (todo): write your description
+      """
     self._loss_layer = loss_layer
     self._optimizer = optimizer
     self._n_devices = n_devices or fastmath.device_count()
@@ -145,6 +154,13 @@ class Trainer(object):
     return stats['loss'], stats
 
   def _unreplicate(self, x):
+      """
+      Unreplicate the first nested.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+      """
     if self._n_devices == 1:
       return x
     return fastmath.nested_map(lambda x: x[0], x)
@@ -173,6 +189,17 @@ def _accelerate_update_fn(forward_and_backward_fn,
   if n_devices == 1:
     def single_device_update_fn(
         weights_and_slots, step, opt_params, batch, state, rng):
+        """
+        Update a single objective function.
+
+        Args:
+            weights_and_slots: (todo): write your description
+            step: (int): write your description
+            opt_params: (dict): write your description
+            batch: (todo): write your description
+            state: (todo): write your description
+            rng: (todo): write your description
+        """
       step = jnp.array(step, dtype=jnp.int32)  # Needed in TFNP backend.
       weights, slots = weights_and_slots
       (loss, state), gradients = forward_and_backward_fn(
@@ -193,6 +220,17 @@ def _accelerate_update_fn(forward_and_backward_fn,
   @functools.partial(fastmath.pmap, axis_name='batch', donate_argnums=(0,))
   def _multi_device_update_fn(
       weights_and_slots, step, opt_params, batch, state, rng):
+      """
+      Perform an objective function.
+
+      Args:
+          weights_and_slots: (todo): write your description
+          step: (todo): write your description
+          opt_params: (dict): write your description
+          batch: (todo): write your description
+          state: (todo): write your description
+          rng: (todo): write your description
+      """
     # We assume all tensors have the first dimension = n_devices.
     weights, slots = weights_and_slots
     (loss, state), gradients = forward_and_backward_fn(
@@ -209,6 +247,17 @@ def _accelerate_update_fn(forward_and_backward_fn,
 
   def multi_device_update_fn(
       weights_and_slots, step, opt_params, batch, state, rng):
+      """
+      Update multiple update function.
+
+      Args:
+          weights_and_slots: (todo): write your description
+          step: (todo): write your description
+          opt_params: (dict): write your description
+          batch: (todo): write your description
+          state: (todo): write your description
+          rng: (todo): write your description
+      """
     # Need to replicate step to n_devices leading dimension.
     return _multi_device_update_fn(weights_and_slots,
                                    jnp.repeat(step, n_devices), opt_params,
@@ -266,6 +315,12 @@ class ReversibleSerialTrainer(object):
 
     # Create per-layer optimizers and replicate opt_params.
     def _make_optimizer(layer):
+        """
+        Create an optimizer.
+
+        Args:
+            layer: (todo): write your description
+        """
       opt = optimizer_fn()
       opt.tree_init(layer.weights)
       return opt
@@ -327,11 +382,25 @@ class ReversibleSerialTrainer(object):
       return fastmath.pmap(f, axis_name='batch', donate_argnums=donate_argnums)
 
   def _replicate(self, x):
+      """
+      Return the replicate.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+      """
     if self._n_devices > 1:
       return tl.for_n_devices(x, self._n_devices)
     return tl.on_accelerator(x)
 
   def _unreplicate(self, x):
+      """
+      Unreplicate the given x.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+      """
     if self._n_devices == 1:
       return tl.on_cpu(x)
     return tl.on_cpu(fastmath.nested_map(lambda x: x[0], x))
@@ -546,6 +615,13 @@ def _fbo_with_layer_and_opt(layer, optimizer, n_devices, stats_name=None):
     """FBO of the layer."""
     # We need a layer pure_fn but only for inputs and weights.
     def pure_fn_without_state_and_rng(x, w):
+        """
+        Helper function that returns a state function.
+
+        Args:
+            x: (todo): write your description
+            w: (todo): write your description
+        """
       return layer.pure_fn(x, w, state, rng)
 
     # Calculate the vector-Jacobian product of the reduced pure fn.
@@ -673,10 +749,24 @@ def extract_reversible_blocks(layers, loss_chunk_size=0):
     # The chunked loss should operate on a merged batch dimension, e.g.,
     # including both length and batch size. Need to merge and un-merge later.
     def _reshape_to_batch_and_copy_targets(preds, targets):
+        """
+        Reshape targets to targets.
+
+        Args:
+            preds: (todo): write your description
+            targets: (todo): write your description
+        """
       batched_preds = jnp.reshape(preds, [-1, preds.shape[-1]])
       batched_targets = jnp.reshape(targets, [-1])
       return batched_preds, batched_targets, targets
     def _reshape_xent_back(xent, targets):
+        """
+        Reshape xent of xentape.
+
+        Args:
+            xent: (todo): write your description
+            targets: (list): write your description
+        """
       return jnp.reshape(xent, targets.shape)
     batched_xent = tl.Serial(
         tl.Fn('pre_xent_rebatch', _reshape_to_batch_and_copy_targets, n_out=3),

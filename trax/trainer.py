@@ -100,6 +100,11 @@ def _output_dir_or_default():
 
 # TODO(afrozm): Share between trainer.py and rl_trainer.py
 def _jax_and_tf_configure_for_devices():  # pylint: disable=missing-function-docstring
+    """
+    Configure jaxaging and jax jax and jax.
+
+    Args:
+    """
   jax.config.enable_omnistaging()
   if FLAGS.use_tpu:
     jax.config.update('jax_platform_name', 'tpu')
@@ -114,6 +119,12 @@ def _jax_and_tf_configure_for_devices():  # pylint: disable=missing-function-doc
 
 
 def _train_using_tf(output_dir):
+    """
+    Train a tf.
+
+    Args:
+        output_dir: (str): write your description
+    """
   worker_cpu = tf_init_tpu()
   with tf.device(worker_cpu):
     if trainer_lib.num_devices() == 1:
@@ -149,6 +160,12 @@ def tf_init_tpu(worker='', protocol=None):
 
 
 def main(_):
+    """
+    Main function.
+
+    Args:
+        _: (int): write your description
+    """
   logging.set_verbosity(FLAGS.log_level)
 
   _tf_setup_from_flags()

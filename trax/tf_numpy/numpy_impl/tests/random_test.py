@@ -31,6 +31,14 @@ from trax.tf_numpy.numpy_impl import random
 class RandomTest(tf.test.TestCase):
 
   def assertNotAllClose(self, a, b, **kwargs):
+      """
+      Asserts that two arrays are not identical.
+
+      Args:
+          self: (todo): write your description
+          a: (todo): write your description
+          b: (todo): write your description
+      """
     try:
       self.assertAllClose(a, b, **kwargs)
     except AssertionError:
@@ -39,8 +47,19 @@ class RandomTest(tf.test.TestCase):
         'The two values are close at all %d elements' % np.size(a))
 
   def testRandN(self):
+      """
+      Generate test test test.
+
+      Args:
+          self: (todo): write your description
+      """
 
     def run_test(*args):
+        """
+        Runs a test test.
+
+        Args:
+        """
       num_samples = 1000
       tol = 0.1  # High tolerance to keep the # of samples low else the test
       # takes a long time to run.

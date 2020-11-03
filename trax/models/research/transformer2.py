@@ -186,6 +186,15 @@ class ConcatWithPadding(tl.Layer):
 
   # Arg shapes: (B, L1, H), (B, L2, H), (B, L1).
   def _ConcatWithPadding(self, vec_e, vec_d, mask_e):
+      """
+      Concatenate a matrix.
+
+      Args:
+          self: (todo): write your description
+          vec_e: (todo): write your description
+          vec_d: (todo): write your description
+          mask_e: (todo): write your description
+      """
     # pylint: disable=invalid-name
     B, L1, H = vec_e.shape
     L2 = vec_d.shape[1]
@@ -199,6 +208,12 @@ class ConcatWithPadding(tl.Layer):
                        f' equal {(B, L1)}.')
 
     def _UpdateRow(x):
+        """
+        Applies a row to a row.
+
+        Args:
+            x: (todo): write your description
+        """
       # row_e - (L1, H), row_d - (L2, H), row_mask_e - (L1,)
       row_e, row_d, row_mask_e = x
       # final_row - (L1+L2, H)
@@ -212,6 +227,15 @@ class ConcatWithPadding(tl.Layer):
     return jax.lax.map(_UpdateRow, [vec_e, vec_d, mask_e])
 
   def __init__(self, n_in=3, n_out=1, mode='train'):
+      """
+      Initialize the device.
+
+      Args:
+          self: (todo): write your description
+          n_in: (int): write your description
+          n_out: (str): write your description
+          mode: (todo): write your description
+      """
     super().__init__(n_in=n_in, n_out=n_out)
     self._mode = mode
 
@@ -221,6 +245,13 @@ class ConcatWithPadding(tl.Layer):
     self.state = jnp.array(0, dtype=jnp.int32)
 
   def forward(self, inputs):
+      """
+      Forward computation.
+
+      Args:
+          self: (todo): write your description
+          inputs: (todo): write your description
+      """
     vec_e, vec_d, mask_e = inputs
 
     # In training/eval mode or at the first step predict mode i.e. when
@@ -239,6 +270,15 @@ class StripFromConcatenateWithPadding(tl.Layer):
   """Strips out the leading encoder tokens from the concatenated array."""
 
   def _StripFromConcatenateWithPadding(self, vec_ed, tok_e, tok_d):
+      """
+      Return a new l1 with a matrix.
+
+      Args:
+          self: (todo): write your description
+          vec_ed: (todo): write your description
+          tok_e: (str): write your description
+          tok_d: (str): write your description
+      """
     # pylint: disable=invalid-name
     B, L, H = vec_ed.shape
     L1 = tok_e.shape[1]
@@ -256,6 +296,12 @@ class StripFromConcatenateWithPadding(tl.Layer):
                        f' equal {(B, L2)}.')
 
     def _UpdateRow(x):
+        """
+        Updates a row of a row.
+
+        Args:
+            x: (todo): write your description
+        """
       # (L, H), (L1, H) & (L2, H)
       row_ed, row_e, _ = x
       mask_e = row_e != 0
@@ -270,6 +316,15 @@ class StripFromConcatenateWithPadding(tl.Layer):
     return jax.lax.map(_UpdateRow, [vec_ed, tok_e, tok_d])
 
   def __init__(self, n_in=3, n_out=1, mode='train'):
+      """
+      Initialize the device.
+
+      Args:
+          self: (todo): write your description
+          n_in: (int): write your description
+          n_out: (str): write your description
+          mode: (todo): write your description
+      """
     super().__init__(n_in=n_in, n_out=n_out)
     self._mode = mode
 
@@ -279,6 +334,13 @@ class StripFromConcatenateWithPadding(tl.Layer):
     self.state = jnp.array(0, dtype=jnp.int32)
 
   def forward(self, inputs):
+      """
+      Parameters ---------- inputs : list.
+
+      Args:
+          self: (todo): write your description
+          inputs: (todo): write your description
+      """
     vec_ed, tok_e, tok_d = inputs
 
     # In training/eval mode or at the first step predict mode i.e. when

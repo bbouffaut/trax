@@ -142,6 +142,12 @@ class Layer:
       A high signal-to-noise string representing this layer.
     """
     def indent_string(x):
+        """
+        Indent a string.
+
+        Args:
+            x: (str): write your description
+        """
       return '  ' + x.replace('\n', '\n  ')
 
     name_str = self._name
@@ -487,6 +493,12 @@ class Layer:
         sublayer.rng = rng
 
   def _clear_init_cache(self):
+      """
+      Clears the cache.
+
+      Args:
+          self: (todo): write your description
+      """
     self._init_cached = False
     for sublayer in self.sublayers:
       sublayer._clear_init_cache()  # pylint: disable=protected-access
@@ -589,6 +601,15 @@ class Layer:
     """Calls this layer for a forward pass, but with custom gradients."""
 
     def _f(state, rng, y, weights):
+        """
+        Compute rng weights.
+
+        Args:
+            state: (todo): write your description
+            rng: (list): write your description
+            y: (todo): write your description
+            weights: (array): write your description
+        """
       old_weights, old_state, old_rng = self.weights, self.state, self._rng
       self.weights, self.state, self._rng = weights, state, rng
       res = self.forward(y)
@@ -597,6 +618,15 @@ class Layer:
       return res, s
 
     def _f_fwd(state, rng, y, weights):
+        """
+        Compute the fwd.
+
+        Args:
+            state: (todo): write your description
+            rng: (list): write your description
+            y: (int): write your description
+            weights: (array): write your description
+        """
       old_weights, old_state, old_rng = self.weights, self.state, self._rng
       self.weights, self.state, self._rng = weights, state, rng
       res = self.forward(y)
@@ -691,6 +721,12 @@ def Fn(name, f, n_out=1):  # pylint: disable=invalid-name
     raise ValueError('Function has variable args (not allowed).')
 
   def _forward(xs):  # pylint: disable=invalid-name
+      """
+      Convert a tuple
+
+      Args:
+          xs: (list): write your description
+      """
     if not isinstance(xs, (tuple, list)):
       xs = (xs,)
     return f(*xs)
@@ -705,6 +741,17 @@ class LayerError(Exception):
 
   def __init__(self, layer_name, function_name, caller,
                input_signature, traceback_string):
+      """
+      Initialize the function.
+
+      Args:
+          self: (todo): write your description
+          layer_name: (str): write your description
+          function_name: (str): write your description
+          caller: (str): write your description
+          input_signature: (str): write your description
+          traceback_string: (str): write your description
+      """
     self._layer_name = layer_name
     self._function_name = function_name
     self._caller = caller  # Python inspect object with init caller info.
@@ -728,11 +775,23 @@ class LayerError(Exception):
 def flatten_weights_and_state(weights, state):
   """Flatten weights and state into lists, excluding empty and cached ones."""
   def _is_empty_weight(x):
+      """
+      Return true if x is a weight.
+
+      Args:
+          x: (array): write your description
+      """
     return (x is EMPTY_WEIGHTS or
             (isinstance(x, dict) and x == GET_WEIGHTS_FROM_CACHE))
   flat_weights = [w for w in fastmath.tree_flatten(weights)
                   if not _is_empty_weight(w)]
   def _is_empty_state(x):
+      """
+      Check if x if x is empty.
+
+      Args:
+          x: (todo): write your description
+      """
     return (x is EMPTY_STATE or
             (isinstance(x, dict) and x == GET_STATE_FROM_CACHE))
   flat_state = [s for s in fastmath.tree_flatten(state)
@@ -777,6 +836,13 @@ def to_list(outputs):
 
 
 def _validate_forward_input(x, n_in):
+    """
+    Validate input.
+
+    Args:
+        x: (todo): write your description
+        n_in: (int): write your description
+    """
   if n_in != 1:
     if not isinstance(x, (tuple, list)):
       raise TypeError(
@@ -787,6 +853,12 @@ def _validate_forward_input(x, n_in):
 
 
 def _is_empty(container):
+    """
+    Returns true if a container is empty.
+
+    Args:
+        container: (str): write your description
+    """
   if container is None:
     raise ValueError('Argument "container" is None.')
   return isinstance(container, (list, tuple)) and len(container) == 0  # pylint: disable=g-explicit-length-test
@@ -872,6 +944,12 @@ def _random_values(input_signature, rng):
 def _shapes(x):
   """Gets a structure of shapes for a structure of nested arrays."""
   def shape(x):
+      """
+      Returns the shape of x.
+
+      Args:
+          x: (int): write your description
+      """
     try:
       return tuple([int(i) for i in x.shape])
     except Exception:  # pylint: disable=broad-except

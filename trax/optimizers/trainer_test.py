@@ -32,7 +32,23 @@ from trax.models.reformer import reformer
 class TrainerTest(absltest.TestCase):
 
   def _assert_all_equal(self, t1, t2, tol=1e-5):
+      """
+      Assertools.
+
+      Args:
+          self: (todo): write your description
+          t1: (todo): write your description
+          t2: (todo): write your description
+          tol: (float): write your description
+      """
     def eq(x1, x2):
+        """
+        Compute the cross product of two vectors.
+
+        Args:
+            x1: (list): write your description
+            x2: (list): write your description
+        """
       diff = np.maximum(np.abs(x1 - x2) - tol, 0.0)
       self.assertLessEqual(np.sum(diff), 0.0,
                            msg=f'\n{x1}\n !=\n{x2}\n diff:\n{x1-x2}')

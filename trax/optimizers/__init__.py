@@ -30,6 +30,11 @@ from trax.optimizers.trainer import Trainer
 
 
 def opt_configure(*args, **kwargs):
+    """
+    Configure external external external external external external configuration
+
+    Args:
+    """
   kwargs['module'] = 'trax.optimizers'
   return gin.external_configurable(*args, **kwargs)
 

@@ -53,6 +53,14 @@ class Accelerate(base.Layer):
   """
 
   def __init__(self, layer, n_devices=None):
+      """
+      Initialize the layer.
+
+      Args:
+          self: (todo): write your description
+          layer: (todo): write your description
+          n_devices: (todo): write your description
+      """
     super().__init__(n_in=layer.n_in, n_out=layer.n_out)
     self._sublayers = [layer]
     self._n_devices = n_devices or fastmath.device_count()
@@ -77,6 +85,12 @@ class Accelerate(base.Layer):
       return self._jit_pure_fn(x, weights, state, rng)
     # If not, pad first.
     def pad(z):
+        """
+        Pad zeros with z.
+
+        Args:
+            z: (int): write your description
+        """
       pad_widths = [(0, 0)] * len(z.shape)
       pad_widths[0] = (0, self._n_devices - remainder)
       return jnp.pad(z, pad_widths, mode='constant',
@@ -115,6 +129,12 @@ class Accelerate(base.Layer):
 
   @property
   def weights(self):
+      """
+      The weights of this : py : class :. sublayer.
+
+      Args:
+          self: (todo): write your description
+      """
     # Override the getter so it works even if only sublayer is initialized.
     if self._weights is base.EMPTY_WEIGHTS:
       self._weights = for_n_devices(self.sublayer.weights, self._n_devices)
@@ -122,11 +142,24 @@ class Accelerate(base.Layer):
 
   @weights.setter
   def weights(self, weights):
+      """
+      Weights weights.
+
+      Args:
+          self: (todo): write your description
+          weights: (array): write your description
+      """
     self._weights = weights
     self.sublayer.weights = self._unreplicate(weights)
 
   @property
   def state(self):
+      """
+      The state of this |state.
+
+      Args:
+          self: (todo): write your description
+      """
     # Override the getter so it works even if only sublayer is initialized.
     if self._state is base.EMPTY_STATE:
       self._state = for_n_devices(self.sublayer.state, self._n_devices)
@@ -134,6 +167,13 @@ class Accelerate(base.Layer):
 
   @state.setter
   def state(self, state):
+      """
+      Unreplicate the state.
+
+      Args:
+          self: (todo): write your description
+          state: (bool): write your description
+      """
     self._state = state
     self.sublayer.state = self._unreplicate(state)
 
@@ -192,6 +232,12 @@ def jit_forward(forward, n_devices, do_mean=True):
 def _combine_devices(x_tuple):
   """Combines multi-device tensors into a single batch."""
   def f(x):
+      """
+      Return the f ( x.
+
+      Args:
+          x: (int): write your description
+      """
     if len(x.shape) < 2:
       return x  # No extra batch dimension: use devices as batch, so return.
     batch_size = x.shape[0] * x.shape[1]
@@ -213,6 +259,12 @@ def _accelerate(f, n_devices):
 def reshape_by_device(x, n_devices):
   """Reshapes possibly nested `x` into a shape `(n_devices, ...)`."""
   def f(x):
+      """
+      Return a batch of - batch size.
+
+      Args:
+          x: (int): write your description
+      """
     x_shape = list(x.shape)
     batch_size = x_shape[0]
     batch_size_per_device = batch_size // n_devices
@@ -227,6 +279,12 @@ def reshape_by_device(x, n_devices):
 def for_n_devices(x, n_devices):
   """Replicates/broadcasts `x` for `n_devices`."""
   def f(x):
+      """
+      Broadcasts function.
+
+      Args:
+          x: (int): write your description
+      """
     if n_devices > 1 and fastmath.is_backend(fastmath.Backend.JAX):
       return _multi_device_put(x)
     elif n_devices > 1:

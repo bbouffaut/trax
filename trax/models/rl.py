@@ -77,6 +77,12 @@ def Value(
     normalizer = lambda mode: []
 
   def ActionInjector(mode):
+      """
+      Conject actions into actions into a list of - actions.
+
+      Args:
+          mode: (str): write your description
+      """
     if inject_actions:
       if is_discrete:
         action_encoder = tl.Embedding(vocab_size, inject_actions_dim)

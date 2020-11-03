@@ -168,7 +168,21 @@ class PolicyEvalTask(training.EvalTask):
 
   @property
   def entropy_metric(self):
+      """
+      Compute the entropy.
+
+      Args:
+          self: (todo): write your description
+      """
     def Entropy(policy_inputs, actions, weights):
+        """
+        Compute the entropy of the distribution.
+
+        Args:
+            policy_inputs: (todo): write your description
+            actions: (str): write your description
+            weights: (array): write your description
+        """
       del actions
       del weights
       return jnp.mean(self._policy_dist.entropy(policy_inputs))

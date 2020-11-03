@@ -31,6 +31,12 @@ from trax.models.research import configurable_transformer as ct
 class ConfigurableTransformerTest(parameterized.TestCase):
 
   def test_transformer_lm_forward_shape(self):
+      """
+      Test for lm shape.
+
+      Args:
+          self: (todo): write your description
+      """
     vocab_size = 16
     model = ct.ConfigurableTransformerLM(
         vocab_size, d_model=32, d_ff=64, n_layers=2, n_heads=2)
@@ -41,6 +47,14 @@ class ConfigurableTransformerTest(parameterized.TestCase):
 
   def _test_transformer_forward_shape(self, input_vocab_size,
                                       output_vocab_size):
+      """
+      Test for forward shape.
+
+      Args:
+          self: (todo): write your description
+          input_vocab_size: (int): write your description
+          output_vocab_size: (int): write your description
+      """
     model = ct.ConfigurableTransformer(
         input_vocab_size,
         output_vocab_size,
@@ -65,6 +79,13 @@ class ConfigurableTransformerTest(parameterized.TestCase):
 
 
   def _test_fast_inference(self, length):
+      """
+      Generate a random example.
+
+      Args:
+          self: (todo): write your description
+          length: (int): write your description
+      """
     with fastmath.use_backend(fastmath.Backend.JAX):
       vocab_size = 16
       model_fn = functools.partial(
@@ -99,6 +120,12 @@ class ConfigurableTransformerTest(parameterized.TestCase):
         buf[:, index] = next_sym[:, 0]
 
   def test_dot_product_causal_attention_fast_inference(self):
+      """
+      Test if the cross - dot - product of - experts have been generated test.
+
+      Args:
+          self: (todo): write your description
+      """
     self._test_fast_inference(length=5)
 
   @parameterized.named_parameters(
@@ -108,6 +135,13 @@ class ConfigurableTransformerTest(parameterized.TestCase):
       ('infinite_affine_positional_encoding', 'infinite-affine'),
       ('axial_positional_encoding', (2, 16)))
   def test_positional_encoder(self, axial_pos_shape):
+      """
+      The encoder encoder.
+
+      Args:
+          self: (todo): write your description
+          axial_pos_shape: (int): write your description
+      """
     # dim should divide FixedBasePositionalEncoding.n_digits
     batch, length, dim = 2, 32, 8
     input_shape = (batch, length, dim)
@@ -124,6 +158,12 @@ class ConfigurableTransformerTest(parameterized.TestCase):
     self.assertEqual(y.shape, input_shape)
 
   def test_embedding_and_positional_encodings(self):
+      """
+      Test for the embedding : [ batch of the model.
+
+      Args:
+          self: (todo): write your description
+      """
     d_model = 16
     max_len = 32
     batch = 2

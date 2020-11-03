@@ -39,25 +39,54 @@ def tf_abstract_eval(f):
   """
   f_shape = tf_np_extensions.eval_on_shapes(f)
   def from_shape_type(x):
+      """
+      Convert a tensor to a tensor.
+
+      Args:
+          x: (todo): write your description
+      """
     if isinstance(x, ShapeDtype):
       return tf.TensorSpec(x.shape, x.dtype)
     else:
       return x
   def to_shape_type(x):  # pylint: disable=missing-docstring
+      """
+      Convert x to a tensor.
+
+      Args:
+          x: (todo): write your description
+      """
     # TODO(wangpeng): handle partial output shapes using `tf.shape`.
     def to_numpy_shape(s):
+        """
+        Convert string to_shape shape.
+
+        Args:
+            s: (todo): write your description
+        """
       if s.is_fully_defined():
         return tuple(s.as_list())
       else:
         raise ValueError("The output shapes (%s) of the dry-run'ed function are"
                          ' not fully defined.' % s)
     def to_numpy_dtype(t):
+        """
+        Convert a numpy. ndtype to a numpy array.
+
+        Args:
+            t: (todo): write your description
+        """
       return np.dtype(t.as_numpy_dtype)
     if isinstance(x, tf.TensorSpec):
       return ShapeDtype(to_numpy_shape(x.shape), to_numpy_dtype(x.dtype))
     else:
       return x
   def f_return(*args):
+      """
+      Returns a tensor of the tensor function.
+
+      Args:
+      """
     args = tf.nest.map_structure(from_shape_type, args)
     res = f_shape(*args)
     return tf.nest.map_structure(to_shape_type, res)
@@ -88,21 +117,42 @@ _tf_xla_forced_compile_enabled = False
 
 
 def tf_xla_forced_compile_enabled():
+    """
+    Returns a tensorfla.
+
+    Args:
+    """
   return _tf_xla_forced_compile_enabled
 
 
 def set_tf_xla_forced_compile(b):
+    """
+    Set the tf tf.
+
+    Args:
+        b: (todo): write your description
+    """
   global _tf_xla_forced_compile_enabled
   _tf_xla_forced_compile_enabled = b
 
 
 def _tf_jit(*args, **kwargs):
+    """
+    Wrapper for tf. tf. tensor.
+
+    Args:
+    """
   kwargs['xla_forced_compile'] = tf_xla_forced_compile_enabled()
   kwargs.pop('donate_argnums', None)  # donate_argnums not used in TF
   return tf_np_extensions.jit(*args, **kwargs)
 
 
 def _tf_pmap(*args, **kwargs):
+    """
+    A wrapper for tf. _tf_pmap.
+
+    Args:
+    """
   kwargs.pop('donate_argnums', None)  # donate_argnums not used in TF
   return tf_np_extensions.pmap(*args, **kwargs)
 
@@ -112,6 +162,11 @@ def _tf_grad(f, **kwargs):
   argnums = kwargs.pop('argnums', 0)
   if argnums != 0:
     def g(*args, **kwargs):
+        """
+        Wrapper function that a function f.
+
+        Args:
+        """
       args = list(args)
       args[0], args[argnums] = args[argnums], args[0]
       return f(*args, **kwargs)
@@ -121,6 +176,11 @@ def _tf_grad(f, **kwargs):
   if argnums == 0:
     return grad_g
   def grad_f(*args, **kwargs):
+      """
+      Decorates a function f ( f ).
+
+      Args:
+      """
     args = list(args)
     args[0], args[argnums] = args[argnums], args[0]
     return grad_g(*args, **kwargs)

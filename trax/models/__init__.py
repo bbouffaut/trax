@@ -33,6 +33,11 @@ from trax.models.research import transformer2
 
 # Ginify
 def model_configure(*args, **kwargs):
+    """
+    Shortcuturable model parameters.
+
+    Args:
+    """
   kwargs['module'] = 'trax.models'
   return gin.external_configurable(*args, **kwargs)
 

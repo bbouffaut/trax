@@ -56,6 +56,13 @@ class NumpyBackend(object):
   """Numpy functions accelerated to run on GPUs and TPUs. Use like numpy."""
 
   def __getattr__(self, attr):
+      """
+      Get an attribute of an attribute
+
+      Args:
+          self: (todo): write your description
+          attr: (str): write your description
+      """
     return getattr(backend()['np'], attr)
 
 numpy = NumpyBackend()
@@ -65,24 +72,71 @@ class RandomBackend(object):
   """Backend providing random functions."""
 
   def get_prng(self, seed):
+      """
+      Return a seed from the seed
+
+      Args:
+          self: (todo): write your description
+          seed: (int): write your description
+      """
     return backend()['random_get_prng'](seed)
 
   def split(self, prng, num=2):
+      """
+      Split n elements in n elements.
+
+      Args:
+          self: (todo): write your description
+          prng: (todo): write your description
+          num: (int): write your description
+      """
     return backend()['random_split'](prng, num)
 
   def fold_in(self, rng, data):
+      """
+      Reverse in - 1 ) in - place.
+
+      Args:
+          self: (todo): write your description
+          rng: (int): write your description
+          data: (array): write your description
+      """
     return backend()['random_fold_in'](rng, data)
 
   def uniform(self, *args, **kwargs):
+      """
+      Return a uniform uniform distribution.
+
+      Args:
+          self: (todo): write your description
+      """
     return backend()['random_uniform'](*args, **kwargs)
 
   def randint(self, *args, **kwargs):
+      """
+      Return a random integer.
+
+      Args:
+          self: (todo): write your description
+      """
     return backend()['random_randint'](*args, **kwargs)
 
   def normal(self, *args, **kwargs):
+      """
+      Return the normalization.
+
+      Args:
+          self: (todo): write your description
+      """
     return backend()['random_normal'](*args, **kwargs)
 
   def bernoulli(self, *args, **kwargs):
+      """
+      See : func : fendoulliouououlli
+
+      Args:
+          self: (todo): write your description
+      """
     return backend()['random_bernoulli'](*args, **kwargs)
 
 
@@ -163,6 +217,13 @@ def fori_loop(lower, upper, body_fn, init_val):
     return backend()['fori_loop'](lower, upper, body_fn, init_val)
   # Use scan otherwise.
   def scanned_fn(loop_carry, _):
+      """
+      Return a function.
+
+      Args:
+          loop_carry: (todo): write your description
+          _: (todo): write your description
+      """
     i, x = loop_carry
     return (i + 1, body_fn(i, x)), None
   (_, result), _ = scan(
@@ -186,18 +247,38 @@ def lt(*args, **kwargs):
 
 
 def index_update(*args, **kwargs):
+    """
+    Update an index.
+
+    Args:
+    """
   return backend()['index_update'](*args, **kwargs)
 
 
 def index_add(*args, **kwargs):
+    """
+    Add an index to the index.
+
+    Args:
+    """
   return backend()['index_add'](*args, **kwargs)
 
 
 def index_min(*args, **kwargs):
+    """
+    Returns the minimum index.
+
+    Args:
+    """
   return backend()['index_min'](*args, **kwargs)
 
 
 def index_max(*args, **kwargs):
+    """
+    Return the maximum index.
+
+    Args:
+    """
   return backend()['index_max'](*args, **kwargs)
 
 
@@ -244,9 +325,23 @@ def value_and_grad(*args, **kwargs):
     has_aux = kwargs['has_aux']
   if not has_aux:
     def val_and_grad(*fn_args, **fn_kwargs):
+        """
+        Evaluates a function and returns the given arguments.
+
+        Args:
+            fn_args: (todo): write your description
+            fn_kwargs: (dict): write your description
+        """
       return fn(*fn_args, **fn_kwargs), grad_fn(*fn_args, **fn_kwargs)
     return val_and_grad
   def val_and_grad_aux(*fn_args, **fn_kwargs):
+      """
+      Evaluates a function and returns a function and returns the gradient.
+
+      Args:
+          fn_args: (todo): write your description
+          fn_kwargs: (dict): write your description
+      """
     g, aux = grad_fn(*fn_args, **fn_kwargs)
     res, _ = fn(*fn_args, **fn_kwargs)
     return (res, aux), g
@@ -283,8 +378,19 @@ def custom_vjp(f, f_fwd, f_bwd, nondiff_argnums=()):
   # Use custom_grad.
   if counter == -1:  # no non-diff args
     def f_vjp(*args):
+        """
+        Return a function that takes a function f_vjp )
+
+        Args:
+        """
       out, residual = f_fwd(*args)
       def vjpfn(g):
+          """
+          Vjpfn of a function
+
+          Args:
+              g: (todo): write your description
+          """
         return f_bwd(residual, g)
       return out, vjpfn
     return backend()['custom_grad'](f_vjp, f)
@@ -294,12 +400,30 @@ def custom_vjp(f, f_fwd, f_bwd, nondiff_argnums=()):
     """This function takes all args, first counter+1 are non-diff ones."""
     nondiff_args = list(args[:counter+1])
     def f_diff(*diff_args):  # Takes only diff args, will define custom grad.
+        """
+        Return the difference between diff_args.
+
+        Args:
+            diff_args: (dict): write your description
+        """
       args = nondiff_args + list(diff_args)
       return f(*args)
     def f_vjp(*diff_args):  # Custom VJP for diff args.
+        """
+        Compute the f_vjp.
+
+        Args:
+            diff_args: (dict): write your description
+        """
       args = nondiff_args + list(diff_args)
       out, residual = f_fwd(*args)
       def vjpfn(g):
+          """
+          Vjpfn function that fn fn.
+
+          Args:
+              g: (todo): write your description
+          """
         bwd_args = [residual, g]
         res = f_bwd(*bwd_args)
         return res[counter+1:]
@@ -350,6 +474,12 @@ _backend_dict = {
 
 
 def _assert_valid_backend_name(name):
+    """
+    Checks if a valid backend name.
+
+    Args:
+        name: (str): write your description
+    """
   for backend_ in Backend:
     if backend_.value == name:
       return
@@ -365,6 +495,12 @@ def set_backend(name):
 
 
 def _get_backend_from_string(name_str):
+    """
+    Return backend backend object from backend.
+
+    Args:
+        name_str: (str): write your description
+    """
   # name is a string.
   for backend_ in Backend:
     if backend_.value == name_str:
@@ -411,4 +547,10 @@ def backend_name():
 
 
 def is_backend(backend_):
+    """
+    Returns true if backend is running.
+
+    Args:
+        backend_: (str): write your description
+    """
   return backend()['name'] == backend_.value

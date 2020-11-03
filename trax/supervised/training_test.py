@@ -35,6 +35,12 @@ from trax.supervised import training
 class TrainingTest(absltest.TestCase):
 
   def setUp(self):
+      """
+      Sets the test flag.
+
+      Args:
+          self: (todo): write your description
+      """
     super().setUp()
     test_utils.ensure_flag('test_tmpdir')
 
@@ -219,6 +225,12 @@ class TrainingTest(absltest.TestCase):
     self.assertEqual(20, training_session.step)
 
   def test_can_predict_with_trained_model(self):
+      """
+      Test if a predict of the given model.
+
+      Args:
+          self: (todo): write your description
+      """
     model = tl.Serial(tl.Dense(3), tl.Branch(tl.Dense(1), tl.Dense(2)))
     train_tasks, eval_tasks = [], []
     for output_dim in [1, 2]:
@@ -277,6 +289,11 @@ class TrainingTest(absltest.TestCase):
     targets_batch = inputs_batch
     labeled_batch = (inputs_batch, targets_batch, np.ones_like(targets_batch))
     def _data_gen():
+        """
+        Generate a generator that yields a sequence of data.
+
+        Args:
+        """
       while True:
         yield labeled_batch
 

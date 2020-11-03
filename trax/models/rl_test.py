@@ -27,6 +27,12 @@ from trax.models import rl
 class RLTest(absltest.TestCase):
 
   def test_policy_forward_shape(self):
+      """
+      Test the forward shape.
+
+      Args:
+          self: (todo): write your description
+      """
     mock_dist = mock.MagicMock()
     mock_dist.n_inputs = 4
     model = rl.Policy(policy_distribution=mock_dist)
@@ -36,6 +42,12 @@ class RLTest(absltest.TestCase):
     self.assertEqual(y.shape, (2, 4))
 
   def test_value_forward_shape(self):
+      """
+      Test for the shape.
+
+      Args:
+          self: (todo): write your description
+      """
     model = rl.Value()
     x = np.ones((2, 3))
     _, _ = model.init(shapes.signature(x))
@@ -43,6 +55,12 @@ class RLTest(absltest.TestCase):
     self.assertEqual(y.shape, (2, 1))
 
   def test_policy_and_value_forward_shape(self):
+      """
+      Test the forward policy.
+
+      Args:
+          self: (todo): write your description
+      """
     mock_dist = mock.MagicMock()
     mock_dist.n_inputs = 4
     model = rl.PolicyAndValue(policy_distribution=mock_dist)

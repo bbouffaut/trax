@@ -68,17 +68,50 @@ def _pooling_general(inputs, reducer, init_val, rescaler=None,
 
 
 def jax_max_pool(x, pool_size, strides, padding):
+    """
+    R jax.
+
+    Args:
+        x: (todo): write your description
+        pool_size: (int): write your description
+        strides: (int): write your description
+        padding: (int): write your description
+    """
   return _pooling_general(x, lax.max, -jnp.inf, pool_size=pool_size,
                           strides=strides, padding=padding)
 
 
 def jax_sum_pool(x, pool_size, strides, padding):
+    """
+    Compute jax jax jax.
+
+    Args:
+        x: (todo): write your description
+        pool_size: (int): write your description
+        strides: (int): write your description
+        padding: (int): write your description
+    """
   return _pooling_general(x, lax.add, 0., pool_size=pool_size,
                           strides=strides, padding=padding)
 
 
 def _normalize_by_window_size(dims, spatial_strides, padding):  # pylint: disable=invalid-name
+    """
+    Normalize the dimensions of the given window.
+
+    Args:
+        dims: (int): write your description
+        spatial_strides: (str): write your description
+        padding: (int): write your description
+    """
   def rescale(outputs, inputs):
+      """
+      Rescale a 2dtype of the given dimensions.
+
+      Args:
+          outputs: (todo): write your description
+          inputs: (todo): write your description
+      """
     one = jnp.ones(inputs.shape[1:-1], dtype=inputs.dtype)
     window_sizes = lax.reduce_window(
         one, 0., lax.add, dims, spatial_strides, padding)
@@ -87,6 +120,15 @@ def _normalize_by_window_size(dims, spatial_strides, padding):  # pylint: disabl
 
 
 def jax_avg_pool(x, pool_size, strides, padding):
+    """
+    Jax pooling.
+
+    Args:
+        x: (todo): write your description
+        pool_size: (int): write your description
+        strides: (int): write your description
+        padding: (int): write your description
+    """
   return _pooling_general(x, lax.add, 0., _normalize_by_window_size,
                           pool_size, strides=strides, padding=padding)
 
@@ -106,6 +148,11 @@ def jax_abstract_eval(f):
     `ShapeDtype`s with the same nested structure as `f`'s return values.
   """
   def shape_fun(*args, **kwargs):
+      """
+      Return a function to apply shapes.
+
+      Args:
+      """
     jax_shapes = jax.eval_shape(f, *args, **kwargs)
     return tnp.nested_map(signature, jax_shapes)
   return shape_fun
@@ -156,14 +203,35 @@ def _dataset_as_numpy(ds, batch_size=None):
 
 
 def _custom_grad(f_vjp, f_original):
+    """
+    Computes the gradients of a function.
+
+    Args:
+        f_vjp: (todo): write your description
+        f_original: (str): write your description
+    """
   f_ = jax.custom_transforms(f_original)
   jax.defvjp_all(f_, f_vjp)
   return f_
 
 
 def _custom_vjp(f, f_fwd, f_bwd, nondiff_argnums=()):
+    """
+    Decorator to a function f_fwd.
+
+    Args:
+        f: (todo): write your description
+        f_fwd: (todo): write your description
+        f_bwd: (todo): write your description
+        nondiff_argnums: (int): write your description
+    """
   @functools.partial(jax.custom_vjp, nondiff_argnums=nondiff_argnums)
   def _f(*args, **kwargs):
+      """
+      Wraps a function f.
+
+      Args:
+      """
     return f(*args, **kwargs)
   _f.defvjp(f_fwd, f_bwd)
   return _f

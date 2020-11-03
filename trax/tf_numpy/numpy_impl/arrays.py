@@ -27,6 +27,13 @@ from trax.tf_numpy.numpy_impl import dtypes
 
 
 def convert_to_tensor(value, dtype=None):
+    """
+    Convert tensor to tensor.
+
+    Args:
+        value: (str): write your description
+        dtype: (todo): write your description
+    """
   # A safer version of `tf.convert_to_tensor` to work around b/149876037.
   # TODO(wangpeng): Remove this function once the bug is fixed.
   if (dtype is None and isinstance(value, six.integer_types)
@@ -123,10 +130,22 @@ class ndarray(object):  # pylint: disable=invalid-name
 
   @property
   def dtype(self):
+      """
+      The dtype of this dataarray.
+
+      Args:
+          self: (todo): write your description
+      """
     return np.dtype(self.data.dtype.as_numpy_dtype)
 
   @property
   def ndim(self):
+      """
+      The numpy array.
+
+      Args:
+          self: (todo): write your description
+      """
     return self.data.shape.ndims
 
   @property
@@ -136,15 +155,34 @@ class ndarray(object):  # pylint: disable=invalid-name
 
   @property
   def T(self):  # pylint: disable=invalid-name
+      """
+      Transpose of the matrix.
+
+      Args:
+          self: (todo): write your description
+      """
     return self.transpose()
 
   def __len__(self):
+      """
+      Returns the length of the shape.
+
+      Args:
+          self: (todo): write your description
+      """
     if self.shape:
       return self.shape[0]
     else:
       raise TypeError('len() of unsized object.')
 
   def astype(self, dtype):
+      """
+      Convert dtype to numpy dtype.
+
+      Args:
+          self: (todo): write your description
+          dtype: (str): write your description
+      """
     if self.dtype == dtype:
       return self
     else:
@@ -152,31 +190,80 @@ class ndarray(object):  # pylint: disable=invalid-name
 
   # Unary operations
   def __neg__(self):
+      """
+      Returns the numpy. ndarray. numpy.
+
+      Args:
+          self: (todo): write your description
+      """
     return tensor_to_ndarray(-self.data)  # pylint: disable=invalid-unary-operand-type
 
   def __pos__(self):
+      """
+      Return the position.
+
+      Args:
+          self: (todo): write your description
+      """
     return self
 
   __hash__ = None
 
   def __int__(self):
+      """
+      Returns the int value of the int.
+
+      Args:
+          self: (todo): write your description
+      """
     return int(self.data)
 
   def __float__(self):
+      """
+      Returns the float value of the data.
+
+      Args:
+          self: (todo): write your description
+      """
     return float(self.data)
 
   def __nonzero__(self):
+      """
+      Returns true if the data is zero false otherwise.
+
+      Args:
+          self: (todo): write your description
+      """
     return bool(self.data)
 
   def __bool__(self):
+      """
+      Returns the boolean value of the boolean.
+
+      Args:
+          self: (todo): write your description
+      """
     return self.__nonzero__()
 
   def __getitem__(self, slice_spec):
+      """
+      Get the item from a slice.
+
+      Args:
+          self: (todo): write your description
+          slice_spec: (todo): write your description
+      """
     # TODO(srbs): Need to support better indexing.
     result_t = self.data.__getitem__(slice_spec)
     return tensor_to_ndarray(result_t)
 
   def __iter__(self):
+      """
+      Return an iterator over the tensors.
+
+      Args:
+          self: (todo): write your description
+      """
     for i in range(self.shape[0]):
       result_t = self.data[i]
       yield tensor_to_ndarray(result_t)
@@ -216,20 +303,53 @@ class ndarray(object):  # pylint: disable=invalid-name
     return np.asscalar(self.data.numpy())
 
   def tolist(self):
+      """
+      Return the numpy : ndict
+
+      Args:
+          self: (todo): write your description
+      """
     return self.data.numpy().tolist()
 
   def __str__(self):
+      """
+      Return the string representation of the object.
+
+      Args:
+          self: (todo): write your description
+      """
     return 'ndarray<{}>'.format(self.data.__str__())
 
   def __repr__(self):
+      """
+      Return a human - readable representation of this object.
+
+      Args:
+          self: (todo): write your description
+      """
     return 'ndarray<{}>'.format(self.data.__repr__())
 
 
 def tensor_to_ndarray(tensor):
+    """
+    Convert a tensor to a numpy. ndarray.
+
+    Args:
+        tensor: (todo): write your description
+    """
   return ndarray(tensor._shape_tuple(), dtype=tensor.dtype, buffer=tensor)  # pylint: disable=protected-access
 
 
 def ndarray_to_tensor(arr, dtype=None, name=None, as_ref=False):
+    """
+    Convert arr to a tensor.
+
+    Args:
+        arr: (array): write your description
+        dtype: (todo): write your description
+        name: (str): write your description
+        as_ref: (bool): write your description
+    """
   if as_ref:
     raise ValueError('as_ref is not supported.')
   if dtype and tf.as_dtype(arr.dtype) != dtype:
@@ -269,18 +389,43 @@ class ShardedNdArray(object):
     self.n_devices = len(tensors)
 
   def __getitem__(self, i):
+      """
+      Return the item at the given index.
+
+      Args:
+          self: (todo): write your description
+          i: (todo): write your description
+      """
     return self.tensors[i]
 
   @property
   def shape(self):
+      """
+      The shape of the device.
+
+      Args:
+          self: (todo): write your description
+      """
     return (self.n_devices,) + self.tensors[0]._shape_tuple()  # pylint: disable=protected-access
 
   @property
   def dtype(self):
+      """
+      The dtype of this dtype.
+
+      Args:
+          self: (todo): write your description
+      """
     return x.tensors[0].dtype
 
 
 def convert_sharded_tensor_to_eager_tensor(value, *args, **kwargs):
+    """
+    Convert tensor to tensor.
+
+    Args:
+        value: (todo): write your description
+    """
   del args, kwargs
   # TODO(nareshmodi): Consider a collective op to gather the tensors from the
   # various devices for performance reasons.

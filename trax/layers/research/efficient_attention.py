@@ -48,6 +48,13 @@ from trax.layers import initializers as init
 
 
 def length_normalized(x, epsilon=1e-6):
+    """
+    Normalize the length of x.
+
+    Args:
+        x: (todo): write your description
+        epsilon: (float): write your description
+    """
   variance = np.mean(x**2, axis=-1, keepdims=True)
   norm_inputs = x / np.sqrt(variance + epsilon)
   return norm_inputs
@@ -283,10 +290,33 @@ def apply_broadcasted_dropout(vecs, dropout_rate, rng):
 def permute_via_gather(val, permutation, inverse_permutation, axis=0):
   """Permutation helper for LSH attention."""
   def permute_impl(p, unused_ip, val):
+      """
+      R compute a set of a layer.
+
+      Args:
+          p: (todo): write your description
+          unused_ip: (todo): write your description
+          val: (float): write your description
+      """
     return np.take(val, p, axis=axis)
   def permute_fwd(p, ip, val):
+      """
+      R compute the fwd.
+
+      Args:
+          p: (todo): write your description
+          ip: (todo): write your description
+          val: (float): write your description
+      """
     return np.take(val, p, axis=axis), ip
   def permute_bwd(ip, permuted_grad):
+      """
+      Perform a permute permutations.
+
+      Args:
+          ip: (todo): write your description
+          permuted_grad: (todo): write your description
+      """
     # JAX autodiff would synthesize a scatter operation because it doesn't
     # know that the indices are a permutation. However on TPU, gathers are
     # faster than scatters (at least in the regime the LSH attention uses).
@@ -298,14 +328,37 @@ def permute_via_gather(val, permutation, inverse_permutation, axis=0):
 def permute_via_sort(val, keys, inverse_keys, axis=0):
   """Permutation helper for LSH attention."""
   def permute_impl(k, unused_ik, val):
+      """
+      Perform permute permutations.
+
+      Args:
+          k: (todo): write your description
+          unused_ik: (todo): write your description
+          val: (float): write your description
+      """
     # On TPU, sorting scalars by key is faster than a gather.
     _, permuted = fastmath.sort_key_val(k, val, dimension=axis)
     return permuted
   def permute_fwd(k, ik, val):
+      """
+      Perform a permuted function.
+
+      Args:
+          k: (todo): write your description
+          ik: (todo): write your description
+          val: (float): write your description
+      """
     # On TPU, sorting scalars by key is faster than a gather.
     _, permuted = fastmath.sort_key_val(k, val, dimension=axis)
     return permuted, ik
   def permute_bwd(ik, permuted_grad):
+      """
+      Perform a permute computation.
+
+      Args:
+          ik: (todo): write your description
+          permuted_grad: (todo): write your description
+      """
     _, val_grad = fastmath.sort_key_val(
         ik, permuted_grad, dimension=axis)
     return (None, None, val_grad)
@@ -397,6 +450,13 @@ class EfficientAttentionBase(base.Layer):
     self.use_reference_code = use_reference_code
 
   def init_weights_and_state(self, input_signature):
+      """
+      Initialize the weights.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (bool): write your description
+      """
     if not isinstance(input_signature, (tuple, list)):
       input_signature = (input_signature,)
     input_signature_unbatched = fastmath.nested_map(
@@ -432,10 +492,26 @@ class EfficientAttentionBase(base.Layer):
     self.weights = tuple(weights)
 
   def create_weights_unbatched(self, input_signature, rng):
+      """
+      Create an input weights for a : parameter_signature.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (str): write your description
+          rng: (todo): write your description
+      """
     raise NotImplementedError(
         'Subclasses should override create_weights_unbatched')
 
   def create_state_unbatched(self, input_signature, rng):
+      """
+      Creates a transbatched state signature.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (str): write your description
+          rng: (todo): write your description
+      """
     return ()
 
   def forward_unbatched(self, *inputs, weights, state):
@@ -551,6 +627,12 @@ class EfficientAttentionBase(base.Layer):
       # of tokens (self.predict_drop_tokens) will be dropped from memory if
       # needed, and then new values will be inserted into the memory.
       def roll_mem(buf):
+          """
+          Rolls the memory.
+
+          Args:
+              buf: (todo): write your description
+          """
         return np.concatenate(
             [buf[:, self.predict_drop_len:],
              np.zeros_like(buf[:, :self.predict_drop_len])], axis=1)
@@ -565,6 +647,13 @@ class EfficientAttentionBase(base.Layer):
       )
       mem_end = np.where(do_roll_mem, mem_end - self.predict_drop_len, mem_end)
       def update_mem(mem_element, new_vals):
+          """
+          Update mem_element with mem_element with mem_vals )
+
+          Args:
+              mem_element: (str): write your description
+              new_vals: (todo): write your description
+          """
         assert new_vals.shape[1] == seqlen
         if seqlen == 1:
           return fastmath.index_update(
@@ -603,6 +692,12 @@ class EfficientAttentionBase(base.Layer):
       # primitive we can use to signal an error, so we instead signal the error
       # by introducing NaNs into the computation.
       def replace_with_nan_if_not_seq_start(x):
+          """
+          Replace nan values with nan.
+
+          Args:
+              x: (todo): write your description
+          """
         if x.dtype != np.float32:
           return x
         return fastmath.cond(
@@ -614,6 +709,12 @@ class EfficientAttentionBase(base.Layer):
 
   @property
   def has_backward(self):
+      """
+      Returns true if there is_backward backend.
+
+      Args:
+          self: (todo): write your description
+      """
     # Use an efficient backward pass, unless we're running the reference code.
     return not self.use_reference_code
 
@@ -724,11 +825,27 @@ class EfficientAttentionBase(base.Layer):
       n_parallel_heads = self.n_parallel_heads
 
     def tree_update(tree, indices, new_values):
+        """
+        Updates the tree in tree.
+
+        Args:
+            tree: (todo): write your description
+            indices: (array): write your description
+            new_values: (list): write your description
+        """
       return fastmath.nested_map_multiarg(
           lambda x, y: fastmath.index_update(x, jax.ops.index[indices], y),
           tree, new_values)
 
     def tree_add(tree, indices, new_values):
+        """
+        Add a tree to the tree.
+
+        Args:
+            tree: (todo): write your description
+            indices: (array): write your description
+            new_values: (todo): write your description
+        """
       return fastmath.nested_map_multiarg(
           lambda x, y: fastmath.index_add(x, jax.ops.index[indices], y),
           tree, new_values)
@@ -737,6 +854,12 @@ class EfficientAttentionBase(base.Layer):
       inputs_is_differentiable = fastmath.nested_map(
           lambda x: np.issubdtype(x.dtype, np.inexact), inputs)
       def split_differentiable(xs):
+          """
+          Split a multi - dimensional tensor.
+
+          Args:
+              xs: (todo): write your description
+          """
         differentiable_xs = fastmath.nested_map_multiarg(
             lambda x, is_differentiable: x if is_differentiable else None,
             xs, inputs_is_differentiable)
@@ -760,8 +883,22 @@ class EfficientAttentionBase(base.Layer):
         return tree
 
       def vjp(fn, inp, *args, has_aux=False):
+          """
+          Vjpiable function.
+
+          Args:
+              fn: (todo): write your description
+              inp: (todo): write your description
+              has_aux: (todo): write your description
+          """
         d_inp, nd_inp = split_differentiable(inp)
         def fn_closed_over_nd_inp(d_inp, *args):
+            """
+            Return the number of nd_inp.
+
+            Args:
+                d_inp: (todo): write your description
+            """
           inp = join_differentiable(d_inp, nd_inp)
           return fn(inp, *args)
         return fastmath.vjp(fn_closed_over_nd_inp, d_inp, *args,
@@ -779,6 +916,13 @@ class EfficientAttentionBase(base.Layer):
         s_h = fastmath.nested_map(lambda s: s[idx], state)
 
         def forward_fn(i_h, w_h):
+            """
+            Forward function.
+
+            Args:
+                i_h: (todo): write your description
+                w_h: (todo): write your description
+            """
           return forward_unbatched(
               *i_h, weights=w_h, state=fastmath.stop_gradient(s_h))
 
@@ -813,8 +957,23 @@ class EfficientAttentionBase(base.Layer):
         w_mh = fastmath.nested_map(lambda w: w[head_range], weights)
         s_mh = fastmath.nested_map(lambda s: s[state_range], state)
         def forward_unbatched_h(i_h, w_h, s_h):
+            """
+            R forward forward h_unbatched implementation.
+
+            Args:
+                i_h: (todo): write your description
+                w_h: (todo): write your description
+                s_h: (todo): write your description
+            """
           return forward_unbatched(*i_h, weights=w_h, state=s_h)
         def forward_fn(i_mh, w_mh):
+            """
+            R forward computation.
+
+            Args:
+                i_mh: (todo): write your description
+                w_mh: (todo): write your description
+            """
           o_mh, new_s_mh = fastmath.vmap(
               forward_unbatched_h, in_axes=(None, 0, 0), out_axes=0)(
                   i_mh, w_mh, s_mh)
@@ -840,7 +999,23 @@ class EfficientAttentionBase(base.Layer):
     else:
       assert n_parallel_heads % self.n_heads == 0
       def forward_single_example(i_x, w_all, s_x):
+          """
+          R forward computation.
+
+          Args:
+              i_x: (todo): write your description
+              w_all: (todo): write your description
+              s_x: (todo): write your description
+          """
         def forward_unbatched_h(i_h, w_h, s_h):
+            """
+            R forward forward h_unbatched implementation.
+
+            Args:
+                i_h: (todo): write your description
+                w_h: (todo): write your description
+                s_h: (todo): write your description
+            """
           return forward_unbatched(*i_h, weights=w_h, state=s_h)
         o_x, s_x = fastmath.vmap(
             forward_unbatched_h, in_axes=(None, 0, 0), out_axes=(0, 0))(
@@ -862,6 +1037,13 @@ class EfficientAttentionBase(base.Layer):
                                  (-1, self.n_heads) + s.shape[1:]),
             state)
         def forward_fn(i_mex, w_all):
+            """
+            R apply function.
+
+            Args:
+                i_mex: (todo): write your description
+                w_all: (todo): write your description
+            """
           o_mex, new_s_mex = fastmath.vmap(
               forward_single_example, in_axes=(0, None, 0), out_axes=(0, 0))(
                   i_mex, w_all, s_mex)
@@ -1012,6 +1194,14 @@ class SelfAttention(EfficientAttentionBase):
       self.output_dropout = 0.0
 
   def _kernel_initializer(self, shape, rng):
+      """
+      Generate a new kernel.
+
+      Args:
+          self: (todo): write your description
+          shape: (int): write your description
+          rng: (todo): write your description
+      """
     # Attention uses Glorot uniform initalization with respect to the *total*
     # dimension of queries/key/values across all heads. We initialize one head
     # at a time in this class, so init.GlorotUniformInitializer won't work.
@@ -1021,6 +1211,14 @@ class SelfAttention(EfficientAttentionBase):
     return fastmath.random.uniform(rng, shape, np.float32, -lim, lim)
 
   def create_weights_unbatched(self, input_signature, rng):
+      """
+      Create a convolution.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (str): write your description
+          rng: (todo): write your description
+      """
     if isinstance(input_signature, (tuple, list)):
       input_signature = input_signature[0]
     d_model = input_signature.shape[-1]
@@ -1047,6 +1245,18 @@ class SelfAttention(EfficientAttentionBase):
 
   def forward_unbatched(self, x, mask=None, *,
                         weights, state, rng, update_state):
+      """
+      Unbatched computation.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+          mask: (todo): write your description
+          weights: (todo): write your description
+          state: (todo): write your description
+          rng: (todo): write your description
+          update_state: (todo): write your description
+      """
     del update_state
     attend_rng, output_rng = fastmath.random.split(rng)
     if self.bias:
@@ -1100,6 +1310,20 @@ class SelfAttention(EfficientAttentionBase):
   def incremental_forward_unbatched(self, x, mask=None, *,
                                     q_start, q_len,
                                     weights, state, rng, update_state):
+      """
+      Incremental computation.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+          mask: (todo): write your description
+          q_start: (todo): write your description
+          q_len: (todo): write your description
+          weights: (array): write your description
+          state: (todo): write your description
+          rng: (todo): write your description
+          update_state: (todo): write your description
+      """
     del update_state
     attend_rng, output_rng = fastmath.random.split(rng)
     if self.share_qk:
@@ -1194,6 +1418,14 @@ class LSHSelfAttention(SelfAttention):
     self._max_length_for_buckets = max_length_for_buckets
 
   def create_state_unbatched(self, input_signature, rng):
+      """
+      Creates a batch state for the given input.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (str): write your description
+          rng: (todo): write your description
+      """
     if isinstance(input_signature, (tuple, list)):
       input_signature = input_signature[0]
     # The `rng` argument passed to forward_unbatched is shared across all
@@ -1213,6 +1445,15 @@ class LSHSelfAttention(SelfAttention):
       return (buckets, buckets_idx, rng)
 
   def hash_vectors(self, vecs, rng, mask=None):
+      """
+      Hash buckets in bucket.
+
+      Args:
+          self: (todo): write your description
+          vecs: (array): write your description
+          rng: (array): write your description
+          mask: (array): write your description
+      """
     n_buckets_list = self.n_buckets
 
     # Determine the number of buckets needed from input length if not set.
@@ -1243,6 +1484,18 @@ class LSHSelfAttention(SelfAttention):
 
   def forward_unbatched(self, x, mask=None, *, weights, state, rng,
                         update_state):
+      """
+      Unbatched computation.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+          mask: (todo): write your description
+          weights: (todo): write your description
+          state: (todo): write your description
+          rng: (todo): write your description
+          update_state: (todo): write your description
+      """
     attend_rng, output_rng = fastmath.random.split(rng)
     w_q, w_v, w_o = weights
 
@@ -1325,6 +1578,19 @@ class LSHSelfAttention(SelfAttention):
   def incremental_forward_unbatched(self, x, *,
                                     q_start, q_len,
                                     weights, state, rng, update_state):
+      """
+      Perform forward computation.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+          q_start: (todo): write your description
+          q_len: (todo): write your description
+          weights: (array): write your description
+          state: (todo): write your description
+          rng: (todo): write your description
+          update_state: (todo): write your description
+      """
     assert update_state, (
         'This setting not supported (e.g. no backprop for fast inference)')
     if q_len > 1:
@@ -1360,6 +1626,12 @@ class LSHSelfAttention(SelfAttention):
     buckets, buckets_idx, hash_rng = state
 
     def roll_buckets(buckets):
+        """
+        Roll buckets.
+
+        Args:
+            buckets: (todo): write your description
+        """
       buckets = np.reshape(buckets, (self.n_hashes, -1))
       new_buckets = np.concatenate(
           [buckets, np.zeros((self.n_hashes, self.predict_drop_len),
@@ -1448,6 +1720,22 @@ class EncDecAttention(EfficientAttentionBase):
                use_python_loop=False,
                use_reference_code=False,
               ):
+      """
+      Initialize attention.
+
+      Args:
+          self: (todo): write your description
+          n_heads: (int): write your description
+          d_qk: (int): write your description
+          d_v: (int): write your description
+          masked: (bool): write your description
+          mode: (todo): write your description
+          attention_dropout: (todo): write your description
+          output_dropout: (str): write your description
+          n_parallel_heads: (todo): write your description
+          use_python_loop: (todo): write your description
+          use_reference_code: (str): write your description
+      """
     super().__init__(
         n_heads=n_heads,
         n_in=(3 if masked else 2),
@@ -1467,6 +1755,14 @@ class EncDecAttention(EfficientAttentionBase):
       self.output_dropout = 0.0
 
   def _kernel_initializer(self, shape, rng):
+      """
+      Generate a new kernel.
+
+      Args:
+          self: (todo): write your description
+          shape: (int): write your description
+          rng: (todo): write your description
+      """
     # Attention uses Glorot uniform initalization with respect to the *total*
     # dimension of queries/key/values across all heads. We initialize one head
     # at a time in this class, so init.GlorotUniformInitializer won't work.
@@ -1476,6 +1772,14 @@ class EncDecAttention(EfficientAttentionBase):
     return fastmath.random.uniform(rng, shape, np.float32, -lim, lim)
 
   def create_weights_unbatched(self, input_signature, rng):
+      """
+      Create a convolutional model.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (str): write your description
+          rng: (todo): write your description
+      """
     d_model = input_signature[0].shape[-1]
     d_kv_antecedent = input_signature[1].shape[-1]
     rng_q, rng_k, rng_v, rng_o = fastmath.random.split(rng, 4)
@@ -1487,6 +1791,19 @@ class EncDecAttention(EfficientAttentionBase):
 
   def forward_unbatched(self, q_antecedent, kv_antecedent, mask=None, *,
                         weights, state, rng, update_state):
+      """
+      Unbatched computation.
+
+      Args:
+          self: (todo): write your description
+          q_antecedent: (todo): write your description
+          kv_antecedent: (todo): write your description
+          mask: (todo): write your description
+          weights: (todo): write your description
+          state: (todo): write your description
+          rng: (todo): write your description
+          update_state: (todo): write your description
+      """
     del update_state
     attend_rng, output_rng = fastmath.random.split(rng)
     w_q, w_k, w_v, w_o = weights
@@ -1504,6 +1821,14 @@ class EncDecAttention(EfficientAttentionBase):
       q_info = None
       kv_info = (~mask).astype(np.int32)  # pylint: disable=invalid-unary-operand-type
       def mask_fn(dots, q_info, kv_info):
+          """
+          Mask a function.
+
+          Args:
+              dots: (todo): write your description
+              q_info: (todo): write your description
+              kv_info: (array): write your description
+          """
         del q_info
         mask = kv_info.astype(np.float32)
         dots = dots - 1e9 * mask

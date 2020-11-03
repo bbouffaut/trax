@@ -22,6 +22,13 @@ from trax.fastmath import numpy as jnp
 
 # TODO(ddohan): Combinator to add saturation costs to loss
 def SaturationCost(x, limit=0.9):
+    """
+    Absolute value of the value of the value.
+
+    Args:
+        x: (todo): write your description
+        limit: (int): write your description
+    """
   return jnp.minimum(0, jnp.abs(x) - limit)
 
 
@@ -29,6 +36,12 @@ def DiagonalGate():
   """Split channels in 3 parts. Shifts 1st and 3rd sections to left/right."""
 
   def f(x):  # pylint: disable=invalid-name
+      """
+      Concatenate a function f ( x ).
+
+      Args:
+          x: (int): write your description
+      """
     # x : [batch, 1, length, depth]
     x = jnp.pad(x, [(0, 0), (0, 0), (1, 1), (0, 0)],
                 mode='constant', constant_values=0.0)
@@ -47,6 +60,11 @@ def ConvDiagonalGRU(units, kernel_size=(3, 3)):
   """Build convolutional GRU with diagonal gating as in ImprovedNGPU."""
 
   def BuildConv():
+      """
+      Create a convolutional kernel.
+
+      Args:
+      """
     return tl.Conv(filters=units, kernel_size=kernel_size, padding='SAME')
 
   return tl.GeneralGRUCell(

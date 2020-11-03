@@ -27,6 +27,12 @@ from trax.optimizers import momentum
 class OptimizersTest(absltest.TestCase):
 
   def test_slots(self):
+      """
+      Initialize the initial optimizer.
+
+      Args:
+          self: (todo): write your description
+      """
     weights_shape = (3, 5)
     weight_tree = np.arange(15).reshape(weights_shape)
 

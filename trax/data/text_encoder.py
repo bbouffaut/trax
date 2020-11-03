@@ -53,6 +53,12 @@ _ESCAPE_CHARS = set(u"\\_u;0123456789")
 
 # Unicode utility functions that work with Python 2 and 3
 def native_to_unicode(s):
+    """
+    Convert a string to unicode.
+
+    Args:
+        s: (str): write your description
+    """
   if is_unicode(s):
     return s
   try:
@@ -64,10 +70,23 @@ def native_to_unicode(s):
 
 
 def is_unicode(s):
+    """
+    Returns true if s is a unicode string.
+
+    Args:
+        s: (str): write your description
+    """
   return isinstance(s, six.text_type)
 
 
 def to_unicode(s, ignore_errors=False):
+    """
+    Convert s to unicode.
+
+    Args:
+        s: (str): write your description
+        ignore_errors: (bool): write your description
+    """
   if is_unicode(s):
     return s
   error_mode = "ignore" if ignore_errors else "strict"
@@ -75,10 +94,22 @@ def to_unicode(s, ignore_errors=False):
 
 
 def to_unicode_ignore_errors(s):
+    """
+    Convert string to unicode.
+
+    Args:
+        s: (todo): write your description
+    """
   return to_unicode(s, ignore_errors=True)
 
 
 def to_unicode_utf8(s):
+    """
+    To_unicode to utf8.
+
+    Args:
+        s: (todo): write your description
+    """
   return s.decode("utf-8")
 
 
@@ -94,10 +125,24 @@ class TextEncoder(object):
   """Base class for converting from ints to/from human readable strings."""
 
   def __init__(self, num_reserved_ids=NUM_RESERVED_TOKENS):
+      """
+      Initialize the table.
+
+      Args:
+          self: (todo): write your description
+          num_reserved_ids: (int): write your description
+          NUM_RESERVED_TOKENS: (int): write your description
+      """
     self._num_reserved_ids = num_reserved_ids
 
   @property
   def num_reserved_ids(self):
+      """
+      Returns the number of reserved ids.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._num_reserved_ids
 
   def encode(self, s):
@@ -156,6 +201,12 @@ class TextEncoder(object):
 
   @property
   def vocab_size(self):
+      """
+      The vocab size of the vocab.
+
+      Args:
+          self: (todo): write your description
+      """
     raise NotImplementedError()
 
 
@@ -163,11 +214,26 @@ class ByteTextEncoder(TextEncoder):
   """Encodes each byte to an id. For 8-bit strings only."""
 
   def encode(self, s):
+      """
+      Encode a sequence of numreserved characters.
+
+      Args:
+          self: (todo): write your description
+          s: (todo): write your description
+      """
     numres = self._num_reserved_ids
     # Python3: explicitly convert to UTF-8
     return [c + numres for c in s.encode("utf-8")]
 
   def decode(self, ids, strip_extraneous=False):
+      """
+      Decode a sequence of bytes.
+
+      Args:
+          self: (todo): write your description
+          ids: (list): write your description
+          strip_extraneous: (str): write your description
+      """
     if strip_extraneous:
       ids = strip_ids(ids, list(range(self._num_reserved_ids or 0)))
     numres = self._num_reserved_ids
@@ -182,6 +248,13 @@ class ByteTextEncoder(TextEncoder):
     return b"".join(decoded_ids).decode("utf-8", "replace")
 
   def decode_list(self, ids):
+      """
+      Decode a sequence of integers.
+
+      Args:
+          self: (todo): write your description
+          ids: (str): write your description
+      """
     numres = self._num_reserved_ids
     decoded_ids = []
     int2byte = six.int2byte
@@ -195,6 +268,12 @@ class ByteTextEncoder(TextEncoder):
 
   @property
   def vocab_size(self):
+      """
+      Str : class : the vocab.
+
+      Args:
+          self: (todo): write your description
+      """
     return 2**8 + self._num_reserved_ids
 
 
@@ -202,6 +281,14 @@ class ClassLabelEncoder(TextEncoder):
   """Encoder for class labels."""
 
   def __init__(self, class_labels=None, class_labels_fname=None):
+      """
+      Initialize class_labels.
+
+      Args:
+          self: (todo): write your description
+          class_labels: (list): write your description
+          class_labels_fname: (str): write your description
+      """
     super(ClassLabelEncoder, self).__init__(num_reserved_ids=0)
 
     if class_labels_fname:
@@ -212,10 +299,25 @@ class ClassLabelEncoder(TextEncoder):
     self._class_labels = class_labels
 
   def encode(self, s):
+      """
+      Encode a string using the given string.
+
+      Args:
+          self: (todo): write your description
+          s: (todo): write your description
+      """
     label_str = s
     return self._class_labels.index(label_str)
 
   def decode(self, ids, strip_extraneous=False):
+      """
+      Decodes a list of labels into a string.
+
+      Args:
+          self: (todo): write your description
+          ids: (list): write your description
+          strip_extraneous: (str): write your description
+      """
     del strip_extraneous
     label_id = ids
     if isinstance(label_id, list):
@@ -226,10 +328,23 @@ class ClassLabelEncoder(TextEncoder):
     return self._class_labels[label_id]
 
   def decode_list(self, ids):
+      """
+      Decode a sequence of ids.
+
+      Args:
+          self: (todo): write your description
+          ids: (str): write your description
+      """
     return [self._class_labels[i] for i in ids]
 
   @property
   def vocab_size(self):
+      """
+      The size of the vocabulary.
+
+      Args:
+          self: (todo): write your description
+      """
     return len(self._class_labels)
 
 
@@ -237,11 +352,28 @@ class OneHotClassLabelEncoder(ClassLabelEncoder):
   """One-hot encoder for class labels."""
 
   def encode(self, label_str, on_value=1, off_value=0):  # pylint: disable=arguments-differ
+      """
+      Encode label_str as a sequence.
+
+      Args:
+          self: (todo): write your description
+          label_str: (str): write your description
+          on_value: (float): write your description
+          off_value: (todo): write your description
+      """
     e = np.full(self.vocab_size, off_value, dtype=np.int32)
     e[self._class_labels.index(label_str)] = on_value
     return e.tolist()
 
   def decode(self, ids, strip_extraneous=False):
+      """
+      Convert a sequence of ids.
+
+      Args:
+          self: (todo): write your description
+          ids: (list): write your description
+          strip_extraneous: (str): write your description
+      """
     del strip_extraneous
     label_id = ids
     if isinstance(label_id, np.ndarray):
@@ -252,6 +384,12 @@ class OneHotClassLabelEncoder(ClassLabelEncoder):
 
   @property
   def vocab_size(self):
+      """
+      The size of the vocabulary.
+
+      Args:
+          self: (todo): write your description
+      """
     return len(self._class_labels)
 
 
@@ -302,17 +440,45 @@ class TokenTextEncoder(TextEncoder):
     return ret[::-1] if self._reverse else ret
 
   def decode(self, ids, strip_extraneous=False):
+      """
+      Decode string ids.
+
+      Args:
+          self: (todo): write your description
+          ids: (list): write your description
+          strip_extraneous: (str): write your description
+      """
     return " ".join(self.decode_list(ids))
 
   def decode_list(self, ids):
+      """
+      Convert a sequence of ids.
+
+      Args:
+          self: (todo): write your description
+          ids: (str): write your description
+      """
     seq = reversed(ids) if self._reverse else ids
     return [self._safe_id_to_token(i) for i in seq]
 
   @property
   def vocab_size(self):
+      """
+      The size of the vocabulary vocabulary.
+
+      Args:
+          self: (todo): write your description
+      """
     return len(self._id_to_token)
 
   def _safe_id_to_token(self, idx):
+      """
+      Returns the token of token.
+
+      Args:
+          self: (todo): write your description
+          idx: (int): write your description
+      """
     return self._id_to_token.get(idx, "ID_%d" % idx)
 
   def _init_vocab_from_file(self, filename):
@@ -325,6 +491,11 @@ class TokenTextEncoder(TextEncoder):
       tokens = [token.strip() for token in f.readlines()]
 
     def token_gen():
+        """
+        Generate tokens from a list of tokens.
+
+        Args:
+        """
       for token in tokens:
         yield token
 
@@ -340,6 +511,11 @@ class TokenTextEncoder(TextEncoder):
       vocab_list: A list of tokens.
     """
     def token_gen():
+        """
+        Generate tokens from a list of tokens.
+
+        Args:
+        """
       for token in vocab_list:
         if token not in RESERVED_TOKENS:
           yield token
@@ -413,6 +589,12 @@ def _unescape_token(escaped_token):
   """
 
   def match(m):
+      """
+      Returns true if the string matches a string.
+
+      Args:
+          m: (todo): write your description
+      """
     if m.group(1) is None:
       return u"_" if m.group(0) == u"\\u" else u"\\"
 
@@ -515,6 +697,13 @@ class SubwordTextEncoder(TextEncoder):
     return tokenizer.decode(self._subtoken_ids_to_tokens(ids))
 
   def decode_list(self, ids):
+      """
+      Decode a list of subtoken ids.
+
+      Args:
+          self: (todo): write your description
+          ids: (str): write your description
+      """
     return [self._subtoken_id_to_subtoken_string(s) for s in ids]
 
   @property
@@ -847,6 +1036,12 @@ class SubwordTextEncoder(TextEncoder):
 
   @property
   def all_subtoken_strings(self):
+      """
+      Return a list of all subtoken strings.
+
+      Args:
+          self: (todo): write your description
+      """
     return tuple(self._all_subtoken_strings)
 
   def dump(self):
@@ -921,6 +1116,14 @@ class SubwordTextEncoder(TextEncoder):
       self._load_from_file_object(f)
 
   def store_to_file(self, filename, add_single_quotes=True):
+      """
+      Store a file to a file.
+
+      Args:
+          self: (todo): write your description
+          filename: (str): write your description
+          add_single_quotes: (bool): write your description
+      """
     with tf.io.gfile.GFile(filename, "w") as f:
       for subtoken_string in self._all_subtoken_strings:
         if add_single_quotes:
@@ -933,6 +1136,16 @@ class ImageEncoder(object):
   """Encoder class for saving and loading images."""
 
   def __init__(self, num_reserved_ids=0, height=None, width=None, channels=3):
+      """
+      Initialize the window.
+
+      Args:
+          self: (todo): write your description
+          num_reserved_ids: (int): write your description
+          height: (int): write your description
+          width: (int): write your description
+          channels: (list): write your description
+      """
     assert num_reserved_ids == 0
     self._height = height
     self._width = width
@@ -940,6 +1153,12 @@ class ImageEncoder(object):
 
   @property
   def num_reserved_ids(self):
+      """
+      Returns the number of reserved ids.
+
+      Args:
+          self: (todo): write your description
+      """
     return 0
 
   def encode(self, s):
@@ -1010,6 +1229,12 @@ class ImageEncoder(object):
 
   @property
   def vocab_size(self):
+      """
+      The size of the vocabulary.
+
+      Args:
+          self: (todo): write your description
+      """
     return 256
 
 

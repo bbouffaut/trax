@@ -226,6 +226,13 @@ def EmbeddingAndPositionalEncodings(input_vocab_size,
   """
   # tokens --> vectors
   def Embedder(vocab_size, embedding_mode):
+      """
+      Batch embedding.
+
+      Args:
+          vocab_size: (int): write your description
+          embedding_mode: (todo): write your description
+      """
     return [
         (tl.Embedding(vocab_size, d_model) if vocab_size is not None
          else tl.Dense(d_model)),
@@ -855,6 +862,11 @@ def EncoderDecoderBlock(d_model, d_ff, n_heads, dropout, dropout_shared_axes,
   """
 
   def _Dropout():
+      """
+      Return a new shared subclass.
+
+      Args:
+      """
     return tl.Dropout(rate=dropout, shared_axes=dropout_shared_axes, mode=mode)
 
   # TODO(afrozm): This layer isn't configurable because: We currently don't have

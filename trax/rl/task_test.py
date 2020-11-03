@@ -31,9 +31,22 @@ class DummyEnv(object):
   action_space = gym.spaces.Discrete(2)
 
   def reset(self):
+      """
+      Reset the dataset.
+
+      Args:
+          self: (todo): write your description
+      """
     return np.ones((2,))
 
   def step(self, action):
+      """
+      Perform action.
+
+      Args:
+          self: (todo): write your description
+          action: (int): write your description
+      """
     del action
     return np.ones((2,)), 0.0, False, None
 
@@ -41,6 +54,12 @@ class DummyEnv(object):
 class TaskTest(absltest.TestCase):
 
   def setUp(self):
+      """
+      Sets the test flag.
+
+      Args:
+          self: (todo): write your description
+      """
     super().setUp()
     test_utils.ensure_flag('test_tmpdir')
 

@@ -33,6 +33,12 @@ from trax.supervised import decoding
 class DecodingTimingTest(test.TestCase):
 
   def test_autoregressive_sample_reformer2_timing(self):
+      """
+      Sample autoregressive autoregressive autoregressive autoregressive autoregressive autoregressive.
+
+      Args:
+          self: (todo): write your description
+      """
     max_len = 16
     all_settings = [
         {'attn_sparsity': 64, 'ff_sparsity': (256, 32),
@@ -49,12 +55,22 @@ class DecodingTimingTest(test.TestCase):
     for settings in all_settings:
 
       def _self_attention_fn():
+          """
+          The attention function.
+
+          Args:
+          """
         return functools.partial(
             tl.SelfAttention,
             predict_drop_len=2 * max_len,
             predict_mem_len=2 * max_len)
 
       def _causal_attention_fn():
+          """
+          Return the bandwidth - related to be encoded filename.
+
+          Args:
+          """
         return functools.partial(
             settings['attn'],  # pylint: disable=cell-var-from-loop
             sparsity=settings['attn_sparsity'],  # pylint: disable=cell-var-from-loop
