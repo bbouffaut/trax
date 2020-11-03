@@ -36,6 +36,11 @@ _TESTDATA = os.path.join(pkg_dir, 'testdata')
 def _test_dataset_ints(inp_lengths, tgt_lengths):
   """Create a test dataset of int64 tensors of given shapes."""
   def generator():
+      """
+      Generate a generator of generator
+
+      Args:
+      """
     for inp_len, tgt_len in zip(inp_lengths, tgt_lengths):
       inp = np.ones([inp_len], dtype=np.int64)
       tgt = np.ones([tgt_len], dtype=np.int64)
@@ -47,19 +52,42 @@ def _test_dataset_ints(inp_lengths, tgt_lengths):
 
 
 def _load_dataset(name, split='train'):
+    """
+    Loads a dataset.
+
+    Args:
+        name: (str): write your description
+        split: (str): write your description
+    """
   return tfds.load(
       name=name, split=split, data_dir=_TESTDATA, shuffle_files=False)
 
 
 def _c4_dataset(split='train'):
+    """
+    Return a c4 dataset.
+
+    Args:
+        split: (str): write your description
+    """
   return _load_dataset('c4:2.3.0', split=split)
 
 
 def _spm_path():
+    """
+    Return the path of the spm file.
+
+    Args:
+    """
   return os.path.join(_TESTDATA, 'sentencepiece.model')
 
 
 def _t5_gin_config():
+    """
+    Binds a t5 config.
+
+    Args:
+    """
   # The following pages worth of gin configuration are required because a lot
   # of T5 functions have `gin.REQUIRED` in code, i.e. you cannot use these
   # functions at all without having configured gin.
@@ -108,11 +136,28 @@ def _t5_gin_config():
 class TFInputsTest(tf.test.TestCase):
 
   def setUp(self):
+      """
+      Set the default configuration
+
+      Args:
+          self: (todo): write your description
+      """
     super().setUp()
     gin.clear_config()
 
   def test_tokenize_detokenize(self):
+      """
+      Tokenize sentences.
+
+      Args:
+          self: (todo): write your description
+      """
     def dataset():
+        """
+        Yield dataset.
+
+        Args:
+        """
       yield 'I have a cat.'
 
     # Character-level.
@@ -143,7 +188,18 @@ class TFInputsTest(tf.test.TestCase):
     self.assertEqual(detok, 'I have a cat.')
 
   def test_tokenize_keys_reservedids(self):
+      """
+      Tokenize the embedding.
+
+      Args:
+          self: (todo): write your description
+      """
     def dataset():
+        """
+        Generate dataset as a generator.
+
+        Args:
+        """
       yield ('Cat.', 'Dog.')
 
     tok_char1 = list(tf_inputs.tokenize(
@@ -157,7 +213,18 @@ class TFInputsTest(tf.test.TestCase):
     self.assertEqual(tok_char2[0][1], 'Dog.')
 
   def test_tokenize_dict(self):
+      """
+      Tokenize the dataset.
+
+      Args:
+          self: (todo): write your description
+      """
     def dataset():
+        """
+        Return dataset dataset.
+
+        Args:
+        """
       yield {'a': 'Cat.', 'b': 'Dog.'}
 
     tok_char1 = list(tf_inputs.tokenize(dataset(), vocab_type='char'))
@@ -170,6 +237,12 @@ class TFInputsTest(tf.test.TestCase):
     self.assertEqual(tok_char2[0]['b'], 'Dog.')
 
   def test_vocab_size(self):
+      """
+      Determines the vocab.
+
+      Args:
+          self: (todo): write your description
+      """
     # Character-level.
     char_size = tf_inputs.vocab_size(vocab_type='char', n_reserved_ids=11)
     self.assertEqual(char_size, 256 + 11)
@@ -185,6 +258,12 @@ class TFInputsTest(tf.test.TestCase):
     self.assertEqual(sbw_size, 8183)
 
   def test_c4_bare_preprocess_fn(self):
+      """
+      Reads the preprocessing.
+
+      Args:
+          self: (todo): write your description
+      """
     dataset = _c4_dataset()
 
     example = list(tfds.as_numpy(dataset.take(1)))[0]
@@ -216,11 +295,29 @@ class TFInputsTest(tf.test.TestCase):
     self.assertEqual(len(example['inputs']), 0)
 
   def test_c4_preprocess(self):
+      """
+      Reads the c4 dataset.
+
+      Args:
+          self: (todo): write your description
+      """
     def load_c4_dataset(split='train'):
+        """
+        Load c4 dataset.
+
+        Args:
+            split: (str): write your description
+        """
       dataset = _c4_dataset(split=split)
       return dataset.map(lambda example: (example, example['text']))
 
     def examine_processed_dataset(proc_dataset):
+        """
+        Examine examples.
+
+        Args:
+            proc_dataset: (todo): write your description
+        """
       count = 0
       lengths = []
       for example in tfds.as_numpy(proc_dataset):
@@ -267,6 +364,12 @@ class TFInputsTest(tf.test.TestCase):
       self.assertLessEqual(spc_len, char_len)
 
   def test_c4(self):
+      """
+      Bind c4 c4.
+
+      Args:
+          self: (todo): write your description
+      """
     gin.bind_parameter('c4_preprocess.max_target_length', 2048)
     gin.bind_parameter('c4_preprocess.tokenization', 'spc')
     gin.bind_parameter('c4_preprocess.spm_path', _spm_path())
@@ -277,6 +380,12 @@ class TFInputsTest(tf.test.TestCase):
         preprocess_fn=tf_inputs.c4_preprocess)
 
   def test_c4_bare_preprocess_fn_denoising_objective(self):
+      """
+      Preprocess the c4 dataset.
+
+      Args:
+          self: (todo): write your description
+      """
     _t5_gin_config()
 
     dataset = _c4_dataset()
@@ -310,6 +419,12 @@ class TFInputsTest(tf.test.TestCase):
     self.assertEqual(1, targets_counter[31998])
 
   def test_c4_pretrain(self):
+      """
+      Preprocess c4 c4.
+
+      Args:
+          self: (todo): write your description
+      """
     _t5_gin_config()
 
     gin.bind_parameter('c4_bare_preprocess_fn.spm_path', _spm_path())
@@ -325,6 +440,12 @@ class TFInputsTest(tf.test.TestCase):
         bare_preprocess_fn=tf_inputs.c4_bare_preprocess_fn)
 
   def test_generic_text_dataset_preprocess_fn(self):
+      """
+      Reads the example of a dataset.
+
+      Args:
+          self: (todo): write your description
+      """
     dataset = _load_dataset('squad/v1.1:2.0.0')
 
     example, = tfds.as_numpy(dataset.take(1))
@@ -349,6 +470,12 @@ class TFInputsTest(tf.test.TestCase):
 
   # TODO(afrozm): Why does this test take so much time?
   def test_inputs_using_generic_text_dataset_preprocess_fn(self):
+      """
+      Preprocess preprocesses.
+
+      Args:
+          self: (todo): write your description
+      """
     gin.bind_parameter(
         'generic_text_dataset_preprocess_fn.spm_path', _spm_path())
     gin.bind_parameter(
@@ -357,6 +484,11 @@ class TFInputsTest(tf.test.TestCase):
 
     # Just make sure this doesn't throw.
     def data_streams():
+        """
+        Reads tf.
+
+        Args:
+        """
       return tf_inputs.data_streams(
           'squad', data_dir=_TESTDATA, input_name='inputs',
           target_name='targets',
@@ -379,6 +511,12 @@ class TFInputsTest(tf.test.TestCase):
     self.assertEqual(tgts.shape[0] % n_devices, 0)
 
   def test_filter_dataset_on_len(self):
+      """
+      This function that the dataset.
+
+      Args:
+          self: (todo): write your description
+      """
     # {1, 2}, {2, 4}, {3, 6} ... {10, 20}
     ds = _test_dataset_ints(range(1, 11), range(2, 21, 2))
 
@@ -400,6 +538,12 @@ class TFInputsTest(tf.test.TestCase):
     self.assertLen(list(ds3.as_numpy_iterator()), 2)
 
   def test_truncate_dataset_on_len(self):
+      """
+      Truncate the dataset.
+
+      Args:
+          self: (todo): write your description
+      """
     ds = _test_dataset_ints([5, 6, 7], [8, 9, 10])
     ds1 = tf_inputs.truncate_dataset_on_len(
         ds, True, len_map={'inputs': 6, 'targets': 4})
@@ -419,6 +563,12 @@ class TFInputsTest(tf.test.TestCase):
     t5_test_utils.assert_dataset(ds3, list(expected_ds.as_numpy_iterator()))
 
   def test_get_t5_preprocessor_by_name(self):
+      """
+      Preprocessor for preprocessor.
+
+      Args:
+          self: (todo): write your description
+      """
     gin.clear_config()
 
     gin.parse_config("""
@@ -435,6 +585,12 @@ class TFInputsTest(tf.test.TestCase):
         {'inputs': 'That is bad.', 'targets': 'That is good.'})
 
   def test_pad_dataset_to_length(self):
+      """
+      Test to pad the length of the dataset.
+
+      Args:
+          self: (todo): write your description
+      """
     ds = _test_dataset_ints([5, 6, 7], [6, 7, 8])
     ds1 = tf_inputs.pad_dataset_to_length(
         ds, True, len_map={'inputs': 7, 'targets': 10})
@@ -457,6 +613,12 @@ class TFInputsTest(tf.test.TestCase):
     t5_test_utils.assert_dataset(ds1, expected_ds)
 
   def test_lm_token_preprocessing(self):
+      """
+      Reads the preprocessing.
+
+      Args:
+          self: (todo): write your description
+      """
     ds = _test_dataset_ints([1, 2, 3], [3, 2, 1])
     ds1 = tf_inputs.lm_token_preprocessing(ds, True)
 

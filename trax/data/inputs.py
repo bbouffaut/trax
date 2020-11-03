@@ -84,6 +84,12 @@ from trax.fastmath import numpy as jnp
 def Serial(*fns):  # pylint: disable=invalid-name
   """Combines generator functions into one that runs them in turn."""
   def composed_fns(generator=None):
+      """
+      Compile of the given a generator.
+
+      Args:
+          generator: (todo): write your description
+      """
     for f in fastmath.tree_flatten(fns):
       generator = f(generator)
     return generator
@@ -93,6 +99,12 @@ def Serial(*fns):  # pylint: disable=invalid-name
 def Log(n_steps_per_example=1, only_shapes=True):  # pylint: disable=invalid-name
   """Creates a logging component of the input pipeline."""
   def log(stream):
+      """
+      Yield a single log of examples.
+
+      Args:
+          stream: (str): write your description
+      """
     counter = 0
     for example in stream:
       item_to_log = example
@@ -368,6 +380,12 @@ def FilterByLength(max_length,  # pylint: disable=invalid-name
   length_keys = length_keys or [0, 1]
   length_fn = lambda x: _length_fn(x, length_axis, length_keys)
   def filtered(gen):
+      """
+      Yields a generator that yields tuples.
+
+      Args:
+          gen: (todo): write your description
+      """
     for example in gen:
       if length_fn(example) <= max_length:
         yield example
@@ -375,6 +393,13 @@ def FilterByLength(max_length,  # pylint: disable=invalid-name
 
 
 def _append_value(generator, val=None):
+    """
+    Add examples for examples.
+
+    Args:
+        generator: (todo): write your description
+        val: (dict): write your description
+    """
   for example in generator:
     if val is not None:
       for key, value in val.items():
@@ -397,6 +422,13 @@ def AppendValue(val=None):  # pylint: disable=invalid-name
 
 
 def _truncate_to_length(generator, len_map=None):
+    """
+    Truncate the length of a generator.
+
+    Args:
+        generator: (todo): write your description
+        len_map: (dict): write your description
+    """
   for example in generator:
     if len_map is not None:
       for key, max_len in len_map.items():
@@ -521,12 +553,33 @@ class Inputs(object):
     self._example_dtype = [x.dtype for x in example_train_batch]
 
   def train_stream(self, n_devices):
+      """
+      Train the device.
+
+      Args:
+          self: (todo): write your description
+          n_devices: (int): write your description
+      """
     return self._train_stream(n_devices)
 
   def eval_stream(self, n_devices):
+      """
+      Evaluate the number of streams.
+
+      Args:
+          self: (todo): write your description
+          n_devices: (int): write your description
+      """
     return self._eval_stream(n_devices)
 
   def train_eval_stream(self, n_devices):
+      """
+      Evaluate all : class.
+
+      Args:
+          self: (todo): write your description
+          n_devices: (int): write your description
+      """
     return self._train_stream(n_devices)
 
   @property

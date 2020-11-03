@@ -32,6 +32,12 @@ np3 = tf.experimental.numpy
 class PublicSymbolTest(tf.test.TestCase):
 
   def testSimple(self):
+      """
+      Test if two vectors are identical
+
+      Args:
+          self: (todo): write your description
+      """
     a = 0.1
     b = 0.2
     for op in [np1.add, np2.add, np3.add]:

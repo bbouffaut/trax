@@ -31,13 +31,32 @@ _TestNamedtuple = collections.namedtuple('_TestNamedtuple', ['x'])
 class BackendTest(test.TestCase, parameterized.TestCase):
 
   def setUp(self):
+      """
+      Set the default configuration
+
+      Args:
+          self: (todo): write your description
+      """
     super().setUp()
     gin.clear_config()
 
   def override_gin(self, bindings):
+      """
+      Parse the given bindings.
+
+      Args:
+          self: (todo): write your description
+          bindings: (dict): write your description
+      """
     gin.parse_config_files_and_bindings(None, bindings)
 
   def test_backend_imports_correctly(self):
+      """
+      Test if backend backend is a numpy.
+
+      Args:
+          self: (todo): write your description
+      """
     backend = fastmath.backend()
     self.assertEqual(jnp, backend['np'])
     self.assertNotEqual(onp, backend['np'])
@@ -49,6 +68,12 @@ class BackendTest(test.TestCase, parameterized.TestCase):
     self.assertEqual(onp, backend['np'])
 
   def test_backend_can_be_set(self):
+      """
+      Check if the backend backend backendable.
+
+      Args:
+          self: (todo): write your description
+      """
     self.assertEqual(fastmath.backend_name(), 'jax')
     fastmath.set_backend('tensorflow-numpy')
     self.assertEqual(fastmath.backend_name(), 'tensorflow-numpy')
@@ -56,6 +81,12 @@ class BackendTest(test.TestCase, parameterized.TestCase):
     self.assertEqual(fastmath.backend_name(), 'jax')
 
   def test_numpy_backend_delegation(self):
+      """
+      Test for numpy. numpy. ndarray.
+
+      Args:
+          self: (todo): write your description
+      """
     # Assert that we are getting JAX's numpy backend.
     backend = fastmath.backend()
     numpy = fastmath.numpy
@@ -84,16 +115,35 @@ class BackendTest(test.TestCase, parameterized.TestCase):
   @parameterized.named_parameters(
       ('_' + b.value, b) for b in (fastmath.Backend.JAX, fastmath.Backend.TFNP))
   def test_fori_loop(self, backend):
+      """
+      Perform backend loop.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+      """
     with fastmath.use_backend(backend):
       res = fastmath.fori_loop(2, 5, lambda i, x: x + i, 1)
       self.assertEqual(res, 1 + 2 + 3 + 4)
 
   def test_nested_map(self):
+      """
+      Test if a nested nested dict contains a nested nested dict.
+
+      Args:
+          self: (todo): write your description
+      """
     inp = {'a': ([0, 1], 2), 'b': _TestNamedtuple(3)}
     out = {'a': ([1, 2], 3), 'b': _TestNamedtuple(4)}
     self.assertEqual(fastmath.nested_map(lambda x: x + 1, inp), out)
 
   def test_nested_stack(self):
+      """
+      Test if the stack
+
+      Args:
+          self: (todo): write your description
+      """
     inp = [
         {'a': ([0, 1], 2), 'b': _TestNamedtuple(3)},
         {'a': ([1, 2], 3), 'b': _TestNamedtuple(4)},
@@ -102,6 +152,12 @@ class BackendTest(test.TestCase, parameterized.TestCase):
     onp.testing.assert_equal(fastmath.nested_stack(inp), out)
 
   def test_names_match(self):
+      """
+      Test for backend backends.
+
+      Args:
+          self: (todo): write your description
+      """
     # Names match up.
     for backend_enum, backend_obj in fastmath.ops._backend_dict.items():
       self.assertEqual(backend_enum.value, backend_obj['name'])
@@ -111,10 +167,22 @@ class BackendTest(test.TestCase, parameterized.TestCase):
       self.assertIn(backend_enum, fastmath.ops._backend_dict)
 
   def test_use_backend_str(self):
+      """
+      Test for backend backend
+
+      Args:
+          self: (todo): write your description
+      """
     with fastmath.use_backend('tensorflow-numpy'):
       self.assertEqual(fastmath.backend_name(), 'tensorflow-numpy')
 
   def test_use_backend_enum(self):
+      """
+      Test that backend backend backend backend.
+
+      Args:
+          self: (todo): write your description
+      """
     with fastmath.use_backend(fastmath.Backend.NUMPY):
       self.assertEqual(fastmath.backend_name(), 'numpy')
 

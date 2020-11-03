@@ -23,6 +23,11 @@ from trax.rl import training
 
 
 def configure_rl(*args, **kwargs):
+    """
+    Configure external external external external configuration.
+
+    Args:
+    """
   kwargs['module'] = 'trax.rl'
   kwargs['blacklist'] = ['task', 'output_dir']
   return gin.external_configurable(*args, **kwargs)

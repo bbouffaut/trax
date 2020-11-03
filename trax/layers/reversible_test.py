@@ -31,6 +31,13 @@ class ReversibleLayerTest(parameterized.TestCase):
 
   @parameterized.named_parameters([('_' + b.value, b) for b in BACKENDS])
   def test_reversible_swap(self, backend):
+      """
+      Test if backend is enabled.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+      """
     with fastmath.use_backend(backend):
       layer = tl.ReversibleSwap()
       xs = [np.array([1, 2]), np.array([10, 20])]

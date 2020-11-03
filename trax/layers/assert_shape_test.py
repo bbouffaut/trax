@@ -26,44 +26,92 @@ class AssertFunctionTest(absltest.TestCase):
   """Test AssertFunction layer."""
 
   def test_simple_pass(self):
+      """
+      Test if the layer passable layer.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertFunction('abc->abc', tl.Dropout(rate=0.1))
     x = np.ones((2, 5, 20))
     layer(x)
 
   def test_simple_fail(self):
+      """
+      Test that test test.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertFunction('abc->cba', tl.Dropout(rate=0.1))
     x = np.ones((2, 5, 20))
     with self.assertRaises(tl.LayerError):
       layer(x)
 
   def test_reduce_rank_ellipsis_pass(self):
+      """
+      Reduce the ellipsis ellipis.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertFunction('...ab->...c', tl.Flatten(n_axes_to_keep=3))
     x = np.ones((1, 2, 3, 4, 5))
     layer(x)
 
   def test_reduce_rank_explicit_pass(self):
+      """
+      Reduce the rank of each layer.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertFunction('xyzab->xyzc', tl.Flatten(n_axes_to_keep=3))
     x = np.ones((1, 2, 3, 4, 5))
     layer(x)
 
   def test_reduce_rank_to_one_pass(self):
+      """
+      Reduce the test test test is_reduce.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertFunction('abcde->x', tl.Flatten(n_axes_to_keep=0))
     x = np.ones((1, 2, 3, 4, 5))
     layer(x)
 
   def test_reduce_rank_explicit_fail1(self):
+      """
+      Reduce the rank of each test is a test.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertFunction('abcde->abcde', tl.Flatten(n_axes_to_keep=3))
     x = np.ones((1, 2, 3, 4, 5))
     with self.assertRaises(tl.LayerError):
       layer(x)
 
   def test_reduce_rank_explicit_fail2(self):
+      """
+      Reduce the rank of the test test.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertFunction('abcde->abcd', tl.Flatten(n_axes_to_keep=3))
     x = np.ones((1, 2, 3, 4, 5))
     with self.assertRaises(tl.LayerError):
       layer(x)
 
   def test_two_outputs_pass(self):
+      """
+      Test if a layer has a 1d. 0.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertFunction(
         '...cd->...x,...cd',
         tl.Branch(
@@ -74,6 +122,12 @@ class AssertFunctionTest(absltest.TestCase):
     layer(x)
 
   def test_numeric_dimensions_pass(self):
+      """
+      Test if the layer is numeric.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertFunction(
         '...34->1234,...34',
         tl.Branch(
@@ -84,6 +138,12 @@ class AssertFunctionTest(absltest.TestCase):
     layer(x)
 
   def test_too_many_outputs_fail(self):
+      """
+      Test that all outputs have a test outputs.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertFunction(
         '...cd->...x,...cd,...cd,...cd',
         tl.Branch(
@@ -96,6 +156,12 @@ class AssertFunctionTest(absltest.TestCase):
       layer(x)
 
   def test_multi_output_rank_fail(self):
+      """
+      Test for test test test.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertFunction(
         '...34->...x,...y',
         tl.Branch(
@@ -111,162 +177,324 @@ class AssertShapeTest(absltest.TestCase):
   """Test AssertShape layer."""
 
   def test_simple_pass(self):
+      """
+      Test if the layer pass pass to test.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('aba,ba')
     x = [np.ones((10, 5, 10)), np.zeros((5, 10))]
     y = layer(x)
     self.assertEqual(y, x)
 
   def test_same_shapes_pass(self):
+      """
+      Test if the layer has the same.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('aba,ba')
     x = [np.ones((5, 5, 5)), np.zeros((5, 5))]
     y = layer(x)
     self.assertEqual(y, x)
 
   def test_single_arg_pass(self):
+      """
+      Test if the test pass of the test pass.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('a')
     x = np.ones((5,))
     y = layer(x)
     self.assertEqual(y.tolist(), x.tolist())
 
   def test_scalar_pass(self):
+      """
+      Test if the test pass is a scalar.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('')
     x = np.ones(())
     y = layer(x)
     self.assertEqual(y.tolist(), x.tolist())
 
   def test_square_matrix_pass(self):
+      """
+      Compute the square matrix of the square matrix.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('aa')
     x = np.ones((3, 3))
     y = layer(x)
     self.assertEqual(y.tolist(), x.tolist())
 
   def test_vector_scalar_pass(self):
+      """
+      Test if vector test vector is a vector.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('a,')
     x = [np.ones((5,)), np.zeros(())]
     y = layer(x)
     self.assertEqual(y, x)
 
   def test_three_args_pass(self):
+      """
+      Test if the test test is the test.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('a,b,a')
     x = [np.ones((5,)), np.zeros((2)), np.zeros((5))]
     y = layer(x)
     self.assertEqual(y, x)
 
   def test_multiple_matching_dims_pass(self):
+      """
+      Test if there ising test layers.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('a,b,a,ab')
     x = [np.ones((5,)), np.zeros((2)), np.zeros((5)), np.zeros((5, 2))]
     y = layer(x)
     self.assertEqual(y, x)
 
   def test_numeric_dims_pass(self):
+      """
+      Test if the layer is numeric.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('23,1,93')
     x = [np.ones((2, 3)), np.zeros((1)), np.zeros((9, 3))]
     y = layer(x)
     self.assertEqual(y, x)
 
   def test_numeric_dims_fail(self):
+      """
+      Test if the test test test.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('24,1,93')
     x = [np.ones((2, 3)), np.zeros((1)), np.zeros((9, 3))]
     with self.assertRaises(tl.LayerError):
       layer(x)
 
   def test_ellipsis_middle_pass(self):
+      """
+      Test if the ellipsis ellipsis ellipis.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('a...bc,abc')
     x = [np.ones((1, 5, 5, 2, 3)), np.zeros((1, 2, 3))]
     y = layer(x)
     self.assertEqual(y, x)
 
   def test_ellipsis_prefix_pass(self):
+      """
+      Test if ellipsis ellipisis ellipsis.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('...bc,abc')
     x = [np.ones((5, 5, 2, 3)), np.zeros((1, 2, 3))]
     y = layer(x)
     self.assertEqual(y, x)
 
   def test_ellipsis_matching_zero_dims_pass(self):
+      """
+      Test if ellipsis ellipsis ellipsis ellipsis ellipsois.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('...bc,abc')
     x = [np.ones((2, 3)), np.zeros((1, 2, 3))]
     y = layer(x)
     self.assertEqual(y, x)
 
   def test_ellipsis_matching_ellipsis_pass(self):
+      """
+      Test if ellipsis ellipsis ellipsis ellipsois.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('...bc,...bc')
     x = [np.ones((1, 2, 3)), np.zeros((1, 2, 3))]
     y = layer(x)
     self.assertEqual(y, x)
 
   def test_prefix_ellipsis_matching_sufix_ellipsis_pass(self):
+      """
+      Test if ellipsis ellipsis ellipis 2.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('bb...,...bb')
     x = [np.ones((2, 2, 5, 6)), np.zeros((5, 6, 2, 2))]
     y = layer(x)
     self.assertEqual(y, x)
 
   def test_middle_ellipsis_fail(self):
+      """
+      Test if the ellipis ellipis.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('ab...cde,2')
     x = [np.ones((2, 3, 4, 5)), np.zeros((2))]
     with self.assertRaises(tl.LayerError):
       layer(x)
 
   def test_short_middle_ellipsis_fail(self):
+      """
+      Test if the ellipsis is ellips the ellipsis.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('b...c,2')
     x = [np.ones((2)), np.zeros((2))]
     with self.assertRaises(tl.LayerError):
       layer(x)
 
   def test_double_ellipsis_fail(self):
+      """
+      Test if ellipsis double double double double zero.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('b......c,2')
     x = [np.ones((2, 3, 4, 5)), np.zeros((2))]
     with self.assertRaises(tl.LayerError):
       layer(x)
 
   def test_typo_ellipsis_fail(self):
+      """
+      Test that the ellipsis error.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('b..c,2')
     x = [np.ones((2, 3, 4, 5)), np.zeros((2))]
     with self.assertRaises(tl.LayerError):
       layer(x)
 
   def test_ellipsis_matching_ellipsis_fail(self):
+      """
+      Test if ellipis ellipsis ellipsis ellipsis match the ellipsis ellipsis.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('...a,...b')
     x = [np.ones((1, 2, 3, 7)), np.zeros((1, 2, 8))]
     with self.assertRaises(tl.LayerError):
       layer(x)
 
   def test_ellipsis_numeric_pass(self):
+      """
+      Test if the ellipsis ellipsis is the ellipsis.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('...22,...3')
     x = [np.ones((1, 2, 3, 2, 2)), np.zeros((1, 2, 3, 3))]
     y = layer(x)
     self.assertEqual(y, x)
 
   def test_prefix_and_sufix_ellipsis_fail(self):
+      """
+      Test if the ellipsis and 2d.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('...c...,2')
     x = [np.ones((2, 3, 4, 5)), np.zeros((2))]
     with self.assertRaises(tl.LayerError):
       layer(x)
 
   def test_ellipsis_too_few_dims_fail(self):
+      """
+      Test if the ellipis ellipsis ellipsis.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('...abc,2')
     x = [np.ones((4, 5)), np.zeros((2))]
     with self.assertRaises(tl.LayerError):
       layer(x)
 
   def test_ellipses_matching_dims_fail(self):
+      """
+      Test if ellipes ellipses match the ellipses.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('...2,...8')
     x = [np.ones((1, 2, 3, 9)), np.zeros((1, 3, 3, 8))]
     with self.assertRaises(tl.LayerError):
       layer(x)
 
   def test_dims_matching_fail(self):
+      """
+      Test if the test matches a test.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('aba,ab')
     x = [np.ones((10, 5, 10)), np.ones((5, 8))]
     with self.assertRaises(tl.LayerError):
       layer(x)
 
   def test_rank_fail(self):
+      """
+      Test that the test is a test.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('aba,ab')
     x = [np.ones((10, 5, 10)), np.ones((5, 10, 4))]
     with self.assertRaises(tl.LayerError):
       layer(x)
 
   def test_square_matrix_fail(self):
+      """
+      Test if a square matrix.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.AssertShape('aa')
     x = np.ones((10, 5))
     with self.assertRaises(tl.LayerError):

@@ -27,6 +27,12 @@ from trax.shapes import ShapeDtype
 class AtariCnnTest(test.TestCase):
 
   def test_computes(self):
+      """
+      Test if the model is in the same.
+
+      Args:
+          self: (todo): write your description
+      """
     hidden_size = (4, 4)
     output_size = 6
     model = atari_cnn.AtariCnn(
@@ -43,6 +49,12 @@ class AtariCnnTest(test.TestCase):
 class FrameStackMLPTest(test.TestCase):
 
   def test_computes(self):
+      """
+      Compute the model is the test for the model
+
+      Args:
+          self: (todo): write your description
+      """
     hidden_size = (4, 4)
     output_size = 6
     model = atari_cnn.FrameStackMLP(

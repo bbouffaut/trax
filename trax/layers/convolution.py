@@ -33,6 +33,21 @@ class Conv(base.Layer):
                dimension_numbers=('NHWC', 'HWIO', 'NHWC'),
                kernel_initializer=None,
                bias_initializer=init.RandomNormalInitializer(1e-6)):
+      """
+      Initialize the kernel.
+
+      Args:
+          self: (todo): write your description
+          filters: (list): write your description
+          kernel_size: (int): write your description
+          strides: (int): write your description
+          padding: (str): write your description
+          dimension_numbers: (int): write your description
+          kernel_initializer: (int): write your description
+          bias_initializer: (int): write your description
+          init: (str): write your description
+          RandomNormalInitializer: (bool): write your description
+      """
     super().__init__()
     self._filters = filters
     self._kernel_size = kernel_size
@@ -49,10 +64,23 @@ class Conv(base.Layer):
           rhs_spec.index('O'), rhs_spec.index('I'))
 
   def _check_nhwc(self):
+      """
+      Checks if the specification.
+
+      Args:
+          self: (todo): write your description
+      """
     msg = 'Convolutions on more than 4 dimensions only supported in NHWC.'
     assert self._lhs_spec == self._out_spec == 'NHWC', msg
 
   def forward(self, x):
+      """
+      Forward computation.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+      """
     w, b = self.weights
     x_shape = list(x.shape)
     if len(x_shape) > 4:
@@ -74,6 +102,13 @@ class Conv(base.Layer):
             next(kernel_size_iter) for c in self._rhs_spec]
 
   def init_weights_and_state(self, input_signature):
+      """
+      Initialize the weights.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (bool): write your description
+      """
     input_shape = input_signature.shape
     if len(input_shape) > 4:
       self._check_nhwc()
@@ -99,6 +134,18 @@ class CausalConv(Conv):
                kernel_width=3,
                kernel_initializer=None,
                bias_initializer=init.RandomNormalInitializer(1e-6)):
+      """
+      Initialize kernel
+
+      Args:
+          self: (todo): write your description
+          filters: (list): write your description
+          kernel_width: (todo): write your description
+          kernel_initializer: (int): write your description
+          bias_initializer: (int): write your description
+          init: (str): write your description
+          RandomNormalInitializer: (bool): write your description
+      """
     super().__init__(
         filters=filters,
         kernel_size=(kernel_width,),
@@ -109,6 +156,13 @@ class CausalConv(Conv):
         bias_initializer=bias_initializer)
 
   def forward(self, x):
+      """
+      Forward computation.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+      """
     assert self._padding == 'VALID'
     # Left pad with 0s. Applying an unmasked valid convolution on top of this
     # yields a causal convolution.
@@ -124,6 +178,19 @@ class CausalConv(Conv):
 def Conv1d(filters, kernel_size, stride=1, padding='VALID',
            kernel_initializer=None,
            bias_initializer=init.RandomNormalInitializer(1e-6)):
+    """
+    A wrapper function for conv1d.
+
+    Args:
+        filters: (list): write your description
+        kernel_size: (int): write your description
+        stride: (int): write your description
+        padding: (str): write your description
+        kernel_initializer: (bool): write your description
+        bias_initializer: (bool): write your description
+        init: (todo): write your description
+        RandomNormalInitializer: (bool): write your description
+    """
   return Conv(filters, (kernel_size,), strides=(stride,), padding=padding,
               dimension_numbers=('NWC', 'WIO', 'NWC'),
               kernel_initializer=kernel_initializer,

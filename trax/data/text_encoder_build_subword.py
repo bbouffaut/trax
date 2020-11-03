@@ -52,6 +52,12 @@ FLAGS = flags.FLAGS
 
 
 def main(unused_argv):
+    """
+    Main function.
+
+    Args:
+        unused_argv: (bool): write your description
+    """
   if FLAGS.corpus_filepattern and FLAGS.vocab_filepattern:
     raise ValueError(
         'Must only provide one of --corpus_filepattern or --vocab_filepattern')

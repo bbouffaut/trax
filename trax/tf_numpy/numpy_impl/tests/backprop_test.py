@@ -29,6 +29,12 @@ from trax.tf_numpy.numpy_impl import math_ops  # pylint: disable=unused-import
 class BackpropTest(tf.test.TestCase):
 
   def test_setitem(self):
+      """
+      Perform the objective function.
+
+      Args:
+          self: (todo): write your description
+      """
     # Single integer index.
     a = array_ops.array([1., 2., 3.])
     b = array_ops.array(5.)

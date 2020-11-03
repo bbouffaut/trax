@@ -29,6 +29,16 @@ class RMSProp(opt_base.Optimizer):
 
   def __init__(self, learning_rate=0.001, gamma=0.9,
                eps=1e-8, clip_grad_norm=None):  # pylint: disable=useless-super-delegation
+      """
+      Initialize the gradient.
+
+      Args:
+          self: (todo): write your description
+          learning_rate: (float): write your description
+          gamma: (float): write your description
+          eps: (float): write your description
+          clip_grad_norm: (todo): write your description
+      """
     super().__init__(
         learning_rate=learning_rate,
         gamma=gamma,
@@ -37,9 +47,27 @@ class RMSProp(opt_base.Optimizer):
     )
 
   def init(self, weights):
+      """
+      Initialize weights.
+
+      Args:
+          self: (todo): write your description
+          weights: (array): write your description
+      """
     return jnp.ones_like(weights)
 
   def update(self, step, grads, weights, avg_sq_grad, opt_params):
+      """
+      Update the gradients step.
+
+      Args:
+          self: (todo): write your description
+          step: (int): write your description
+          grads: (array): write your description
+          weights: (array): write your description
+          avg_sq_grad: (array): write your description
+          opt_params: (dict): write your description
+      """
     del step
     lr = opt_params['learning_rate']
     gamma = opt_params['gamma']

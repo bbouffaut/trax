@@ -26,6 +26,12 @@ from trax.models.research import transformer2
 class Transformer2Test(absltest.TestCase):
 
   def test_concat_with_padding(self):
+      """
+      Concat with padding is a 4.
+
+      Args:
+          self: (todo): write your description
+      """
     vec_e = np.array(
         [[[7, 5, 2, 8, 8, 8, 6, 7],
           [8, 2, 6, 2, 1, 1, 4, 2],
@@ -91,6 +97,12 @@ class Transformer2Test(absltest.TestCase):
     )
 
   def test_concat_with_padding_predict(self):
+      """
+      Concatenate the padding padding.
+
+      Args:
+          self: (todo): write your description
+      """
     vec_e = np.array(
         [[[7, 5, 2, 8, 8, 8, 6, 7],
           [8, 2, 6, 2, 1, 1, 4, 2],
@@ -161,6 +173,12 @@ class Transformer2Test(absltest.TestCase):
       np.testing.assert_equal(y, vec_d)
 
   def test_strip_from_concatenate_with_padding(self):
+      """
+      Return the image is_decode
+
+      Args:
+          self: (todo): write your description
+      """
     enc_dec = np.array(
         [[[7, 5, 2, 8, 8, 8, 6, 7],
           [8, 2, 6, 2, 1, 1, 4, 2],
@@ -206,6 +224,12 @@ class Transformer2Test(absltest.TestCase):
                    [0, 0, 0, 0, 0, 0, 0, 0]]]))
 
   def test_strip_from_concatenate_with_padding_predict(self):
+      """
+      Predict padding is_predict.
+
+      Args:
+          self: (todo): write your description
+      """
     enc_dec = np.array(
         [[[7, 5, 2, 8, 8, 8, 6, 7],
           [8, 2, 6, 2, 1, 1, 4, 2],
@@ -256,6 +280,12 @@ class Transformer2Test(absltest.TestCase):
       np.testing.assert_equal(y, enc_dec)
 
   def test_transformer_noencdec_forward_shape(self):
+      """
+      Test for batches of the model.
+
+      Args:
+          self: (todo): write your description
+      """
     input_vocab_size = 16
     output_vocab_size = 16
 

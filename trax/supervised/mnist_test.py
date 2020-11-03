@@ -85,6 +85,12 @@ class MnistTest(absltest.TestCase):
 
 
 def _build_model(two_heads):
+    """
+    Build a model object from two - place.
+
+    Args:
+        two_heads: (todo): write your description
+    """
   cls_head = tl.Serial(tl.Dense(10), tl.LogSoftmax())
   if two_heads:
     reg_head = tl.Dense(1)
@@ -113,7 +119,18 @@ def _mnist_dataset():
 def _mnist_brightness_dataset():
   """Loads (and caches) a MNIST mean brightness data set."""
   def preprocess_stream(stream):
+      """
+      Preprocess an image stream.
+
+      Args:
+          stream: (str): write your description
+      """
     def new_stream():
+        """
+        Generate a new image from an image.
+
+        Args:
+        """
       for (image, _) in stream():
         yield (image, (image / 255).mean()[None])
     return new_stream
@@ -154,6 +171,13 @@ def _mnist_tasks(head=None):
 
 
 def _read_metric(metric_name, stdout):
+    """
+    Read metric from the metric.
+
+    Args:
+        metric_name: (str): write your description
+        stdout: (todo): write your description
+    """
   log = stdout.getvalue()
   metric_log = [line for line in log.split('\n') if metric_name in line][-1]
   return float(metric_log.strip().split(' ')[-1])

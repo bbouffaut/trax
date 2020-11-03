@@ -53,6 +53,12 @@ def load():
   test_data = (test_data[0], [to_one_hot(x) for x in test_data[1]])
 
   def shuffle(data):
+      """
+      Shuffle an array of the data.
+
+      Args:
+          data: (array): write your description
+      """
     zipped = zip(*data)
     random.shuffle(zipped)
     return zip(*zipped)
@@ -61,6 +67,13 @@ def load():
 
 
 def to_one_hot(label, num_classes=10):
+    """
+    Convert label to_one_classes.
+
+    Args:
+        label: (str): write your description
+        num_classes: (int): write your description
+    """
   vec = np.zeros(num_classes, dtype=np.float32)
   vec[label] = 1.
   return vec
@@ -74,6 +87,14 @@ def _maybe_download():
   if not os.path.exists(filepath):
 
     def _progress(count, block_size, total_size):
+        """
+        Prints the progress.
+
+        Args:
+            count: (int): write your description
+            block_size: (int): write your description
+            total_size: (int): write your description
+        """
       print('\r>> Downloading %s %.1f%%' %
             (filename, float(count * block_size) / float(total_size) * 100.0))
 
@@ -86,4 +107,9 @@ def _maybe_download():
 
 
 def _get_data_dir():
+    """
+    Returns the full path to the data directory.
+
+    Args:
+    """
   return '/tmp'

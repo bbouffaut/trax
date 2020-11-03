@@ -34,6 +34,18 @@ class BatchNorm(base.Layer):
 
   def __init__(self, axis=(0, 1, 2), epsilon=1e-5, center=True, scale=True,
                momentum=0.999, mode='train'):
+      """
+      Initialize the device.
+
+      Args:
+          self: (todo): write your description
+          axis: (int): write your description
+          epsilon: (float): write your description
+          center: (list): write your description
+          scale: (float): write your description
+          momentum: (array): write your description
+          mode: (todo): write your description
+      """
     super().__init__()
     self._axis = axis
     self._epsilon = epsilon
@@ -84,6 +96,13 @@ class BatchNorm(base.Layer):
     beta = jnp.zeros(shape, dtype='float32') if self._center else ()
     gamma = jnp.ones(shape, dtype='float32') if self._scale else ()
     def get_stats_axis(i, d):
+        """
+        Return the axis axis for i.
+
+        Args:
+            i: (str): write your description
+            d: (str): write your description
+        """
       if i in axis:
         return 1
       else:
@@ -96,6 +115,13 @@ class BatchNorm(base.Layer):
     self.state = (running_mean, running_var, n_batches)
 
   def _fast_mean_and_variance(self, x):
+      """
+      Compute mean and variance.
+
+      Args:
+          self: (todo): write your description
+          x: (array): write your description
+      """
     mean = jnp.mean(x, self._axis, keepdims=True)
     # Fast but less numerically-stable variance calculation than jnp.var.
     m1 = jnp.mean(x**2, self._axis, keepdims=True)
@@ -103,11 +129,28 @@ class BatchNorm(base.Layer):
     return mean, variance
 
   def _z_score(self, x, mean, variance):
+      """
+      Returns the z - score of the normal distribution.
+
+      Args:
+          self: (todo): write your description
+          x: (array): write your description
+          mean: (array): write your description
+          variance: (todo): write your description
+      """
     mu = mean.astype(x.dtype)
     sigma = jnp.sqrt(variance + self._epsilon).astype(x.dtype)
     return (x - mu) / sigma
 
   def _beta_gamma_with_correct_axes(self, x, weights):
+      """
+      R beta beta beta.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+          weights: (array): write your description
+      """
     # Expand the parameters to have the right axes.
     beta, gamma = weights
     # TODO(phawkins): jnp.expand_dims should accept an axis tuple.
@@ -123,10 +166,24 @@ class LayerNorm(base.Layer):
   """Layer normalization."""
 
   def __init__(self, epsilon=1e-6):
+      """
+      Initialize eigenvalue.
+
+      Args:
+          self: (todo): write your description
+          epsilon: (float): write your description
+      """
     super().__init__()
     self._epsilon = epsilon
 
   def forward(self, x):
+      """
+      Evaluate the model.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+      """
     scale, bias = self.weights
     mean = jnp.mean(x, axis=-1, keepdims=True)
     centered = x - mean
@@ -135,6 +192,13 @@ class LayerNorm(base.Layer):
     return norm_inputs * scale + bias
 
   def init_weights_and_state(self, input_signature):
+      """
+      Initialize the weights.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (bool): write your description
+      """
     features = input_signature.shape[-1]
     scale = jnp.ones(features, dtype=input_signature.dtype)
     bias = jnp.zeros(features, dtype=input_signature.dtype)
@@ -152,6 +216,16 @@ class FilterResponseNorm(base.Layer):
                learn_epsilon=False,
                init_epsilon=1e-6,
                init_learnt_epsilon=1e-4):
+      """
+      Initialize the superclassifier.
+
+      Args:
+          self: (todo): write your description
+          mode: (todo): write your description
+          learn_epsilon: (float): write your description
+          init_epsilon: (float): write your description
+          init_learnt_epsilon: (float): write your description
+      """
     super().__init__()
 
     del mode
@@ -172,6 +246,13 @@ class FilterResponseNorm(base.Layer):
                                           dtype=jnp.float32)
 
   def forward(self, inputs):
+      """
+      Perform forward
+
+      Args:
+          self: (todo): write your description
+          inputs: (todo): write your description
+      """
     gamma, beta, epsilon_l = self.weights
 
     epsilon = self._init_epsilon
@@ -188,6 +269,13 @@ class FilterResponseNorm(base.Layer):
     return gamma * xhat + beta
 
   def init_weights_and_state(self, input_signature):
+      """
+      Initialize the weights.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (bool): write your description
+      """
     # Usually (B, W, H, C)
     shape = input_signature.shape
     num_channels = shape[-1]
@@ -203,5 +291,13 @@ class FilterResponseNorm(base.Layer):
 
 
 def _exponentially_smoothed(momentum, old, new):
+    """
+    Smoot a new sampling.
+
+    Args:
+        momentum: (todo): write your description
+        old: (todo): write your description
+        new: (todo): write your description
+    """
   smoothed_value = momentum * old + (1 - momentum) * new
   return smoothed_value.astype(old.dtype)

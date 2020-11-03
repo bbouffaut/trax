@@ -31,21 +31,63 @@ def get_prng(seed):
 
 
 def random_uniform(rng, shape=(), dtype=np.float64, minval=0.0, maxval=1.0):
+    """
+    Return a random uniform uniform random variates.
+
+    Args:
+        rng: (todo): write your description
+        shape: (int): write your description
+        dtype: (float): write your description
+        np: (todo): write your description
+        float64: (todo): write your description
+        minval: (float): write your description
+        maxval: (int): write your description
+    """
   del rng
   return np.random.uniform(minval, maxval, size=shape).astype(dtype)
 
 
 def random_normal(rng, shape=(), dtype=np.float64):
+    """
+    Return a random array.
+
+    Args:
+        rng: (int): write your description
+        shape: (int): write your description
+        dtype: (todo): write your description
+        np: (int): write your description
+        float64: (int): write your description
+    """
   del rng
   return np.random.normal(size=shape).astype(dtype)
 
 
 def random_randint(rng, shape, minval, maxval, dtype=np.int64):
+    """
+    Return a random integer.
+
+    Args:
+        rng: (int): write your description
+        shape: (int): write your description
+        minval: (float): write your description
+        maxval: (int): write your description
+        dtype: (todo): write your description
+        np: (array): write your description
+        int64: (int): write your description
+    """
   del rng
   return np.random.randint(minval, maxval, size=shape).astype(dtype)
 
 
 def random_bernoulli(rng, p=0.5, shape=()):
+    """
+    Return a random variates.
+
+    Args:
+        rng: (todo): write your description
+        p: (int): write your description
+        shape: (list): write your description
+    """
   del rng
   return np.random.binomial(1, p, size=shape)
 
@@ -53,6 +95,11 @@ def random_bernoulli(rng, p=0.5, shape=()):
 def np_abstract_eval(f):
   """Abstract evaluation in numpy by running the real function on 0s."""
   def abstract_f(*args, **kwargs):
+      """
+      Return a function.
+
+      Args:
+      """
     real_args = [nested_map(lambda x: np.zeros(x.shape, x.dtype), a)
                  for a in args]
     real_res = f(*real_args, **kwargs)

@@ -30,6 +30,12 @@ from trax import shapes
 class AccelerationTest(absltest.TestCase):
 
   def test_accelerated_same_result(self):
+      """
+      Perform a random hypercelerator.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Dense(2)
     x = np.random.uniform(size=(8, 7))
     layer.init(shapes.signature(x))
@@ -40,6 +46,12 @@ class AccelerationTest(absltest.TestCase):
       self.assertAlmostEqual(float(y[i, 1]), float(z[i, 1]), places=4)
 
   def test_accelerated_pad(self):
+      """
+      Test for zero - randomly sampled.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Dense(2)
     x = np.random.uniform(size=(3, 7))
     layer.init(shapes.signature(x))
@@ -68,7 +80,22 @@ class AccelerationTest(absltest.TestCase):
 
     @fastmath.jit
     def mock_training_step(x, weights, state, rng):
+        """
+        Perform a single loss.
+
+        Args:
+            x: (todo): write your description
+            weights: (array): write your description
+            state: (todo): write your description
+            rng: (todo): write your description
+        """
       def compute_mock_loss(weights):
+          """
+          Compute the weights.
+
+          Args:
+              weights: (array): write your description
+          """
         logits, new_state = chunked.pure_fn(x, weights, state, rng)
         loss = fastmath.numpy.mean(logits)
         return loss, (new_state, logits)

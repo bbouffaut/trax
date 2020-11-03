@@ -56,6 +56,13 @@ def InitializerFromFile(path):
   """Loads parameters from .npy file."""
 
   def Initializer(shape, rng):
+      """
+      Creates a tf. tng file.
+
+      Args:
+          shape: (int): write your description
+          rng: (array): write your description
+      """
     del rng
     logging.info('Loading pretrained embeddings from %s', path)
     with tf.io.gfile.GFile(path, 'rb') as f:

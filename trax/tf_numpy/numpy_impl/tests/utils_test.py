@@ -28,6 +28,12 @@ class UtilsTest(tf.test.TestCase):
 
   # pylint: disable=unused-argument
   def testNpDoc(self):
+      """
+      Decorator for the docstring.
+
+      Args:
+          self: (todo): write your description
+      """
     def np_fun(x):
       """np_fun docstring."""
       return

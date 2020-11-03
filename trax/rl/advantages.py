@@ -41,6 +41,15 @@ def monte_carlo(gamma, margin):
   """
   del gamma
   def estimator(rewards, returns, values, dones):
+      """
+      R calculate the estimator.
+
+      Args:
+          rewards: (todo): write your description
+          returns: (todo): write your description
+          values: (str): write your description
+          dones: (todo): write your description
+      """
     (_, length) = returns.shape
     # Make sure that the future returns and values at "done" states are zero.
     returns[dones] = rewards[dones]
@@ -71,6 +80,15 @@ def td_k(gamma, margin):
     advantages is an array of shape [batch_size, length - margin].
   """
   def estimator(rewards, returns, values, dones):
+      """
+      Estimate the estimator estimator.
+
+      Args:
+          rewards: (todo): write your description
+          returns: (todo): write your description
+          values: (str): write your description
+          dones: (todo): write your description
+      """
     del returns
     # Here we calculate advantage with TD-k, where k=margin.
     k = margin
@@ -110,6 +128,15 @@ def td_lambda(gamma, margin, lambda_=0.95):
     advantages is an array of shape [batch_size, length - margin].
   """
   def estimator(rewards, returns, values, dones):
+      """
+      R calculate the estimator.
+
+      Args:
+          rewards: (todo): write your description
+          returns: (todo): write your description
+          values: (str): write your description
+          dones: (todo): write your description
+      """
     td_returns = np.zeros_like(returns)
     (_, length) = returns.shape
     td_returns[:, -1] = values[:, -1]
@@ -138,6 +165,15 @@ def gae(gamma, margin, lambda_=0.95):
     advantages is an array of shape [batch_size, length - margin].
   """
   def estimator(rewards, returns, values, dones):
+      """
+      R calculate the estimator.
+
+      Args:
+          rewards: (todo): write your description
+          returns: (todo): write your description
+          values: (str): write your description
+          dones: (todo): write your description
+      """
     del returns
     advantages = np.zeros_like(rewards)
     (_, length) = rewards.shape

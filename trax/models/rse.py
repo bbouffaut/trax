@@ -28,6 +28,12 @@ from trax.layers.assert_shape import assert_shape
 
 # pylint: disable=invalid-name
 def _inverse_sigmoid(x):
+    """
+    Inverse of sigmoid.
+
+    Args:
+        x: (todo): write your description
+    """
   return np.log(x / (1 - x))
 
 
@@ -37,14 +43,35 @@ class ClippedScaling(tl.Layer):
 
   def __init__(self,
                residual_weight):
+      """
+      Initialize weight function.
+
+      Args:
+          self: (todo): write your description
+          residual_weight: (int): write your description
+      """
     super().__init__(n_in=1, n_out=1)
     self.residual_weight = residual_weight
 
   def forward(self, x):
+      """
+      Forward computation.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+      """
     s = self.weights
     return jnp.multiply(x, fastmath.expit(s))
 
   def init_weights_and_state(self, input_signature):
+      """
+      Initialize the weights.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (bool): write your description
+      """
     self.weights = _inverse_sigmoid(self.residual_weight) * np.ones(
         (input_signature.shape[-1])).astype('float32')
 
@@ -156,11 +183,21 @@ def shuffle_layer(inputs, shuffle_fn):
 
 @assert_shape('bld->bld')
 def ShuffleLayer():
+    """
+    Shuffle the layer.
+
+    Args:
+    """
   return tl.Fn(
       'ShuffleLayer', lambda x: shuffle_layer(x, ror), n_out=1)
 
 
 @assert_shape('bld->bld')
 def ReverseShuffleLayer():
+    """
+    Shuffle the layer of the layers.
+
+    Args:
+    """
   return tl.Fn(
       'ReverseShuffleLayer', lambda x: shuffle_layer(x, rol), n_out=1)

@@ -29,6 +29,12 @@ class DenseTest(absltest.TestCase):
   """Test Dense layer per se and as a key example of trainable layers."""
 
   def test_call_before_init_raises_error(self):
+      """
+      Initialize error after error.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Dense(5)
     x = np.array([1, 2, 3])
 
@@ -37,6 +43,12 @@ class DenseTest(absltest.TestCase):
       _ = layer(x)
 
   def test_call_uses_and_caches_supplied_weights(self):
+      """
+      Test if the hyperb is a set of the weights.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Dense(4)
     x = np.array([2, 3])
 
@@ -60,6 +72,12 @@ class DenseTest(absltest.TestCase):
     self.assertEqual(b.tolist(), b_cached.tolist())
 
   def test_separate_instances_have_separate_weights(self):
+      """
+      Test the weights of the model.
+
+      Args:
+          self: (todo): write your description
+      """
     # Two dense layer instances: each will get its own initial weights (w, b).
     model = tl.Serial(tl.Dense(5), tl.Dense(5))
 
@@ -74,6 +92,12 @@ class DenseTest(absltest.TestCase):
     self.assertNotEqual(b0.tolist(), b1.tolist())
 
   def test_shared_instance_means_shared_weights(self):
+      """
+      Test if the shared weights.
+
+      Args:
+          self: (todo): write your description
+      """
     # Same dense layer instance in two places --> shared weights.
     layer = tl.Dense(5)
     model = tl.Serial(layer, layer)
@@ -82,6 +106,12 @@ class DenseTest(absltest.TestCase):
     self.assertIs(weights[1], tl.GET_WEIGHTS_FROM_CACHE)
 
   def test_call_no_bias(self):
+      """
+      Test for the bias.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Dense(4, use_bias=False)
     x = np.array([2, 5, 3])
     _, _ = layer.init(shapes.signature(x))
@@ -91,6 +121,12 @@ class DenseTest(absltest.TestCase):
     self.assertEqual(y.tolist(), [253, 456, 653, 856])
 
   def test_new_weights_use_bias(self):
+      """
+      Test if the weights.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Dense(4)
     x = np.array([1, 2])
     _, _ = layer.init(shapes.signature(x))
@@ -99,12 +135,24 @@ class DenseTest(absltest.TestCase):
     self.assertEqual(layer.weights[1].shape, (4,))
 
   def test_new_weights_no_bias(self):
+      """
+      Test if the weights.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Dense(4, use_bias=False)
     x = np.array([1, 2])
     _, _ = layer.init(shapes.signature(x))
     self.assertEqual(layer.weights.shape, (2, 4))
 
   def test_init_twice_weights_same_shape(self):
+      """
+      Initialize the weights of the weights of the weights of the weights.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Dense(4, use_bias=False)
     x = np.array([1, 2])
     w1, _ = layer.init(shapes.signature(x))
@@ -116,6 +164,12 @@ class DenseTest(absltest.TestCase):
 class EmbeddingTest(absltest.TestCase):
 
   def test_forward(self):
+      """
+      Compute forward computation.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Embedding(10, 3)  # vocab_size=10, d_feature=3
     _, _ = layer.init(None)  # Embedding init doesn't use input signature.
     x = np.array([2, 3, 5, 3, 2])
@@ -132,6 +186,12 @@ class EmbeddingTest(absltest.TestCase):
     self.assertEqual(y[1].tolist(), y[3].tolist())
 
   def test_negative_inputs_clip_to_zero(self):
+      """
+      Test if the zero to zero.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Embedding(10, 3)
     _, _ = layer.init(None)
     x = np.array([0, 2, 3, -2, -3])
@@ -142,6 +202,12 @@ class EmbeddingTest(absltest.TestCase):
     self.assertEqual(y[0].tolist(), y[4].tolist())
 
   def test_large_inputs_clip_to_upper_bound(self):
+      """
+      Test to see https : py : class : layer_test ).
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Embedding(10, 3)
     _, _ = layer.init(None)
     x = np.array([2, 3, 9, 10, 20])
@@ -154,6 +220,12 @@ class EmbeddingTest(absltest.TestCase):
     self.assertEqual(y[2].tolist(), y[4].tolist())
 
   def test_new_weights(self):
+      """
+      Create new weights.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Embedding(20, 5)
     _, _ = layer.init(None)
 
@@ -163,8 +235,21 @@ class EmbeddingTest(absltest.TestCase):
     self.assertLess(np.abs(np.mean(w)), .4)  # .4 is 4 sigma deviation
 
   def test_explicit_kernel_initializer(self):
+      """
+      Initialize the kernel.
+
+      Args:
+          self: (todo): write your description
+      """
 
     def f(shape, rng):
+        """
+        R compute f ) f ( f ).
+
+        Args:
+            shape: (int): write your description
+            rng: (list): write your description
+        """
       del rng
       n_elements = np.prod(shape)
       return np.arange(n_elements).reshape(shape)
@@ -179,6 +264,12 @@ class EmbeddingTest(absltest.TestCase):
 class DropoutTest(absltest.TestCase):
 
   def test_call_in_train_mode(self):
+      """
+      Test for the training mode.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Dropout(rate=0.1, mode='train')
     x = np.ones((2, 5, 1000))  # 10,000 values
     y = layer(x)
@@ -192,12 +283,24 @@ class DropoutTest(absltest.TestCase):
         np.abs(n_remaining - mu_of_remaining), 4 * sigma_of_remaining)
 
   def test_call_in_eval_mode_does_no_dropout(self):
+      """
+      Test if the test calls.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Dropout(rate=0.1, mode='eval')
     x = np.ones((2, 5, 1000))
     y = layer(x)
     self.assertEqual(np.count_nonzero(y), 10_000)
 
   def test_new_weights(self):
+      """
+      Create new weights.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Dropout(rate=0.1, mode='train')
     layer.init(None)
     self.assertEmpty(layer.weights)
@@ -207,18 +310,36 @@ class WeightsTest(absltest.TestCase):
   """Test Weights layer."""
 
   def test_simple(self):
+      """
+      Test if the layer
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Weights(lambda shape, rng: jnp.zeros(shape, dtype=jnp.float32))
     layer.init(())
     y = layer(())
     self.assertEqual(y.tolist(), 0.)
 
   def test_shape(self):
+      """
+      Test the shape.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Weights(init.RandomNormalInitializer(), (5, 10, 3))
     layer.init(())
     y = layer(())
     self.assertEqual(y.shape, (5, 10, 3))
 
   def test_simple_custom_initializer(self):
+      """
+      Initializer for the initializer.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Weights(init.RandomNormalInitializer())
     layer.init(())
     y = layer(())
@@ -226,6 +347,12 @@ class WeightsTest(absltest.TestCase):
     self.assertNotEqual(y.tolist(), 0.)
 
   def test_custom_initializer_shape(self):
+      """
+      Initialize the initial shape.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Weights(lambda shape, rng: jnp.zeros(shape, dtype=jnp.float32),
                        (2, 2))
     layer.init(())
@@ -244,6 +371,12 @@ class WeightsTest(absltest.TestCase):
 class SummaryScalarTest(absltest.TestCase):
 
   def test_passes(self):
+      """
+      Test for passes the passes a layer
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.SummaryScalar('test')
     x = np.array([[3., 5.], [2., 6.]])  # 10,000 values
     y = layer(x)
@@ -255,6 +388,12 @@ class RandomUniformTest(absltest.TestCase):
   """Test Weights layer."""
 
   def test_simple(self):
+      """
+      Simple simple simple test.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.RandomUniform()
     layer.init(())
     y = layer(())
@@ -262,12 +401,24 @@ class RandomUniformTest(absltest.TestCase):
     self.assertBetween(y, 0.0, 1.0)
 
   def test_shape(self):
+      """
+      Test for the shape of the network.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.RandomUniform(shape=(5, 10, 3))
     layer.init(())
     y = layer(())
     self.assertEqual(y.shape, (5, 10, 3))
 
   def test_simple_range(self):
+      """
+      Test for simple test range.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.RandomUniform(1., 2., shape=(1000,))
     layer.init(())
     y = layer(())
@@ -280,6 +431,12 @@ class RandomUniformTest(absltest.TestCase):
 class LocallyConnected1dTest(absltest.TestCase):
 
   def test_shape_kernel1(self):
+      """
+      Test for convolutional layer.
+
+      Args:
+          self: (todo): write your description
+      """
     for padding in ['WRAP', 'SAME', 'VALID']:
       layer = tl.LocallyConnected1d(6, 1, padding=padding)
       x = np.array([[0, 1], [2, 3], [4, 5]])
@@ -288,6 +445,12 @@ class LocallyConnected1dTest(absltest.TestCase):
       self.assertEqual(y.shape, (3, 6))
 
   def test_shape_kernel3(self):
+      """
+      Test the convolution layer.
+
+      Args:
+          self: (todo): write your description
+      """
     for padding in ['WRAP', 'SAME']:
       layer = tl.LocallyConnected1d(6, 3, padding=padding)
       x = np.array([[0, 1], [2, 3], [4, 5]])
@@ -306,6 +469,12 @@ class LocallyConnected1dTest(absltest.TestCase):
 class FlattenTest(absltest.TestCase):
 
   def test_keep_default(self):
+      """
+      Keep only keep keep only keep_default_default_default_default ()
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Flatten()
     x = np.ones((1, 2, 3, 4, 5))
     y = layer(x)
@@ -313,18 +482,36 @@ class FlattenTest(absltest.TestCase):
     self.assertEqual(y.shape, (1, 2 * 3 * 4 * 5))
 
   def test_keep_3(self):
+      """
+      Keep only the 2d_3.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Flatten(n_axes_to_keep=3)
     x = np.ones((1, 2, 3, 4, 5))
     y = layer(x)
     self.assertEqual(y.shape, (1, 2, 3, 4 * 5))
 
   def test_keep_max_number(self):
+      """
+      Keep max number of max number of max_number.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Flatten(n_axes_to_keep=4)
     x = np.ones((1, 2, 3, 4, 5))
     y = layer(x)
     self.assertEqual(y.shape, (1, 2, 3, 4, 5))
 
   def test_keep_too_many_raises_error(self):
+      """
+      Keep only keep keep keep_keep.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Flatten(n_axes_to_keep=5)
     with self.assertRaises(tl.LayerError):
       x = np.ones((1, 2, 3, 4, 5))
@@ -335,6 +522,12 @@ class LogGaussianTest(absltest.TestCase):
   # TODO(jonni): Find a more fitting home for this test.
 
   def test_log_gaussian_pdf(self):
+      """
+      Test for the probability of the normal distribution
+
+      Args:
+          self: (todo): write your description
+      """
     x = np.zeros((2, 5), dtype=np.float32)
     mu = x
     dsigma = np.eye(5)[None, :, :]
@@ -345,6 +538,12 @@ class LogGaussianTest(absltest.TestCase):
     self.assertEqual(int(prob[1]), -6)
 
   def test_log_gaussian_diag_pdf(self):
+      """
+      R get the probability density function
+
+      Args:
+          self: (todo): write your description
+      """
     x = np.zeros((2, 5), dtype=np.float32)
     mu = x
     sigma = np.ones((5,))[None, :]
@@ -358,6 +557,12 @@ class LogGaussianTest(absltest.TestCase):
 class StopGradientTest(absltest.TestCase):
 
   def test_passes(self):
+      """
+      Test if passes
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.StopGradient()
     x = np.array([[3., 5.], [2., 6.]])
     y = layer(x)
@@ -368,6 +573,12 @@ class StopGradientTest(absltest.TestCase):
 class MinMaxTest(absltest.TestCase):
 
   def test_min(self):
+      """
+      Return the min / maximum
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Min()
     x = np.array([[3., 5.], [2., 6.]])
     y = layer(x)
@@ -393,6 +604,12 @@ class MinMaxTest(absltest.TestCase):
     self.assertEqual(y.tolist(), [[3.], [2.]])
 
   def test_max(self):
+      """
+      Compute the maximum of the maximum
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Max()
     x = np.array([[3., 5.], [2., 6.]])
     y = layer(x)

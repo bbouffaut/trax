@@ -31,6 +31,12 @@ from trax.rl import space_serializer
 def Serialize(serializer):
   """Layer that serializes a given array."""
   def serialize(x):
+      """
+      Serialize x into nd arrays.
+
+      Args:
+          x: (todo): write your description
+      """
     (batch_size, length) = x.shape[:2]
     shape_suffix = x.shape[2:]
     x = jnp.reshape(x, (batch_size * length,) + shape_suffix)
@@ -60,6 +66,13 @@ def Interleave():
     Layer that interleaves sequence of shape (B, L1 * R1 + L2 * R2).
   """
   def interleave(x, y):
+      """
+      Concatenate the length of x.
+
+      Args:
+          x: (todo): write your description
+          y: (todo): write your description
+      """
     (batch_size, _, _) = x.shape
     (_, length, _) = y.shape
     assert x.shape[1] in (length, length + 1)
@@ -74,6 +87,12 @@ def Interleave():
 def Deinterleave(x_size, y_size):
   """Layer that does the inverse of Interleave."""
   def deinterleave(inputs):
+      """
+      Deinterleave inputs.
+
+      Args:
+          inputs: (array): write your description
+      """
     reprs = inputs
     (batch_size, length) = reprs.shape[:2]
     shape_suffix = reprs.shape[2:]
@@ -95,6 +114,12 @@ def RepresentationMask(serializer):
   # Trax enforces the mask to be of the same size as the target. Get rid of the
   # extra dimensions.
   def representation_mask(mask):
+      """
+      Represent a masked mask.
+
+      Args:
+          mask: (todo): write your description
+      """
     # mask shape (batch_size,4)
     mask = jnp.amax(mask, axis=tuple(range(2, mask.ndim)))
     # mask shape (batch_size,4)
@@ -110,6 +135,12 @@ def RepresentationMask(serializer):
 def SignificanceWeights(serializer, decay):
   """Multiplies a binary mask with a symbol significance mask."""
   def significance_weights(mask):
+      """
+      Significance.
+
+      Args:
+          mask: (array): write your description
+      """
     # (repr,) -> (batch, length, repr)
     # significance = [0, 1, 2]
     significance = serializer.significance_map
@@ -215,6 +246,12 @@ def RawPolicy(seq_model, n_controls, n_actions):
   def SplitControls():  # pylint: disable=invalid-name
     """Splits logits for actions in different controls."""
     def f(x):
+        """
+        Returns the jnp function f ( x ).
+
+        Args:
+            x: (int): write your description
+        """
       return jnp.reshape(x, x.shape[:2] + (n_controls, n_actions))
     return tl.Fn('SplitControls', f)
 
@@ -270,10 +307,27 @@ def SerializedPolicy(
     )
 
   def FirstSymbol():
+      """
+      Returns the value.
+
+      Args:
+      """
     return tl.Fn('FirstSymbol', lambda x: x[:, :, 0])
 
   def PadRight(n_to_pad):
+      """
+      Pad padding to - pad to the left.
+
+      Args:
+          n_to_pad: (int): write your description
+      """
     def pad_right(x):
+        """
+        Pad x to - pad.
+
+        Args:
+            x: (int): write your description
+        """
       pad_widths = [(0, 0), (0, n_to_pad)] + [(0, 0)] * (x.ndim - 2)
       return jnp.pad(
           x, pad_widths, mode='constant', constant_values=x.dtype.type(0))

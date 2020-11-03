@@ -32,10 +32,22 @@ from trax.models.reformer import reformer
 class ReformerOOMTest(absltest.TestCase):
 
   def setUp(self):
+      """
+      Set the default configuration
+
+      Args:
+          self: (todo): write your description
+      """
     super().setUp()
     gin.clear_config()
 
   def _lsh_self_attention_fn(self):
+      """
+      Lshared attention.
+
+      Args:
+          self: (todo): write your description
+      """
     return functools.partial(
         tl.LSHSelfAttention,
         attention_dropout=0.0,
@@ -50,6 +62,12 @@ class ReformerOOMTest(absltest.TestCase):
     )
 
   def test_reformer2_one_step(self):
+      """
+      Reformer encoder.
+
+      Args:
+          self: (todo): write your description
+      """
     d_model = 1024
     vocab_size = 14041
     max_len = 16384
@@ -100,6 +118,11 @@ class ReformerOOMTest(absltest.TestCase):
     )
 
     def random_sentence():
+        """
+        Generate a random sentence.
+
+        Args:
+        """
       return np.random.randint(low=1, high=vocab_size - 1, size=(1, max_len),
                                dtype=np.int32)
 
@@ -108,7 +131,22 @@ class ReformerOOMTest(absltest.TestCase):
 
     @fastmath.jit
     def mock_training_step(x, weights, state, rng):
+        """
+        Perform a single loss.
+
+        Args:
+            x: (todo): write your description
+            weights: (array): write your description
+            state: (todo): write your description
+            rng: (todo): write your description
+        """
       def compute_mock_loss(weights):
+          """
+          Compute the loss : math : math : \ rng.
+
+          Args:
+              weights: (array): write your description
+          """
         logits_and_dec_toks, new_state = model.pure_fn(x, weights, state, rng)
         # This returns [logits, decoder tokens]
         logits = logits_and_dec_toks[0]

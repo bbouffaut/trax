@@ -31,10 +31,24 @@ tensor_to_ndarray = arrays.tensor_to_ndarray
 
 
 def _canonicalize_axis(axis, rank):
+    """
+    Return the canonicalize canonicalize_axis.
+
+    Args:
+        axis: (int): write your description
+        rank: (int): write your description
+    """
   return _canonicalize_axes([axis], rank)[0]
 
 
 def _canonicalize_axes(axes, rank):
+    """
+    Compute the canonicalized tensor.
+
+    Args:
+        axes: (todo): write your description
+        rank: (int): write your description
+    """
   rank = _maybe_static(rank)
 
   if isinstance(rank, tf.Tensor):
@@ -106,6 +120,12 @@ def result_type(*arrays_and_dtypes):
     A numpy dtype.
   """
   def maybe_get_dtype(x):
+      """
+      Return the dtype to dtype.
+
+      Args:
+          x: (todo): write your description
+      """
     # Don't put np.ndarray in this list, because np.result_type looks at the
     # value (not just dtype) of np.ndarray to decide the result type.
     if isinstance(x, (arrays.ndarray, arrays.ShardedNdArray,
@@ -138,10 +158,22 @@ def promote_types(type1, type2):
 
 
 def _has_docstring(f):
+    """
+    Returns true if the docstring docstring
+
+    Args:
+        f: (str): write your description
+    """
   return hasattr(f, '__doc__') and isinstance(f.__doc__, str) and f.__doc__
 
 
 def _add_blank_line(s):
+    """
+    Add blank blank blank lines.
+
+    Args:
+        s: (str): write your description
+    """
   if s.endswith('\n'):
     return s + '\n'
   else:
@@ -153,6 +185,13 @@ def _np_signature(f):
   if not isinstance(f, np.ufunc):
     return funcsigs.signature(f)
   def names_from_num(prefix, n):
+      """
+      Return a list of n characters from a list of n.
+
+      Args:
+          prefix: (str): write your description
+          n: (todo): write your description
+      """
     if n <= 0:
       return []
     elif n == 1:
@@ -189,7 +228,20 @@ def _np_signature(f):
 # allow positional-only argument. So we conflate positional-only, keyword-only
 # and positional-or-keyword arguments here.
 def _is_compatible_param_kind(a, b):
+    """
+    Determine if a is a function that checks if a and b
+
+    Args:
+        a: (todo): write your description
+        b: (todo): write your description
+    """
   def relax(k):
+      """
+      Return the relaxigs of k.
+
+      Args:
+          k: (todo): write your description
+      """
     if k in (funcsigs.Parameter.POSITIONAL_ONLY,
              funcsigs.Parameter.KEYWORD_ONLY):
       return funcsigs.Parameter.POSITIONAL_OR_KEYWORD
@@ -251,6 +303,12 @@ def np_doc_only(np_f):
   """
 
   def decorator(f):
+      """
+      Decorator for decorator
+
+      Args:
+          f: (array): write your description
+      """
     f.__doc__ = _np_doc_helper(f, np_f)
     return f
 
@@ -296,6 +354,12 @@ def get_static_value(x):
 
 
 def _maybe_static(x):
+    """
+    Returns the value of x if needed static.
+
+    Args:
+        x: (array): write your description
+    """
   value = get_static_value(x)
   if value is None:
     return x

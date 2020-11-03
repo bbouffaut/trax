@@ -26,6 +26,12 @@ import trax.layers as tl
 class ConvolutionTest(absltest.TestCase):
 
   def test_call(self):
+      """
+      Evaluate the model.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Conv(30, (3, 3))
     x = np.ones((9, 5, 5, 20))
     layer.init(shapes.signature(x))
@@ -34,6 +40,12 @@ class ConvolutionTest(absltest.TestCase):
     self.assertEqual(y.shape, (9, 3, 3, 30))
 
   def test_call_rebatch(self):
+      """
+      Evaluate of the network.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Conv(30, (3, 3))
     x = np.ones((2, 9, 5, 5, 20))
     layer.init(shapes.signature(x))
@@ -45,6 +57,12 @@ class ConvolutionTest(absltest.TestCase):
 class CausalConvolutionTest(absltest.TestCase):
 
   def test_causal_conv(self):
+      """
+      Test if the convolution.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.CausalConv(filters=30, kernel_width=3)
     x = np.ones((9, 5, 20))
     layer.init(shapes.signature(x))

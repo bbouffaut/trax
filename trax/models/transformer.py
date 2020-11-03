@@ -322,6 +322,12 @@ def Transformer(input_vocab_size,
     text pair to activations over a vocab set.
   """
   def Embedder(vocab_size):  # tokens --> vectors
+      """
+      Emb - product of vocab.
+
+      Args:
+          vocab_size: (int): write your description
+      """
     return [
         tl.Embedding(vocab_size, d_model),
         tl.Dropout(rate=dropout, shared_axes=dropout_shared_axes, mode=mode),
@@ -511,6 +517,11 @@ def _EncoderDecoderBlock(d_model, d_ff, n_heads,
     encoder_activations) to triples of the same sort.
   """
   def _Dropout():
+      """
+      Return a new shared subclass.
+
+      Args:
+      """
     return tl.Dropout(rate=dropout, shared_axes=dropout_shared_axes, mode=mode)
 
   attention_qkv = tl.AttentionQKV(

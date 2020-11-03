@@ -29,6 +29,12 @@ from trax.layers.research import sparsity
 class EfficientFeedForwardTest(test.TestCase):
 
   def test_blocksparse_ff_train(self):
+      """
+      Train blocksparse blocksparse.
+
+      Args:
+          self: (todo): write your description
+      """
     d_model = 1024
     num_experts = 64
     d_ff = d_model * 8
@@ -42,6 +48,12 @@ class EfficientFeedForwardTest(test.TestCase):
       self.assertEqual(y.shape, x.shape)
 
   def test_blocksparse_ff_predict_equals_eval(self):
+      """
+      Predict a block - block - wise.
+
+      Args:
+          self: (todo): write your description
+      """
     d_model = 1024
     num_experts = 64
     d_ff = d_model * 8
@@ -73,6 +85,12 @@ class EfficientFeedForwardTest(test.TestCase):
 class ReversibleReshapePermuteTest(test.TestCase):
 
   def test_reversible_permute(self):
+      """
+      Performats the permute permute.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = sparsity.ReversibleReshapePermute()
     x = np.array([[1, 2, 3, 4, 5, 6, 7, 8],
                   [0, 1, 2, 3, 4, 5, 6, 7]])
@@ -88,6 +106,12 @@ class ReversibleReshapePermuteTest(test.TestCase):
 class ReversibleRandomPermuteTest(test.TestCase):
 
   def test_reversible_permute(self):
+      """
+      Test permutation permute permute permutation.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = sparsity.ReversibleRandomPermute()
     x = np.array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
                   [0, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 11, 12, 13],
@@ -107,6 +131,12 @@ class ReversibleRandomPermuteTest(test.TestCase):
 class LocallyConnectedDenseTest(test.TestCase):
 
   def test_simple_call(self):
+      """
+      Call the simple simple test.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = sparsity.LocallyConnectedDense(2, 8)
     x = np.array([[2, 5, 3, 4],
                   [0, 1, 2, 3]])
@@ -119,6 +149,12 @@ class LocallyConnectedDenseTest(test.TestCase):
 class ModularCausalAttentionTest(test.TestCase):
 
   def test_simple_call(self):
+      """
+      Call self - attention.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = sparsity.ModularCausalAttention(
         d_feature=4, n_heads=2, sparsity=2)
     x = np.array([[[2, 5, 3, 4],
@@ -133,6 +169,12 @@ class ModularCausalAttentionTest(test.TestCase):
 class LowRankCausalAttentionTest(test.TestCase):
 
   def test_simple_call(self):
+      """
+      Perform a single layer.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = sparsity.LowRankCausalAttention(
         d_feature=4, n_heads=2, lowrank=2)
     x = np.array([[[2, 5, 3, 4],
@@ -147,6 +189,12 @@ class LowRankCausalAttentionTest(test.TestCase):
 class MultiplicativeCausalAttentionTest(test.TestCase):
 
   def test_simple_call(self):
+      """
+      Perform self attention.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = sparsity.MultiplicativeCausalAttention(
         d_feature=4, n_heads=2, sparsity=2)
     x = np.array([[[2, 5, 3, 4],
@@ -161,6 +209,12 @@ class MultiplicativeCausalAttentionTest(test.TestCase):
 class MultiplicativeModularCausalAttentionTest(test.TestCase):
 
   def test_simple_call(self):
+      """
+      Perform layer - layer for a single layer.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = sparsity.MultiplicativeModularCausalAttention(
         d_feature=4, n_heads=2, sparsity=2)
     x = np.array([[[2, 5, 3, 4],
@@ -175,6 +229,12 @@ class MultiplicativeModularCausalAttentionTest(test.TestCase):
 class CausalFavorTest(test.TestCase):
 
   def test_call_and_grad(self):
+      """
+      Perform the gradient of the gradient of the model.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Serial(
         tl.Dense(4),
         sparsity.CausalFavor(d_feature=4, n_heads=2),

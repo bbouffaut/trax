@@ -259,6 +259,12 @@ def ReZeroTransformer(input_vocab_size,
     to activations over a vocab set.
   """
   def Embedder(vocab_size):  # tokens --> vectors
+      """
+      Emb - product of vocab.
+
+      Args:
+          vocab_size: (int): write your description
+      """
     return [
         tl.Embedding(vocab_size, d_model),
         tl.Dropout(rate=dropout, shared_axes=dropout_shared_axes, mode=mode),
@@ -427,6 +433,11 @@ def _EncoderDecoderBlock(d_model, d_ff, n_heads, dropout, dropout_shared_axes,
     encoder_activations) to triples of the same sort.
   """
   def _Dropout():
+      """
+      Return a new shared subclass.
+
+      Args:
+      """
     return tl.Dropout(rate=dropout, shared_axes=dropout_shared_axes, mode=mode)
 
   attention_qkv = tl.AttentionQKV(
@@ -505,6 +516,12 @@ def _deep_flatten(items):
     A list of non-list, non-tuple objects.
   """
   def _flat_gen(xs):
+      """
+      Yields a generator.
+
+      Args:
+          xs: (todo): write your description
+      """
     for x in xs:
       if isinstance(x, (list, tuple)):
         for y in _flat_gen(x):

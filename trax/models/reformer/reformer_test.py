@@ -31,10 +31,22 @@ from trax.models.reformer import reformer
 class ReformerTest(absltest.TestCase):
 
   def setUp(self):
+      """
+      Set the default configuration
+
+      Args:
+          self: (todo): write your description
+      """
     super().setUp()
     gin.clear_config()
 
   def _lsh_self_attention_fn(self):
+      """
+      Lshared attention.
+
+      Args:
+          self: (todo): write your description
+      """
     return functools.partial(
         tl.LSHSelfAttention,
         attention_dropout=0.0,
@@ -49,6 +61,13 @@ class ReformerTest(absltest.TestCase):
     )
 
   def _timebin_self_attention_fn(self, use_reference_code=False):
+      """
+      Time - attention attention.
+
+      Args:
+          self: (todo): write your description
+          use_reference_code: (bool): write your description
+      """
     return functools.partial(
         tl.SelfAttention,
         attention_dropout=0.05,
@@ -59,6 +78,12 @@ class ReformerTest(absltest.TestCase):
     )
 
   def test_reformer_lm_forward_shape(self):
+      """
+      Reformer shape.
+
+      Args:
+          self: (todo): write your description
+      """
     vocab_size = 16
     model = reformer.ReformerLM(
         vocab_size, d_model=32, d_ff=64, d_attention_key=16,
@@ -71,6 +96,12 @@ class ReformerTest(absltest.TestCase):
 
 
   def test_reformer_lm_lsh(self):
+      """
+      Perform loss.
+
+      Args:
+          self: (todo): write your description
+      """
     lsh_self_attention = self._lsh_self_attention_fn()
     timebin_self_attention = self._timebin_self_attention_fn()
 
@@ -97,7 +128,22 @@ class ReformerTest(absltest.TestCase):
 
     @fastmath.jit
     def mock_training_step(x, weights, state, rng):
+        """
+        Perform a single loss.
+
+        Args:
+            x: (todo): write your description
+            weights: (array): write your description
+            state: (todo): write your description
+            rng: (todo): write your description
+        """
       def compute_mock_loss(weights):
+          """
+          Compute the loss.
+
+          Args:
+              weights: (array): write your description
+          """
         logits, new_state = model.pure_fn(x, weights, state, rng)
         loss = fastmath.numpy.mean(logits[..., 0])
         return loss, (new_state, logits)
@@ -112,6 +158,12 @@ class ReformerTest(absltest.TestCase):
     self.assertEqual(logits.shape, (1, 65536, 256))
 
   def test_reformer2_quick(self):
+      """
+      Test for a 2d model.
+
+      Args:
+          self: (todo): write your description
+      """
     vocab_size = 2
     max_len = 2
 
@@ -142,6 +194,12 @@ class ReformerTest(absltest.TestCase):
     self.assertEqual(logits.shape, (1, max_len, vocab_size))
 
   def test_reformer2_one_step(self):
+      """
+      Reformer encoder.
+
+      Args:
+          self: (todo): write your description
+      """
     vocab_size = 256
     max_len = 65536
     axial_pos = 256
@@ -186,7 +244,22 @@ class ReformerTest(absltest.TestCase):
 
     @fastmath.jit
     def mock_training_step(x, weights, state, rng):
+        """
+        Perform a single loss.
+
+        Args:
+            x: (todo): write your description
+            weights: (array): write your description
+            state: (todo): write your description
+            rng: (todo): write your description
+        """
       def compute_mock_loss(weights):
+          """
+          Compute the loss : math : math : \ rng.
+
+          Args:
+              weights: (array): write your description
+          """
         logits_and_dec_toks, new_state = model.pure_fn(x, weights, state, rng)
         # This returns [logits, decoder tokens]
         logits = logits_and_dec_toks[0]

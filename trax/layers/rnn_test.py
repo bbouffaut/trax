@@ -30,6 +30,13 @@ import trax.layers as tl
 class RnnTest(parameterized.TestCase):
 
   def test_conv_gru_cell(self, backend):
+      """
+      Test for convolutional cell.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+      """
     with fastmath.use_backend(backend):
       layer = tl.ConvGRUCell(9, kernel_size=(3, 3))
       x = np.ones((8, 1, 7, 9))
@@ -38,6 +45,13 @@ class RnnTest(parameterized.TestCase):
       self.assertEqual(y.shape, x.shape)
 
   def test_gru_cell(self, backend):
+      """
+      Test for the cell cell.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+      """
     with fastmath.use_backend(backend):
       layer = tl.GRUCell(9)
       xs = [np.ones((8, 7, 9)), np.ones((8, 7, 9))]
@@ -46,6 +60,13 @@ class RnnTest(parameterized.TestCase):
       self.assertEqual([y.shape for y in ys], [(8, 7, 9), (8, 7, 9)])
 
   def test_lstm_cell(self, backend):
+      """
+      Test if lstm cell.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+      """
     with fastmath.use_backend(backend):
       layer = tl.LSTMCell(9)
       xs = [np.ones((8, 9)), np.ones((8, 18))]
@@ -54,6 +75,13 @@ class RnnTest(parameterized.TestCase):
       self.assertEqual([y.shape for y in ys], [(8, 9), (8, 18)])
 
   def test_sru(self, backend):
+      """
+      Test if a gaussian layer.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+      """
     with fastmath.use_backend(backend):
       layer = tl.SRU(7)
       x = np.ones((8, 9, 7), np.float32)
@@ -62,6 +90,13 @@ class RnnTest(parameterized.TestCase):
       self.assertEqual(y.shape, x.shape)
 
   def test_names(self, backend):
+      """
+      Test for test names of all backend layers.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+      """
     with fastmath.use_backend(backend):
       layer = tl.LSTM(3)
       self.assertEqual('LSTM_3', str(layer))

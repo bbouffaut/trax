@@ -79,6 +79,13 @@ class Adafactor(opt_base.Optimizer):
     return 1.0 - t**(-exponent)
 
   def init(self, weights):
+      """
+      Initialize the weights.
+
+      Args:
+          self: (todo): write your description
+          weights: (array): write your description
+      """
     shape = weights.shape
     slots = []
     if self._factored and len(shape) >= 2:
@@ -94,6 +101,17 @@ class Adafactor(opt_base.Optimizer):
     return slots
 
   def update(self, step, grads, weights, slots, opt_params):
+      """
+      Perform a single step.
+
+      Args:
+          self: (todo): write your description
+          step: (int): write your description
+          grads: (array): write your description
+          weights: (array): write your description
+          slots: (todo): write your description
+          opt_params: (dict): write your description
+      """
     updates = []
     learning_rate = opt_params['learning_rate']
     beta1 = opt_params['beta1']

@@ -33,18 +33,36 @@ CUSTOM_GRAD_BACKENDS = [fastmath.Backend.JAX]  # TODO(afrozm): del after TF 2.3
 class BaseLayerTest(parameterized.TestCase):
 
   def test_call_raises_error(self):
+      """
+      Test if the error.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Layer()
     x = np.array([[1, 2, 3, 4, 5], [10, 20, 30, 40, 50]])
     with self.assertRaisesRegex(tl.LayerError, 'NotImplementedError'):
       _ = layer(x)
 
   def test_forward_raises_error(self):
+      """
+      Test if the error.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Layer()
     x = np.array([[1, 2, 3, 4, 5], [10, 20, 30, 40, 50]])
     with self.assertRaises(NotImplementedError):
       _ = layer.forward(x)
 
   def test_init_returns_empty_weights_and_state(self):
+      """
+      Initialize weights and weights.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Layer()
     input_signature = shapes.ShapeDtype((2, 5))
     weights, state = layer.init(input_signature)
@@ -52,6 +70,12 @@ class BaseLayerTest(parameterized.TestCase):
     self.assertEmpty(state)
 
   def test_output_signature_no_weights(self):
+      """
+      Test if the output weights.
+
+      Args:
+          self: (todo): write your description
+      """
     shape_2_3_5 = shapes.ShapeDtype((2, 3, 5))
     input_signature = (shape_2_3_5, shape_2_3_5)
     layer = tl.Fn('2in1out', lambda x, y: x + y)
@@ -69,17 +93,50 @@ class BaseLayerTest(parameterized.TestCase):
   @parameterized.named_parameters(
       [('_' + b.value, b) for b in CUSTOM_GRAD_BACKENDS])
   def test_custom_zero_grad(self, backend):
+      """
+      Perform a custom gradient.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+      """
 
     class IdWithZeroGrad(tl.Layer):
 
       def forward(self, x):
+          """
+          Forward function.
+
+          Args:
+              self: (todo): write your description
+              x: (todo): write your description
+          """
         return x
 
       @property
       def has_backward(self):
+          """
+          Returns true if the backend has a backward backend.
+
+          Args:
+              self: (todo): write your description
+          """
         return True
 
       def backward(self, inputs, output, grad, weights, state, new_state, rng):
+          """
+          Compute backward computation.
+
+          Args:
+              self: (todo): write your description
+              inputs: (array): write your description
+              output: (todo): write your description
+              grad: (array): write your description
+              weights: (array): write your description
+              state: (todo): write your description
+              new_state: (todo): write your description
+              rng: (todo): write your description
+          """
         return (jnp.zeros_like(grad), ())
 
     with fastmath.use_backend(backend):
@@ -97,17 +154,50 @@ class BaseLayerTest(parameterized.TestCase):
   @parameterized.named_parameters(
       [('_' + b.value, b) for b in CUSTOM_GRAD_BACKENDS])
   def test_custom_id_grad(self, backend):
+      """
+      Perform a custom gradient.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+      """
 
     class IdWithIdGrad(tl.Layer):
 
       def forward(self, x):
+          """
+          Forward function.
+
+          Args:
+              self: (todo): write your description
+              x: (todo): write your description
+          """
         return x
 
       @property
       def has_backward(self):
+          """
+          Returns true if the backend has a backward backend.
+
+          Args:
+              self: (todo): write your description
+          """
         return True
 
       def backward(self, inputs, output, grad, weights, state, new_state, rng):
+          """
+          Perform backward computation.
+
+          Args:
+              self: (todo): write your description
+              inputs: (array): write your description
+              output: (todo): write your description
+              grad: (array): write your description
+              weights: (array): write your description
+              state: (todo): write your description
+              new_state: (todo): write your description
+              rng: (todo): write your description
+          """
         return (inputs, ())
 
     with fastmath.use_backend(backend):
@@ -123,14 +213,34 @@ class BaseLayerTest(parameterized.TestCase):
       self.assertEqual(sum(sum(grad)), sum(sum(random_input)))  # Same as input.
 
   def test_weights_and_state_signature(self):
+      """
+      Test the weights of the weights and weights.
+
+      Args:
+          self: (todo): write your description
+      """
 
     class MyLayer(tl.Layer):
 
       def init_weights_and_state(self, input_signature):
+          """
+          Initialize weights and weights.
+
+          Args:
+              self: (todo): write your description
+              input_signature: (bool): write your description
+          """
         self.weights = jnp.zeros((2, 3))
         self.state = jnp.ones(input_signature.shape)
 
       def forward(self, inputs):
+          """
+          Forward computation.
+
+          Args:
+              self: (todo): write your description
+              inputs: (todo): write your description
+          """
         return self.weights + self.state
 
     layer = MyLayer()
@@ -139,6 +249,12 @@ class BaseLayerTest(parameterized.TestCase):
     self.assertEqual(s.shape, (3, 4))
 
   def test_custom_name(self):
+      """
+      Set the name of the layer.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Layer()
     self.assertIn('Layer', str(layer))
     self.assertNotIn('CustomLayer', str(layer))
@@ -150,6 +266,12 @@ class BaseLayerTest(parameterized.TestCase):
 class PureLayerTest(absltest.TestCase):
 
   def test_forward(self):
+      """
+      R forward forward computation.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.PureLayer(lambda x: 2 * x)
 
     # Use Layer.__call__.
@@ -171,18 +293,42 @@ class PureLayerTest(absltest.TestCase):
 class FnTest(absltest.TestCase):
 
   def test_bad_f_has_default_arg(self):
+      """
+      Assert that the badge has a bad test.
+
+      Args:
+          self: (todo): write your description
+      """
     with self.assertRaisesRegex(ValueError, 'default arg'):
       _ = tl.Fn('', lambda x, sth=None: x)
 
   def test_bad_f_has_keyword_arg(self):
+      """
+      Check if the keyword keyword arguments are bad.
+
+      Args:
+          self: (todo): write your description
+      """
     with self.assertRaisesRegex(ValueError, 'keyword arg'):
       _ = tl.Fn('', lambda x, **kwargs: x)
 
   def test_bad_f_has_variable_arg(self):
+      """
+      Checks if variable variable is enabled.
+
+      Args:
+          self: (todo): write your description
+      """
     with self.assertRaisesRegex(ValueError, 'variable arg'):
       _ = tl.Fn('', lambda *args: args[0])
 
   def test_forward(self):
+      """
+      Parameters ---------- forward
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Fn(
         'SumAndMax', lambda x0, x1: (x0 + x1, jnp.maximum(x0, x1)), n_out=2)
 
@@ -204,6 +350,12 @@ class FnTest(absltest.TestCase):
     self.assertEqual(state, tl.EMPTY_STATE)
 
   def test_weights_state(self):
+      """
+      Concat weights.
+
+      Args:
+          self: (todo): write your description
+      """
     layer = tl.Fn(
         '2in2out',
         lambda x, y: (x + y, jnp.concatenate([x, y], axis=0)),

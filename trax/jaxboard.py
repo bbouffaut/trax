@@ -88,6 +88,14 @@ class SummaryWriter(object):
     self._enabled = enable
 
   def add_summary(self, summary, step):
+      """
+      Add an event summary.
+
+      Args:
+          self: (todo): write your description
+          summary: (todo): write your description
+          step: (todo): write your description
+      """
     if not self._enabled:
       return
     event = event_pb2.Event(summary=summary)
@@ -104,6 +112,12 @@ class SummaryWriter(object):
       del self._event_writer
 
   def __del__(self):  # safe?
+      """
+      Closes the file.
+
+      Args:
+          self: (todo): write your description
+      """
     # TODO(afrozm): Sometimes this complains with
     #  `TypeError: 'NoneType' object is not callable`
     try:
@@ -112,6 +126,12 @@ class SummaryWriter(object):
       pass
 
   def flush(self):
+      """
+      Flush the write buffers.
+
+      Args:
+          self: (todo): write your description
+      """
     if not self._enabled:
       return
     self._event_writer.flush()

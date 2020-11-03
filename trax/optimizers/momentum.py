@@ -45,6 +45,16 @@ class Momentum(base.Optimizer):
   def __init__(
       self, learning_rate=0.01, mass=0.9, weight_decay_rate=1e-5, nesterov=True
   ):  # pylint: disable=useless-super-delegation
+      """
+      Initialize learning rate.
+
+      Args:
+          self: (todo): write your description
+          learning_rate: (float): write your description
+          mass: (float): write your description
+          weight_decay_rate: (float): write your description
+          nesterov: (todo): write your description
+      """
     super().__init__(
         learning_rate=learning_rate,
         mass=mass,
@@ -53,9 +63,27 @@ class Momentum(base.Optimizer):
     self._nesterov = nesterov
 
   def init(self, weights):
+      """
+      Initialize the weights.
+
+      Args:
+          self: (todo): write your description
+          weights: (array): write your description
+      """
     return jnp.zeros_like(weights)
 
   def update(self, step, grads, weights, velocity, opt_params):
+      """
+      Compute the kalman filter.
+
+      Args:
+          self: (todo): write your description
+          step: (int): write your description
+          grads: (array): write your description
+          weights: (array): write your description
+          velocity: (int): write your description
+          opt_params: (dict): write your description
+      """
     del step
     v = velocity
     mu = opt_params['mass']

@@ -207,6 +207,12 @@ def train_rl(
 
 
 def main(argv):
+    """
+    Main function.
+
+    Args:
+        argv: (str): write your description
+    """
   del argv
   logging.info('Starting RL training.')
 

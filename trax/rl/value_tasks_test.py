@@ -34,6 +34,12 @@ from trax.supervised import training
 class ValueTasksTest(absltest.TestCase):
 
   def setUp(self):
+      """
+      Initialize the model.
+
+      Args:
+          self: (todo): write your description
+      """
     super().setUp()
     self._model_fn = lambda mode: tl.Serial(  # pylint: disable=g-long-lambda
         tl.Dense(64), tl.Relu(), tl.Dense(1)
@@ -46,6 +52,13 @@ class ValueTasksTest(absltest.TestCase):
     )
 
   def _value_error(self, value_fn):
+      """
+      Return the mean error.
+
+      Args:
+          self: (todo): write your description
+          value_fn: (str): write your description
+      """
     errors = []
     for _ in range(10):
       batch = next(self._trajectory_batch_stream)
@@ -54,6 +67,12 @@ class ValueTasksTest(absltest.TestCase):
     return np.mean(errors)
 
   def test_value_tasks_smoke(self):
+      """
+      Test to train on the model.
+
+      Args:
+          self: (todo): write your description
+      """
     # Smoke test for train + eval.
     model = self._model_fn(mode='train')
     train_task = value_tasks.ValueTrainTask(
@@ -73,6 +92,12 @@ class ValueTasksTest(absltest.TestCase):
     loop.run(n_steps=1)
 
   def test_value_error_high_without_syncs(self):
+      """
+      Test for the value of the model.
+
+      Args:
+          self: (todo): write your description
+      """
     model = self._model_fn(mode='train')
     train_task = value_tasks.ValueTrainTask(
         self._trajectory_batch_stream,
@@ -101,6 +126,12 @@ class ValueTasksTest(absltest.TestCase):
     self.assertGreater(error_after, 0.8)
 
   def test_value_error_low_with_syncs(self):
+      """
+      Perform a model with the given value.
+
+      Args:
+          self: (todo): write your description
+      """
     min_error = np.inf
     for _ in range(5):
       model = self._model_fn(mode='train')
@@ -135,6 +166,12 @@ class ValueTasksTest(absltest.TestCase):
     self.fail(f'Even after 5 trials, min error_after({min_error}) is not < 0.8')
 
   def test_integration_with_policy_tasks(self):
+      """
+      Evaluate the learning rate.
+
+      Args:
+          self: (todo): write your description
+      """
     # Integration test for policy + value training and eval.
     optimizer = opt.Adam()
     lr_schedule = lr_schedules.constant(1e-3)

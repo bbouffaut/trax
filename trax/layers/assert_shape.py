@@ -99,6 +99,12 @@ def assert_shape(specification):
   message = f'Defined at {caller.filename}:{caller.lineno}'
 
   def wrap_cls(cls):
+      """
+      Decorator for class decorator.
+
+      Args:
+          cls: (todo): write your description
+      """
     forward = getattr(cls, 'forward')
     init = getattr(cls, '__init__')
 
@@ -106,6 +112,12 @@ def assert_shape(specification):
 
     @functools.wraps(init)
     def init_wrapper(self, *args, **kwargs):
+        """
+        Initialize a function.
+
+        Args:
+            self: (todo): write your description
+        """
       before_assert = AssertShape(before_spec,
                                   message=message + ' function input')
       after_assert = AssertShape(after_spec,
@@ -118,6 +130,13 @@ def assert_shape(specification):
 
     @functools.wraps(forward)
     def forward_wrapper(self, x, *args, **kwargs):
+        """
+        Forward forward forward forward computation.
+
+        Args:
+            self: (todo): write your description
+            x: (todo): write your description
+        """
       x = self._before_assert_fun.forward(x)  # pylint: disable=protected-access
       y = forward(self, x, *args, **kwargs)
       y = self._after_assert_fun.forward(y)  # pylint: disable=protected-access
@@ -129,13 +148,30 @@ def assert_shape(specification):
 
   # TODO(jaszczur): replace this with forward/init override.
   def wrap_fun(fun):
+      """
+      Wrap a function.
+
+      Args:
+          fun: (todo): write your description
+      """
     @functools.wraps(fun)
     def fun_wrapper(*args, **kwargs):
+        """
+        Wrap a function.
+
+        Args:
+        """
       layer = fun(*args, **kwargs)
       return AssertFunction(specification, layer, message)
     return fun_wrapper
 
   def wrap_fun_or_cls(fun_or_cls):
+      """
+      Wrap the given functions.
+
+      Args:
+          fun_or_cls: (todo): write your description
+      """
     return (wrap_cls(fun_or_cls) if inspect.isclass(fun_or_cls) else
             wrap_fun(fun_or_cls))
 
@@ -204,6 +240,13 @@ class AssertShape(base.Layer):
       self.message = message
 
   def forward(self, xs):
+      """
+      Forward computation.
+
+      Args:
+          self: (todo): write your description
+          xs: (list): write your description
+      """
     if not self.linked:
       for k in list(self.defined_shapes.keys()):
         if not k.isdigit():
@@ -232,6 +275,12 @@ class AssertShape(base.Layer):
 
     # helper functions
     def assert_true(cond):
+        """
+        Asserts that the given conditions are true is true.
+
+        Args:
+            cond: (todo): write your description
+        """
       if not cond:
         shapes = [x.shape for x in xs]
         defined_shapes_dict_without_digits = {
@@ -241,10 +290,24 @@ class AssertShape(base.Layer):
             f' {defined_shapes_dict_without_digits}. {self.message}')
 
     def assert_equal(a, b):
+        """
+        Return true if two values are equal.
+
+        Args:
+            a: (array): write your description
+            b: (array): write your description
+        """
       assert_true(a == b)
       return a
 
     def check_shape(shape, spec):
+        """
+        Check that the shape of shapes.
+
+        Args:
+            shape: (int): write your description
+            spec: (str): write your description
+        """
       assert_equal(len(shape), len(spec))
       for shape_dim, letter in zip(shape, spec):
         if letter in self.defined_shapes:
@@ -254,6 +317,12 @@ class AssertShape(base.Layer):
           self.defined_shapes[letter] = shape_dim
 
     def check_ellipsys(shape):
+        """
+        Check shape for shapes.
+
+        Args:
+            shape: (tuple): write your description
+        """
       if '.' not in self.defined_shapes:
         self.defined_shapes['.'] = shape
       else:

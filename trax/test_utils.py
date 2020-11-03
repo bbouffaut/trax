@@ -27,6 +27,12 @@ FLAGS = flags.FLAGS
 # so if flags are required in tests, this will ensure that flags are manually
 # parsed and the desired flag exists.
 def ensure_flag(flag_str):
+    """
+    Ensures that a flag is set.
+
+    Args:
+        flag_str: (str): write your description
+    """
   try:
     getattr(FLAGS, flag_str)
   except flags.UnparsedFlagAccessError:

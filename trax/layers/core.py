@@ -295,6 +295,12 @@ class Weights(base.Layer):
 def PrintShape(n_in=1, msg=''):
   """Prints the shapes of `n_in` inputs and returns then unchanged."""
   def Fwd(xs):
+      """
+      Return a shape of the shape of shape.
+
+      Args:
+          xs: (int): write your description
+      """
     shapes_and_dtypes = ', '.join([str(x.shape) + f'[{x.dtype}]' for x in xs])
     info = f'PrintShape: {msg}: [{shapes_and_dtypes}]'
     print(info)
@@ -388,6 +394,12 @@ class RandomUniform(base.Layer):
     return result
 
   def _get_conditionally_synced_rng(self):
+      """
+      Return synced synced synced synced synced object.
+
+      Args:
+          self: (todo): write your description
+      """
     if self._sync and fastmath.device_count() > 1:
       return fastmath.psum(self.rng, 'batch')
     else:
@@ -553,6 +565,12 @@ def Flatten(n_axes_to_keep=1):
   """
   layer_name = f'Flatten_keep{n_axes_to_keep}'
   def f(x):  # pylint: disable=invalid-name
+      """
+      Compute f ( x ).
+
+      Args:
+          x: (int): write your description
+      """
     in_rank = len(x.shape)
     if in_rank <= n_axes_to_keep:
       raise ValueError(f'Input rank ({in_rank}) must exceed the number of '

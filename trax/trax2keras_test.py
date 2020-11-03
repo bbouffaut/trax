@@ -39,11 +39,29 @@ tf.enable_v2_behavior()
 
 
 def has_gpu():
+    """
+    Returns true if the hypervisor has a physical.
+
+    Args:
+    """
   return bool(tf.config.list_physical_devices("GPU"))
 
 
 def dummy_inputs(rng, input_sig):
+    """
+    Dummy function for a 2d array.
+
+    Args:
+        rng: (todo): write your description
+        input_sig: (todo): write your description
+    """
   def f(sig):
+      """
+      Return a signal for a signal ) yields a signal.
+
+      Args:
+          sig: (todo): write your description
+      """
     shape = sig.shape
     if shape and shape[0] is None:
       shape = (2,) + tuple(shape[1:])
@@ -61,6 +79,12 @@ def dummy_inputs(rng, input_sig):
 
 
 def Mod(n):  # pylint: disable=invalid-name
+    """
+    Returns a list of layers that are n is a list of layers.
+
+    Args:
+        n: (int): write your description
+    """
   return layers.Fn("Mod", lambda x: x % n)
 
 
@@ -133,6 +157,11 @@ class Trax2KerasTest(tf.test.TestCase, parameterized.TestCase):
       weights, state = trax_layer.init(input_sig, rng=initializer_rng)
       generator = tf.random.Generator.from_seed(567)
       def get_inputs():
+          """
+          Return a list of all inputs.
+
+          Args:
+          """
         return dummy_inputs(generator, input_sig)
       if trax_has_weights:
         trax_layer(to_arrays(get_inputs()), weights=weights, state=state)

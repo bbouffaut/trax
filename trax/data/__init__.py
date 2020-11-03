@@ -22,6 +22,11 @@ from trax.data import tf_inputs
 
 # Ginify
 def data_configure(*args, **kwargs):
+    """
+    Configure external external data_configure.
+
+    Args:
+    """
   kwargs['module'] = 'trax.data'
   return gin.external_configurable(*args, **kwargs)
 

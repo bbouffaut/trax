@@ -33,6 +33,20 @@ class AxialPositionalEncoding(layer_base.Layer):
   def __init__(self, shape=(64, 64, 3), d_embs=(384, 384, 256),
                kernel_initializer=init.RandomNormalInitializer(1.0),
                dropout=0.0, dropout_broadcast_dims=(), mode='train'):
+      """
+      Initialize the module.
+
+      Args:
+          self: (todo): write your description
+          shape: (int): write your description
+          d_embs: (todo): write your description
+          kernel_initializer: (int): write your description
+          init: (str): write your description
+          RandomNormalInitializer: (bool): write your description
+          dropout: (str): write your description
+          dropout_broadcast_dims: (bool): write your description
+          mode: (todo): write your description
+      """
     super().__init__()
     self._kernel_initializer = kernel_initializer
     assert len(shape) == len(d_embs)
@@ -49,6 +63,13 @@ class AxialPositionalEncoding(layer_base.Layer):
     self._mode = mode
 
   def forward(self, inputs):
+      """
+      Forward computation.
+
+      Args:
+          self: (todo): write your description
+          inputs: (todo): write your description
+      """
     rng, state = self.rng, self.state
     embs = []
     for ax_emb in self.weights:
@@ -83,6 +104,13 @@ class AxialPositionalEncoding(layer_base.Layer):
       return inputs + jnp.reshape(emb * multiplier, inputs.shape)
 
   def init_weights_and_state(self, input_signature):
+      """
+      Initialize the weights.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (bool): write your description
+      """
     d_feature = input_signature.shape[-1]
     if sum(self._d_embs) != d_feature:
       raise ValueError(
@@ -110,6 +138,20 @@ class FixedBasePositionalEncoding(layer_base.Layer):
   def __init__(self, bases=[11, 13, 14, 15], n_digits=8,  #  pylint: disable=dangerous-default-value
                start_from_zero_one_in=100, base_dropout_one_in=100,
                mode='train', initializer=init.RandomUniformInitializer(1e-4)):
+      """
+      Initialize the internal network.
+
+      Args:
+          self: (todo): write your description
+          bases: (float): write your description
+          n_digits: (int): write your description
+          start_from_zero_one_in: (bool): write your description
+          base_dropout_one_in: (bool): write your description
+          mode: (todo): write your description
+          initializer: (todo): write your description
+          init: (str): write your description
+          RandomUniformInitializer: (todo): write your description
+      """
     super().__init__()
     self._bases = bases
     self._n_digits = n_digits
@@ -119,6 +161,13 @@ class FixedBasePositionalEncoding(layer_base.Layer):
     self._base_dropout_one_in = base_dropout_one_in
 
   def forward(self, x):
+      """
+      Forward computation.
+
+      Args:
+          self: (todo): write your description
+          x: (todo): write your description
+      """
     rng = self.rng
     base_weights, start_vec = self.weights
     batch_size, length = x.shape[0], x.shape[1]
@@ -167,6 +216,13 @@ class FixedBasePositionalEncoding(layer_base.Layer):
     return x + res
 
   def init_weights_and_state(self, input_signature):
+      """
+      Initialize the weights.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (bool): write your description
+      """
     d_feature = input_signature.shape[-1]
     if d_feature % self._n_digits != 0:
       raise ValueError(
@@ -354,6 +410,13 @@ class InfinitePositionalEncoding(layer_base.Layer):
     return embeddings
 
   def forward(self, inputs):
+      """
+      Forward computation.
+
+      Args:
+          self: (todo): write your description
+          inputs: (todo): write your description
+      """
     rng, state = self.rng, self.state
     d_feature = inputs.shape[-1]
     input_len = inputs.shape[-2]
@@ -380,6 +443,13 @@ class InfinitePositionalEncoding(layer_base.Layer):
     return inputs + emb
 
   def init_weights_and_state(self, input_signature):
+      """
+      Initialize the weights.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (bool): write your description
+      """
     d_feature = input_signature.shape[-1]
     if self._transform == 'diag':
       # Initialize it to a small value because JAX has a bug in softplus.
@@ -433,6 +503,13 @@ class TimeBinPositionalEncoding(layer_base.Layer):
     return embeddings
 
   def forward(self, inputs):
+      """
+      R forward computation.
+
+      Args:
+          self: (todo): write your description
+          inputs: (todo): write your description
+      """
     state = self.state
     depth = inputs.shape[-1]
 
@@ -459,6 +536,13 @@ class TimeBinPositionalEncoding(layer_base.Layer):
     return inputs
 
   def init_weights_and_state(self, input_signature):
+      """
+      Initialize the weights.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (bool): write your description
+      """
     if self._mode == 'predict':
       batch_size = input_signature.shape[0]
       self.state = jnp.zeros((batch_size,), dtype=jnp.int32)

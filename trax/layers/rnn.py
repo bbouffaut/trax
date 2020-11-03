@@ -41,6 +41,20 @@ class LSTMCell(base.Layer):
                forget_bias=1.0,
                kernel_initializer=initializers.GlorotUniformInitializer(),
                bias_initializer=initializers.RandomNormalInitializer(1e-6)):
+      """
+      Initialize the initial graph
+
+      Args:
+          self: (todo): write your description
+          n_units: (int): write your description
+          forget_bias: (str): write your description
+          kernel_initializer: (int): write your description
+          initializers: (todo): write your description
+          GlorotUniformInitializer: (todo): write your description
+          bias_initializer: (int): write your description
+          initializers: (todo): write your description
+          RandomNormalInitializer: (bool): write your description
+      """
     super().__init__(n_in=2, n_out=2)
     self._n_units = n_units
     self._forget_bias = forget_bias
@@ -48,6 +62,13 @@ class LSTMCell(base.Layer):
     self._bias_initializer = bias_initializer
 
   def forward(self, inputs):
+      """
+      R forward computation.
+
+      Args:
+          self: (todo): write your description
+          inputs: (todo): write your description
+      """
     x, lstm_state = inputs
 
     # LSTM state consists of c and h.
@@ -65,6 +86,13 @@ class LSTMCell(base.Layer):
     return new_h, jnp.concatenate([new_c, new_h], axis=-1)
 
   def init_weights_and_state(self, input_signature):
+      """
+      Initialize the weights.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (bool): write your description
+      """
     # LSTM state last dimension must be twice n_units.
     if input_signature[1].shape[-1] != 2 * self._n_units:
       raise ValueError(
@@ -81,6 +109,12 @@ class LSTMCell(base.Layer):
 def MakeZeroState(depth_multiplier=1):
   """Makes zeros of shape like x but removing the length (axis 1)."""
   def f(x):  # pylint: disable=invalid-name
+      """
+      Returns a function f ( x )
+
+      Args:
+          x: (int): write your description
+      """
     if len(x.shape) != 3:
       raise ValueError(f'Layer input should be a rank 3 tensor representing'
                        f' (batch_size, sequence_length, feature_depth); '
@@ -113,6 +147,20 @@ class GRUCell(base.Layer):
                forget_bias=0.0,
                kernel_initializer=initializers.RandomUniformInitializer(0.01),
                bias_initializer=initializers.RandomNormalInitializer(1e-6)):
+      """
+      Initialize the internal initialization.
+
+      Args:
+          self: (todo): write your description
+          n_units: (int): write your description
+          forget_bias: (str): write your description
+          kernel_initializer: (int): write your description
+          initializers: (todo): write your description
+          RandomUniformInitializer: (todo): write your description
+          bias_initializer: (int): write your description
+          initializers: (todo): write your description
+          RandomNormalInitializer: (bool): write your description
+      """
     super().__init__(n_in=2, n_out=2)
     self._n_units = n_units
     self._forget_bias = forget_bias
@@ -120,6 +168,13 @@ class GRUCell(base.Layer):
     self._bias_initializer = bias_initializer
 
   def forward(self, inputs):
+      """
+      Perform forward computation.
+
+      Args:
+          self: (todo): write your description
+          inputs: (todo): write your description
+      """
     x, gru_state = inputs
 
     # Dense layer on the concatenation of x and h.
@@ -136,6 +191,13 @@ class GRUCell(base.Layer):
     return new_gru_state, new_gru_state
 
   def init_weights_and_state(self, input_signature):
+      """
+      Initialize the weights.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (bool): write your description
+      """
     if input_signature[1].shape[-1] != self._n_units:
       raise ValueError(
           f'Second argument in input signature should have a final dimension of'
@@ -177,6 +239,11 @@ def ConvGRUCell(n_units, kernel_size=(3, 3)):
   """
 
   def BuildConv():
+      """
+      Build a convolutional convolutional filter.
+
+      Args:
+      """
     return convolution.Conv(
         filters=n_units, kernel_size=kernel_size, padding='SAME')
 
@@ -253,6 +320,14 @@ def GeneralGRUCell(candidate_transform,
 def InnerSRUCell():
   """The inner (non-parallel) computation of an SRU."""
   def f(cur_x_times_one_minus_f, cur_f, cur_state):  # pylint: disable=invalid-name
+      """
+      R f ( x_f ( f )
+
+      Args:
+          cur_x_times_one_minus_f: (bool): write your description
+          cur_f: (int): write your description
+          cur_state: (todo): write your description
+      """
     res = cur_f * cur_state + cur_x_times_one_minus_f
     return res, res
   return base.Fn('InnerSRUCell', f, n_out=2)
@@ -300,5 +375,11 @@ def SRU(n_units, activation=None):
 
 
 def _AddSigmoidBias(sigmoid_bias):
+    """
+    Compute biasoid to sigmoid.
+
+    Args:
+        sigmoid_bias: (int): write your description
+    """
   return base.Fn('AddSigmoidBias({sigmoid_bias})',
                  lambda x: x + sigmoid_bias)

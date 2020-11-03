@@ -27,6 +27,12 @@ from trax.models import mlp
 class MLPTest(absltest.TestCase):
 
   def test_pure_mlp_forward_shape(self):
+      """
+      Test for the shape.
+
+      Args:
+          self: (todo): write your description
+      """
     model = mlp.PureMLP(layer_widths=(32, 16, 8))
     x = np.ones((7, 28, 28, 3)).astype(np.float32)
     _, _ = model.init(shapes.signature(x))
@@ -34,6 +40,12 @@ class MLPTest(absltest.TestCase):
     self.assertEqual(y.shape, (7, 8))
 
   def test_mlp_forward_shape(self):
+      """
+      Test shape of the model.
+
+      Args:
+          self: (todo): write your description
+      """
     model = mlp.MLP(d_hidden=32, n_output_classes=10)
     x = np.ones((3, 28, 28, 1)).astype(np.float32)
     _, _ = model.init(shapes.signature(x))

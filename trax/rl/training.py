@@ -113,9 +113,22 @@ class Agent:
 
   @property
   def avg_returns(self):
+      """
+      Returns a list of returns
+
+      Args:
+          self: (todo): write your description
+      """
     return self._avg_returns
 
   def save_gin(self, summary_writer=None):
+      """
+      Save the summary to disk. gfile.
+
+      Args:
+          self: (todo): write your description
+          summary_writer: (todo): write your description
+      """
     assert self._output_dir is not None
     config_path = os.path.join(self._output_dir, 'config.gin')
     config_str = gin.operative_config_str()
@@ -159,6 +172,12 @@ class Agent:
           'avg_returns_temperature_{}'.format(eval_t)]
 
   def _collect_trajectories(self):
+      """
+      Collect all trajectories.
+
+      Args:
+          self: (todo): write your description
+      """
     return self.task.collect_trajectories(
         self.policy,
         n_trajectories=self._n_trajectories_per_epoch,
@@ -274,6 +293,12 @@ class Agent:
           self.save_to_file()
 
   def close(self):
+      """
+      Close the connection.
+
+      Args:
+          self: (todo): write your description
+      """
     pass
 
 
@@ -367,6 +392,12 @@ class PolicyAgent(Agent):
 
   @property
   def policy_metrics(self):
+      """
+      Returns a dictionary of policy.
+
+      Args:
+          self: (todo): write your description
+      """
     return {'policy_loss': self.policy_loss}
 
   def policy_batches_stream(self):
@@ -406,6 +437,12 @@ class PolicyAgent(Agent):
           self._policy_eval_steps)
 
   def close(self):
+      """
+      Close the connection.
+
+      Args:
+          self: (todo): write your description
+      """
     self._policy_trainer.close()
     super().close()
 
@@ -543,6 +580,12 @@ class PolicyGradient(Agent):
 
   @staticmethod
   def _value_fn(trajectory_batch):
+      """
+      R compute the mean value.
+
+      Args:
+          trajectory_batch: (todo): write your description
+      """
     # Estimate the value of every state as the mean return across trajectories
     # and timesteps in a batch.
     value = np.mean(trajectory_batch.returns)
@@ -726,6 +769,12 @@ class ValueAgent(Agent):
 
   @property
   def _value_model_signature(self):
+      """
+      Return a tuple of the model signature.
+
+      Args:
+          self: (todo): write your description
+      """
     obs_sig = shapes.signature(self._task.observation_space)
     target_sig = mask_sig = shapes.ShapeDtype(
         shape=(1, 1, self._task.action_space),
@@ -768,6 +817,12 @@ class ValueAgent(Agent):
       self._value_eval_model.state = self._value_trainer.model_state
 
   def close(self):
+      """
+      Closes the object.
+
+      Args:
+          self: (todo): write your description
+      """
     self._value_trainer.close()
     super().close()
 
@@ -780,6 +835,15 @@ class ValueAgent(Agent):
   def returns_mean(self):
     """The mean value of actions selected by the behavioral policy."""
     def f(values, index_max, returns, mask):
+        """
+        Calculate the f - score ) of values
+
+        Args:
+            values: (str): write your description
+            index_max: (int): write your description
+            returns: (todo): write your description
+            mask: (array): write your description
+        """
       del values, index_max
       return jnp.sum(returns) / jnp.sum(mask)
     return tl.Fn('ReturnsMean', f)
@@ -822,6 +886,19 @@ class DQN(ValueAgent):
                smoothl1loss=True,
                double_dqn=False,
                **kwargs):
+      """
+      Initialize task initialization.
+
+      Args:
+          self: (todo): write your description
+          task: (str): write your description
+          advantage_estimator: (todo): write your description
+          advantages: (str): write your description
+          monte_carlo: (todo): write your description
+          max_slice_length: (int): write your description
+          smoothl1loss: (todo): write your description
+          double_dqn: (bool): write your description
+      """
 
     self._max_slice_length = max_slice_length
     self._margin = max_slice_length-1
@@ -843,6 +920,15 @@ class DQN(ValueAgent):
   def value_loss(self):
     """Value loss computed using smooth L1 loss or L2 loss."""
     def f(values, actions, returns, mask):
+        """
+        Compute the cross - masked function.
+
+        Args:
+            values: (str): write your description
+            actions: (list): write your description
+            returns: (todo): write your description
+            mask: (array): write your description
+        """
       ind_0, ind_1 = np.indices(actions.shape)
       # We calculate length using the shape of returns
       # and adequatly remove a superflous slice of values.
@@ -860,6 +946,12 @@ class DQN(ValueAgent):
 
   @property
   def _replay_epochs(self):
+      """
+      Replay : class.
+
+      Args:
+          self: (todo): write your description
+      """
     return [-(ep + 1) for ep in range(self._n_replay_epochs)]
 
   def value_batches_stream(self):
@@ -979,6 +1071,15 @@ class DQN(ValueAgent):
   def value_mean(self):
     """The mean value of actions selected by the behavioral policy."""
     def f(values, actions, returns, mask):
+        """
+        Compute the masked function.
+
+        Args:
+            values: (str): write your description
+            actions: (list): write your description
+            returns: (todo): write your description
+            mask: (array): write your description
+        """
       ind_0, ind_1 = np.indices(actions.shape)
       # We calculate length using the shape of returns
       # and adequatly remove a superflous slice of values.

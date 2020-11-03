@@ -30,6 +30,12 @@ from trax.tf_numpy.numpy_impl import math_ops
 class LogicTest(tf.test.TestCase):
 
   def setUp(self):
+      """
+      Set the opens of the tensors.
+
+      Args:
+          self: (todo): write your description
+      """
     super().setUp()
     self.array_transforms = [
         lambda x: x,  # Identity,
@@ -47,8 +53,21 @@ class LogicTest(tf.test.TestCase):
     ]
 
   def testEqual(self):
+      """
+      Compute the cross - validation.
+
+      Args:
+          self: (todo): write your description
+      """
 
     def run_test(x1, x2=None):
+        """
+        Run two arrays of two arrays.
+
+        Args:
+            x1: (str): write your description
+            x2: (str): write your description
+        """
       if x2 is None:
         x2 = x1
       for fn1 in self.array_transforms:
@@ -71,6 +90,15 @@ class LogicTest(tf.test.TestCase):
     run_test([[1, 2], [3, 4]], [[1, 3], [3, 4]])
 
   def match_shape(self, actual, expected, msg=None):
+      """
+      Matches the shape.
+
+      Args:
+          self: (todo): write your description
+          actual: (todo): write your description
+          expected: (list): write your description
+          msg: (str): write your description
+      """
     if msg:
       msg = 'Shape match failed for: {}. Expected: {} Actual: {}'.format(
           msg, expected.shape, actual.shape)
@@ -80,12 +108,30 @@ class LogicTest(tf.test.TestCase):
     self.assertIsInstance(actual.shape, tuple, msg=msg)
 
   def match_dtype(self, actual, expected, msg=None):
+      """
+      Matches the expected dtype.
+
+      Args:
+          self: (todo): write your description
+          actual: (todo): write your description
+          expected: (list): write your description
+          msg: (str): write your description
+      """
     if msg:
       msg = 'Dtype match failed for: {}. Expected: {} Actual: {}.'.format(
           msg, expected.dtype, actual.dtype)
     self.assertEqual(actual.dtype, expected.dtype, msg=msg)
 
   def match(self, actual, expected, msg=None):
+      """
+      Matches expected expected error message.
+
+      Args:
+          self: (todo): write your description
+          actual: (todo): write your description
+          expected: (todo): write your description
+          msg: (str): write your description
+      """
     msg_ = 'Expected: {} Actual: {}'.format(expected, actual)
     if msg:
       msg = '{} {}'.format(msg_, msg)
@@ -101,6 +147,12 @@ class LogicTest(tf.test.TestCase):
 
 
 def make_numpy_compatible(s):
+    """
+    Make a numpy. numpy. numpy array.
+
+    Args:
+        s: (todo): write your description
+    """
   return s if not isinstance(s, arrays.ndarray) else s.data.numpy()
 
 

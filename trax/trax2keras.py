@@ -26,6 +26,13 @@ from trax.layers import base
 
 
 def _replace_none_batch(x, batch_size=None):
+    """
+    Replace tf.
+
+    Args:
+        x: (todo): write your description
+        batch_size: (int): write your description
+    """
   if batch_size is None:
     return x
   if isinstance(x, tf.Tensor) and x.shape[0] is None:
@@ -37,19 +44,42 @@ def _replace_none_batch(x, batch_size=None):
 
 
 def tensor_shapes_to_shape_dtypes(shapes, dtype):
+    """
+    Converts a shapedtypes_dtypes.
+
+    Args:
+        shapes: (list): write your description
+        dtype: (todo): write your description
+    """
   return math_lib.nested_map(
       lambda s: shapes_lib.ShapeDtype(s.as_list(), dtype), shapes)
 
 
 def read_values(variables):
+    """
+    Read values from the given list.
+
+    Args:
+        variables: (list): write your description
+    """
   return math_lib.nested_map(lambda v: v.read_value(), variables)
 
 
 def to_tensors(args):
+    """
+    Convert tensor to tensor.
+
+    Args:
+    """
   return math_lib.nested_map(tf.convert_to_tensor, args)
 
 
 def to_arrays(args):
+    """
+    Convert a nested array to nested arrays.
+
+    Args:
+    """
   return math_lib.nested_map(jnp.asarray, args)
 
 
@@ -154,6 +184,13 @@ class AsKeras(tf.keras.layers.Layer):
       self._rng_updater = rng_updater
 
   def build(self, input_shape):
+      """
+      Connects the graph.
+
+      Args:
+          self: (todo): write your description
+          input_shape: (list): write your description
+      """
     with math_lib.use_backend(math_lib.Backend.TFNP):
       # Using `is` instead of `==` following Trax's practice
       if self._trax_layer.weights is base.EMPTY_WEIGHTS:
@@ -175,6 +212,13 @@ class AsKeras(tf.keras.layers.Layer):
     super().build(input_shape)
 
   def call(self, inputs):
+      """
+      Call the model.
+
+      Args:
+          self: (todo): write your description
+          inputs: (dict): write your description
+      """
     with math_lib.use_backend(math_lib.Backend.TFNP):
       inputs = math_lib.nested_map(
           functools.partial(_replace_none_batch, batch_size=self._batch_size),

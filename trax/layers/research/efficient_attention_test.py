@@ -29,6 +29,12 @@ from trax.layers.research import efficient_attention
 class EfficientAttentionTest(test.TestCase):
 
   def test_self_attention(self):
+      """
+      Test self attention.
+
+      Args:
+          self: (todo): write your description
+      """
     with fastmath.use_backend(fastmath.Backend.JAX):
       layer = efficient_attention.SelfAttention(
           n_heads=5, d_qk=7, d_v=17, share_qk=False, causal=True,
@@ -40,6 +46,12 @@ class EfficientAttentionTest(test.TestCase):
       self.assertEqual(y.shape, x.shape)
 
   def test_lsh_ff(self):
+      """
+      Test for lsh layers.
+
+      Args:
+          self: (todo): write your description
+      """
     with fastmath.use_backend(fastmath.Backend.JAX):
       layer = efficient_attention.LSHFF(d_ff=1024*8, n_buckets=[16, 8])
       x = np.ones((3, 7, 1024)).astype(np.float32)
@@ -48,6 +60,12 @@ class EfficientAttentionTest(test.TestCase):
       self.assertEqual(y.shape, x.shape)
 
   def test_self_attention_tf(self):
+      """
+      Perform attention.
+
+      Args:
+          self: (todo): write your description
+      """
     with fastmath.use_backend(fastmath.Backend.TFNP):
       layer = efficient_attention.SelfAttention(
           n_heads=5, d_qk=7, d_v=17, share_qk=False, causal=True,
@@ -59,6 +77,12 @@ class EfficientAttentionTest(test.TestCase):
       self.assertEqual(y.shape, x.shape)
 
   def test_lsh_self_attention(self):
+      """
+      Test self - attention.
+
+      Args:
+          self: (todo): write your description
+      """
     with fastmath.use_backend(fastmath.Backend.JAX):
       layer = efficient_attention.LSHSelfAttention(
           n_heads=5, d_qk=7, d_v=17, causal=True,
@@ -71,6 +95,12 @@ class EfficientAttentionTest(test.TestCase):
       self.assertEqual(y.shape, x.shape)
 
   def test_lsh_self_attention_tf(self):
+      """
+      Batch attention.
+
+      Args:
+          self: (todo): write your description
+      """
     with fastmath.use_backend(fastmath.Backend.TFNP):
       layer = efficient_attention.LSHSelfAttention(
           n_heads=5, d_qk=7, d_v=17, causal=True,
@@ -83,7 +113,24 @@ class EfficientAttentionTest(test.TestCase):
       self.assertEqual(y.shape, x.shape)
 
   def _run_forward_and_backward(self, model, inp, weights, state):
+      """
+      Run backward pass on the given model.
+
+      Args:
+          self: (todo): write your description
+          model: (todo): write your description
+          inp: (todo): write your description
+          weights: (array): write your description
+          state: (todo): write your description
+      """
     def forward(inp, weights):
+        """
+        Forward weights.
+
+        Args:
+            inp: (todo): write your description
+            weights: (todo): write your description
+        """
       return model.pure_fn(
           inp, weights, state, rng=jax.random.PRNGKey(0))
     out, vjpfun, new_state = jax.vjp(forward, inp, weights, has_aux=True)
@@ -92,6 +139,17 @@ class EfficientAttentionTest(test.TestCase):
 
   def _test_equivalence_to_reference_code(
       self, model_cls, inp, input_signature, common_kwargs, *test_kwargs):
+      """
+      Runs an ml algorithm on a set of linear weights.
+
+      Args:
+          self: (todo): write your description
+          model_cls: (todo): write your description
+          inp: (todo): write your description
+          input_signature: (str): write your description
+          common_kwargs: (dict): write your description
+          test_kwargs: (dict): write your description
+      """
     ref_model = model_cls(use_reference_code=True, **common_kwargs)
     rng = fastmath.random.get_prng(123)
     weights, state = ref_model.init(input_signature, rng)
@@ -122,6 +180,12 @@ class EfficientAttentionTest(test.TestCase):
                                    test_weights_grad)
 
   def test_batching_self_attention(self):
+      """
+      Perform attention.
+
+      Args:
+          self: (todo): write your description
+      """
     with fastmath.use_backend(fastmath.Backend.JAX):
       common_kwargs = dict(
           n_heads=6, d_qk=7, d_v=17, share_qk=False, causal=True,
@@ -143,6 +207,12 @@ class EfficientAttentionTest(test.TestCase):
           common_kwargs, *test_kwargs)
 
   def test_batching_lsh_self_attention(self):
+      """
+      Batching for lsh descent.
+
+      Args:
+          self: (todo): write your description
+      """
     with fastmath.use_backend(fastmath.Backend.JAX):
       common_kwargs = dict(
           n_heads=6, d_qk=7, d_v=17, causal=True,
@@ -166,6 +236,17 @@ class EfficientAttentionTest(test.TestCase):
 
   def _test_fast_inference(
       self, model_cls, x, input_signature, common_kwargs, *test_kwargs):
+      """
+      Perform a test.
+
+      Args:
+          self: (todo): write your description
+          model_cls: (todo): write your description
+          x: (todo): write your description
+          input_signature: (str): write your description
+          common_kwargs: (dict): write your description
+          test_kwargs: (dict): write your description
+      """
     ref_model = model_cls(use_reference_code=True, mode='eval', **common_kwargs)
     weights, state = ref_model.init(input_signature)
 
@@ -173,7 +254,20 @@ class EfficientAttentionTest(test.TestCase):
         x, weights, state, rng=jax.random.PRNGKey(0))
 
     def get_slice(pytree, i):
+        """
+        Return a slice of a slice.
+
+        Args:
+            pytree: (str): write your description
+            i: (list): write your description
+        """
       def get_slice_for_val(x):
+          """
+          Return a slice of a slice.
+
+          Args:
+              x: (str): write your description
+          """
         if isinstance(x, shapes.ShapeDtype):
           return shapes.ShapeDtype(shape=x.shape[:1] + (1,) + x.shape[2:],
                                    dtype=x.dtype)
@@ -196,6 +290,12 @@ class EfficientAttentionTest(test.TestCase):
       self.assertAllClose(out, ref_out, rtol=1e-3, atol=1e-3)
 
   def test_fast_inference_self_attention(self):
+      """
+      Perform example of the example.
+
+      Args:
+          self: (todo): write your description
+      """
     with fastmath.use_backend(fastmath.Backend.JAX):
       common_kwargs = dict(
           n_heads=6, d_qk=7, d_v=17, share_qk=False, causal=True,
@@ -217,6 +317,13 @@ class EfficientAttentionTest(test.TestCase):
           common_kwargs, *test_kwargs)
 
   def _test_lsh_self_attention_deterministic_given_seed(self, causal=False):
+      """
+      Determine experts.
+
+      Args:
+          self: (todo): write your description
+          causal: (todo): write your description
+      """
     # Once the initialization and the call seeds are pinned down we have
     # deterministic output.
     with fastmath.use_backend(fastmath.Backend.JAX):
@@ -228,6 +335,11 @@ class EfficientAttentionTest(test.TestCase):
       x = np.ones((3, 32, 8)).astype(np.float32)
 
       def get_output():
+          """
+          Return a random output for the output.
+
+          Args:
+          """
         _, _ = layer.init(shapes.signature(x), jax.random.PRNGKey(0))
         return layer(x, rng=jax.random.PRNGKey(1))
 
@@ -239,12 +351,30 @@ class EfficientAttentionTest(test.TestCase):
         np.testing.assert_array_almost_equal(ys[0], y, decimal=6)
 
   def test_lsh_determinism_causal(self):
+      """
+      Test if the lsh_determinismism.
+
+      Args:
+          self: (todo): write your description
+      """
     self._test_lsh_self_attention_deterministic_given_seed(causal=True)
 
   def test_lsh_determinism_non_causal(self):
+      """
+      Determine lsh_sh_determines.
+
+      Args:
+          self: (todo): write your description
+      """
     self._test_lsh_self_attention_deterministic_given_seed(causal=False)
 
   def test_lsh_self_attention_masked_non_causal(self):
+      """
+      Generate a non - layer.
+
+      Args:
+          self: (todo): write your description
+      """
     # Test that when the input that is in the masked area changes the attention
     # for the un-masked outputs doesn't change, but the masked region does
     # change.
@@ -270,6 +400,13 @@ class EfficientAttentionTest(test.TestCase):
 
       # Fix rngs and get the output for the LSH layer.
       def get_output(x, mask):
+          """
+          Return a convolution for a layer.
+
+          Args:
+              x: (int): write your description
+              mask: (int): write your description
+          """
         xs = [x, mask]
         _, _ = layer.init(shapes.signature(xs), jax.random.PRNGKey(0))
         return layer(xs, rng=jax.random.PRNGKey(1))

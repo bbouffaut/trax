@@ -65,6 +65,12 @@ class ValueTrainTask(training.TrainTask):
     self._head_selector = head_selector
 
     def attach_head(model):
+        """
+        Attach a head to the head.
+
+        Args:
+            model: (todo): write your description
+        """
       return tl.Serial(model, self._head_selector)
     self._train_model = attach_head(model)
     if target_model is None:
@@ -90,9 +96,21 @@ class ValueTrainTask(training.TrainTask):
 
   @property
   def trajectory_batch_stream(self):
+      """
+      Trajects the stream stream.
+
+      Args:
+          self: (todo): write your description
+      """
     return self._trajectory_batch_stream
 
   def _sync_target_model(self):
+      """
+      Synchronize the train model.
+
+      Args:
+          self: (todo): write your description
+      """
     if self._train_model is not None:
       self._target_model.weights = self._train_model.weights
       self._target_model.state = self._train_model.state
@@ -191,6 +209,20 @@ class ValueEvalTask(training.EvalTask):
 
   @property
   def l1_loss(self):
+      """
+      Compute the l1 loss.
+
+      Args:
+          self: (todo): write your description
+      """
     def loss(values, targets, weights):
+        """
+        Compute the sum of the sum.
+
+        Args:
+            values: (str): write your description
+            targets: (list): write your description
+            weights: (array): write your description
+        """
       return jnp.sum(jnp.abs(values - targets) * weights) / jnp.sum(weights)
     return tl.Fn('L1Loss', loss)

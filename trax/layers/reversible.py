@@ -55,6 +55,13 @@ class ReversibleLayer(base.Layer):
       gradient signal for the weights.
     """
     def _do_forward(x, weights):
+        """
+        Perform forward computation.
+
+        Args:
+            x: (todo): write your description
+            weights: (todo): write your description
+        """
       old_weights, old_state, old_rng = self.weights, self.state, self._rng
       self.state, self._rng = state, rng
       self.weights = weights
@@ -69,9 +76,28 @@ class ReversibleLayer(base.Layer):
 
   @property
   def has_backward(self):
+      """
+      Returns true if the backend has a backward backend.
+
+      Args:
+          self: (todo): write your description
+      """
     return True
 
   def backward(self, inputs, output, grad, weights, state, new_state, rng):
+      """
+      Parameters ---------- forward
+
+      Args:
+          self: (todo): write your description
+          inputs: (array): write your description
+          output: (todo): write your description
+          grad: (array): write your description
+          weights: (array): write your description
+          state: (todo): write your description
+          new_state: (todo): write your description
+          rng: (todo): write your description
+      """
     del inputs
     _, inputs_weights_grad = (
         self.reverse_and_grad(output, grad, weights, state, new_state, rng))
@@ -82,6 +108,15 @@ class ReversibleSelect(ReversibleLayer):
   """Reversible version of the Select combinator."""
 
   def __init__(self, indices, n_in=None, name=None):
+      """
+      Initialize the indices.
+
+      Args:
+          self: (todo): write your description
+          indices: (list): write your description
+          n_in: (int): write your description
+          name: (str): write your description
+      """
     if n_in is None:
       n_in = max(indices) + 1
     if name is None:
@@ -99,12 +134,30 @@ class ReversibleSelect(ReversibleLayer):
         self._reverse_indices.append(indices.index(i))
 
   def forward(self, inputs):
+      """
+      Returns the forward computation.
+
+      Args:
+          self: (todo): write your description
+          inputs: (todo): write your description
+      """
     if not isinstance(inputs, (tuple, list)):
       inputs = (inputs,)
     selected = tuple(inputs[i] for i in self._indices)
     return selected[0] if len(selected) == 1 else selected
 
   def reverse(self, outputs, weights=(), state=(), new_state=(), rng=None):
+      """
+      Reverse the first ).
+
+      Args:
+          self: (todo): write your description
+          outputs: (todo): write your description
+          weights: (int): write your description
+          state: (todo): write your description
+          new_state: (todo): write your description
+          rng: (int): write your description
+      """
     del state, new_state, rng, weights
     if not isinstance(outputs, (tuple, list)):
       outputs = (outputs,)
@@ -113,6 +166,11 @@ class ReversibleSelect(ReversibleLayer):
 
 
 def ReversibleSwap():  # pylint: disable=invalid-name
+    """
+    Return a method that returns a : class.
+
+    Args:
+    """
   return ReversibleSelect([1, 0], name='ReversibleSwap')
 
 
@@ -120,6 +178,13 @@ class ReversibleSerial(ReversibleLayer, cb.Serial):
   """A reversible version of tl.Serial (requires reversible sub-layers)."""
 
   def __init__(self, *layers):
+      """
+      Initialize the layers.
+
+      Args:
+          self: (todo): write your description
+          layers: (list): write your description
+      """
     super().__init__(*layers)
   # def __init__(self, *layers):  # pylint: disable=super-init-not-called
   #   cb.Serial.__init__(self, layers)
@@ -132,6 +197,17 @@ class ReversibleSerial(ReversibleLayer, cb.Serial):
                 i, layer))
 
   def reverse(self, output, weights=(), state=(), new_state=(), rng=None):
+      """
+      Reverse the layer.
+
+      Args:
+          self: (todo): write your description
+          output: (todo): write your description
+          weights: (int): write your description
+          state: (todo): write your description
+          new_state: (todo): write your description
+          rng: (int): write your description
+      """
     rngs = (None,) * self._n_layers
     if rng is not None:
       rngs = fastmath.random.split(rng, self._n_layers)
@@ -147,6 +223,18 @@ class ReversibleSerial(ReversibleLayer, cb.Serial):
 
   def reverse_and_grad(self, output, grad, weights=(), state=(), new_state=(),
                        rng=None):
+      """
+      Reverse gradient.
+
+      Args:
+          self: (todo): write your description
+          output: (todo): write your description
+          grad: (todo): write your description
+          weights: (array): write your description
+          state: (todo): write your description
+          new_state: (todo): write your description
+          rng: (todo): write your description
+      """
     rngs = (None,) * self._n_layers
     if rng is not None:
       rngs = fastmath.random.split(rng, self._n_layers)
@@ -189,6 +277,14 @@ class ReversibleHalfResidual(ReversibleLayer):
   """
 
   def __init__(self, *residual_layers, attention_layer=None):
+      """
+      Initialize self.
+
+      Args:
+          self: (todo): write your description
+          residual_layers: (list): write your description
+          attention_layer: (todo): write your description
+      """
     super().__init__()
 
     self.compute_residual = cb.Serial(*residual_layers)
@@ -213,6 +309,13 @@ class ReversibleHalfResidual(ReversibleLayer):
     self._n_in = self._n_out = running_max + 1
 
   def forward(self, xs):
+      """
+      Parameters ----------
+
+      Args:
+          self: (todo): write your description
+          xs: (list): write your description
+      """
     rngs = _split_rngs(self.rng, len(self.sublayers))
     accumulator, *context = xs
     stack = context = tuple(context)
@@ -230,10 +333,33 @@ class ReversibleHalfResidual(ReversibleLayer):
     return stack
 
   def reverse(self, output, weights=(), state=(), new_state=(), rng=None):
+      """
+      Reverse the state.
+
+      Args:
+          self: (todo): write your description
+          output: (todo): write your description
+          weights: (int): write your description
+          state: (todo): write your description
+          new_state: (todo): write your description
+          rng: (int): write your description
+      """
     raise NotImplementedError('Only reverse_and_grad is actually used.')
 
   def reverse_and_grad(self, output, ct, weights=(), state=(), new_state=(),
                        rng=None):
+      """
+      Reverse the layer.
+
+      Args:
+          self: (todo): write your description
+          output: (todo): write your description
+          ct: (todo): write your description
+          weights: (array): write your description
+          state: (todo): write your description
+          new_state: (todo): write your description
+          rng: (todo): write your description
+      """
     rngs = _split_rngs(rng, len(self.sublayers))
 
     accumulator_output, *context = output
@@ -244,6 +370,13 @@ class ReversibleHalfResidual(ReversibleLayer):
     # Forward pass through self.compute_residual. Outputs that will not receive
     # a gradient signal from subsequent layers are moved to aux.
     def call_compute_residual(x, weights):
+        """
+        Call the residual function.
+
+        Args:
+            x: (todo): write your description
+            weights: (array): write your description
+        """
       res, _ = self.compute_residual.pure_fn(
           x, weights=weights, state=state[0], rng=rngs[0])
       if not isinstance(res, (tuple, list)):
@@ -290,6 +423,13 @@ class ReversibleHalfResidual(ReversibleLayer):
     if not isinstance(stack_ct, (tuple, list)):
       stack_ct = (stack_ct,)
     def _add(x, y):
+        """
+        Add a new dtype to the dtype.
+
+        Args:
+            x: (int): write your description
+            y: (int): write your description
+        """
       if x.dtype == jax.float0:
         return y
       if y.dtype == jax.float0:
@@ -308,6 +448,13 @@ class ReversibleHalfResidual(ReversibleLayer):
 
   # pylint: disable=protected-access
   def init_weights_and_state(self, input_signature):
+      """
+      Initialize the weights.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (bool): write your description
+      """
     stack = input_signature[1:]
     if len(stack) == 1:
       stack = stack[0]
@@ -356,6 +503,13 @@ def _forward_and_or_backward(layer):
     """
     # We need a layer pure_fn but only for inputs and weights.
     def pure_fn_without_state_and_rng(x, w):
+        """
+        Helper function that returns a state function.
+
+        Args:
+            x: (todo): write your description
+            w: (todo): write your description
+        """
       return layer.pure_fn(x, w, state, rng)
 
     # Calculate the vector-Jacobian product of the layer pure_fn.

@@ -30,6 +30,12 @@ from trax.models import transformer
 class TransformerTest(parameterized.TestCase):
 
   def test_transformer_lm_forward_shape(self):
+      """
+      Test for lm shape.
+
+      Args:
+          self: (todo): write your description
+      """
     vocab_size = 16
     model = transformer.TransformerLM(
         vocab_size, d_model=32, d_ff=64, n_layers=2, n_heads=2)
@@ -40,6 +46,14 @@ class TransformerTest(parameterized.TestCase):
 
   def _test_transformer_forward_shape(self, input_vocab_size,
                                       output_vocab_size):
+      """
+      Test for forward shape.
+
+      Args:
+          self: (todo): write your description
+          input_vocab_size: (int): write your description
+          output_vocab_size: (int): write your description
+      """
     model = transformer.Transformer(
         input_vocab_size, output_vocab_size, d_model=32, d_ff=64,
         n_encoder_layers=2, n_decoder_layers=2, n_heads=2)
@@ -60,6 +74,13 @@ class TransformerTest(parameterized.TestCase):
 
 
   def _test_fast_inference(self, length):
+      """
+      Generate a random model.
+
+      Args:
+          self: (todo): write your description
+          length: (int): write your description
+      """
     with fastmath.use_backend(fastmath.Backend.JAX):
       vocab_size = 16
       model_fn = functools.partial(
@@ -89,6 +110,12 @@ class TransformerTest(parameterized.TestCase):
         buf[:, index] = next_sym[:, 0]
 
   def test_dot_product_causal_attention_fast_inference(self):
+      """
+      Test if the cross - dot - product of - experts have been generated test.
+
+      Args:
+          self: (todo): write your description
+      """
     self._test_fast_inference(length=5)
 
 

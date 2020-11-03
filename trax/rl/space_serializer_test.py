@@ -35,15 +35,39 @@ class BoxSpaceSerializerTest(test.TestCase):
       # Enough precision to represent float32s accurately.
       precision=4,
   ):
+      """
+      Generate space and space space.
+
+      Args:
+          self: (todo): write your description
+          low: (todo): write your description
+          high: (todo): write your description
+          shape: (tuple): write your description
+          vocab_size: (int): write your description
+          precision: (int): write your description
+      """
     gin.bind_parameter('BoxSpaceSerializer.precision', precision)
     space = gym.spaces.Box(low=low, high=high, shape=shape)
     serializer = space_serializer.create(space, vocab_size=vocab_size)
     return (space, serializer)
 
   def _sample_batch(self, space):
+      """
+      Sample a batch of samples.
+
+      Args:
+          self: (todo): write your description
+          space: (todo): write your description
+      """
     return np.reshape(space.sample(), (1,) + space.shape)
 
   def test_representation_length(self):
+      """
+      Returns the length of - space space.
+
+      Args:
+          self: (todo): write your description
+      """
     (space, serializer) = self._make_space_and_serializer()
     input_array = self._sample_batch(space)
     representation = serializer.serialize(input_array)
@@ -51,6 +75,12 @@ class BoxSpaceSerializerTest(test.TestCase):
         representation.shape, (1, serializer.representation_length))
 
   def test_commutes(self):
+      """
+      Test for serialized space.
+
+      Args:
+          self: (todo): write your description
+      """
     (space, serializer) = self._make_space_and_serializer()
     input_array = self._sample_batch(space)
     representation = serializer.serialize(input_array)
@@ -59,6 +89,12 @@ class BoxSpaceSerializerTest(test.TestCase):
     np.testing.assert_array_almost_equal(input_array, output_array, decimal=5)
 
   def test_representation_changes(self):
+      """
+      Test for changes in the space.
+
+      Args:
+          self: (todo): write your description
+      """
     (space, serializer) = self._make_space_and_serializer()
     array1 = self._sample_batch(space)
     array2 = -array1
@@ -66,6 +102,12 @@ class BoxSpaceSerializerTest(test.TestCase):
     self.assertFalse(np.array_equal(repr1, repr2))
 
   def test_bounds_space(self):
+      """
+      Return a serialized space.
+
+      Args:
+          self: (todo): write your description
+      """
     gin.bind_parameter('BoxSpaceSerializer.max_range', (-10.0, 10.0))
     (_, serializer) = self._make_space_and_serializer(
         # Too wide range to represent, need to clip.
@@ -77,11 +119,23 @@ class BoxSpaceSerializerTest(test.TestCase):
     np.testing.assert_array_almost_equal(input_array, output_array)
 
   def test_significance_map(self):
+      """
+      Test if the space isochance.
+
+      Args:
+          self: (todo): write your description
+      """
     (_, serializer) = self._make_space_and_serializer(shape=(2,))
     np.testing.assert_array_equal(
         serializer.significance_map, [0, 1, 2, 3, 0, 1, 2, 3])
 
   def test_serializes_boundaries(self):
+      """
+      Test the serialized serialization.
+
+      Args:
+          self: (todo): write your description
+      """
     vocab_size = 256
     precision = 4
     (_, serializer) = self._make_space_and_serializer(
@@ -97,64 +151,136 @@ class BoxSpaceSerializerTest(test.TestCase):
 class DiscreteSpaceSerializerTest(test.TestCase):
 
   def setUp(self):
+      """
+      Sets up space.
+
+      Args:
+          self: (todo): write your description
+      """
     super().setUp()
     self._space = gym.spaces.Discrete(n=2)
     self._serializer = space_serializer.create(self._space, vocab_size=2)
 
   def _sample_batch(self):
+      """
+      Return a batch of samples.
+
+      Args:
+          self: (todo): write your description
+      """
     return np.reshape(self._space.sample(), (1,) + self._space.shape)
 
   def test_representation_length(self):
+      """
+      R calculate length of - sample.
+
+      Args:
+          self: (todo): write your description
+      """
     input_array = self._sample_batch()
     representation = self._serializer.serialize(input_array)
     self.assertEqual(
         representation.shape, (1, self._serializer.representation_length))
 
   def test_commutes(self):
+      """
+      Deserialize the input array.
+
+      Args:
+          self: (todo): write your description
+      """
     input_array = self._sample_batch()
     representation = self._serializer.serialize(input_array)
     output_array = self._serializer.deserialize(representation)
     np.testing.assert_array_almost_equal(input_array, output_array)
 
   def test_representation_changes(self):
+      """
+      Determine changes in samples.
+
+      Args:
+          self: (todo): write your description
+      """
     array1 = self._sample_batch()
     array2 = 1 - array1
     (repr1, repr2) = tuple(map(self._serializer.serialize, (array1, array2)))
     self.assertFalse(np.array_equal(repr1, repr2))
 
   def test_significance_map(self):
+      """
+      Test if the signal issignance.
+
+      Args:
+          self: (todo): write your description
+      """
     np.testing.assert_array_equal(self._serializer.significance_map, [0])
 
 
 class MultiDiscreteSpaceSerializerTest(test.TestCase):
 
   def setUp(self):
+      """
+      Sets the space space.
+
+      Args:
+          self: (todo): write your description
+      """
     super().setUp()
     self._space = gym.spaces.MultiDiscrete(nvec=[2, 2])
     self._serializer = space_serializer.create(self._space, vocab_size=2)
 
   def _sample_batch(self):
+      """
+      Return a batch of samples.
+
+      Args:
+          self: (todo): write your description
+      """
     return np.reshape(self._space.sample(), (1,) + self._space.shape)
 
   def test_representation_length(self):
+      """
+      R calculate length of - sample.
+
+      Args:
+          self: (todo): write your description
+      """
     input_array = self._sample_batch()
     representation = self._serializer.serialize(input_array)
     self.assertEqual(
         representation.shape, (1, self._serializer.representation_length))
 
   def test_commutes(self):
+      """
+      Deserialize the input array.
+
+      Args:
+          self: (todo): write your description
+      """
     input_array = self._sample_batch()
     representation = self._serializer.serialize(input_array)
     output_array = self._serializer.deserialize(representation)
     np.testing.assert_array_almost_equal(input_array, output_array)
 
   def test_representation_changes(self):
+      """
+      Determine changes in samples.
+
+      Args:
+          self: (todo): write your description
+      """
     array1 = self._sample_batch()
     array2 = 1 - array1
     (repr1, repr2) = tuple(map(self._serializer.serialize, (array1, array2)))
     self.assertFalse(np.array_equal(repr1, repr2))
 
   def test_significance_map(self):
+      """
+      Test if the cross - serializer.
+
+      Args:
+          self: (todo): write your description
+      """
     np.testing.assert_array_equal(self._serializer.significance_map, [0, 0])
 
 

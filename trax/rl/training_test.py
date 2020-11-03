@@ -36,6 +36,12 @@ from trax.supervised import lr_schedules
 class TrainingTest(absltest.TestCase):
 
   def setUp(self):
+      """
+      Sets the prices for this analysis.
+
+      Args:
+          self: (todo): write your description
+      """
     super().setUp()
     test_utils.ensure_flag('test_tmpdir')
     self._model_fn = functools.partial(
@@ -101,6 +107,11 @@ class TrainingTest(absltest.TestCase):
     # Trainer 3 restores from a checkpoint with Agent/Loop step mistmatch,
     # should fail.
     def agent3_fn():
+        """
+        The agent agent agent.
+
+        Args:
+        """
       return training.PolicyGradient(
           task,
           model_fn=self._model_fn,

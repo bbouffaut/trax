@@ -43,6 +43,15 @@ class PositionEncodingsTest(unittest.TestCase):
       (2, 100, 8),  # batched
   ])
   def test_training(self, n, t, c):
+      """
+      Test for training.
+
+      Args:
+          self: (todo): write your description
+          n: (todo): write your description
+          t: (todo): write your description
+          c: (todo): write your description
+      """
     encoding = self.Encoding()
     input_ntc = np.random.randn(n, t, c)
     encoding.init(input_ntc)
@@ -56,6 +65,15 @@ class PositionEncodingsTest(unittest.TestCase):
       (2, 100, 8),  # batched
   ])
   def test_inference(self, n, t, c):
+      """
+      Test for inference.
+
+      Args:
+          self: (todo): write your description
+          n: (todo): write your description
+          t: (todo): write your description
+          c: (todo): write your description
+      """
     # Get the eval mode outputs:
     encoding = self.Encoding(mode='eval')
     input_ntc = np.random.randn(n, t, c)

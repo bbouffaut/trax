@@ -28,57 +28,122 @@ INPUT_SHAPE = (5, 7, 20)
 
 
 def rng():  # Can't be a constant, because JAX has to init itself in main first.
+    """
+    Return a random rng.
+
+    Args:
+    """
   return fastmath.random.get_prng(0)
 
 
 class InitializersTest(absltest.TestCase):
 
   def test_random_normal(self):
+      """
+      Initialize the random variate.
+
+      Args:
+          self: (todo): write your description
+      """
     f = tl.RandomNormalInitializer()
     init_value = f(INPUT_SHAPE, rng())
     self.assertEqual(init_value.shape, INPUT_SHAPE)
 
   def test_lecun_uniform(self):
+      """
+      Test if a random hypercube.
+
+      Args:
+          self: (todo): write your description
+      """
     f = tl.LeCunUniformInitializer()
     init_value = f(INPUT_SHAPE, rng())
     self.assertEqual(init_value.shape, INPUT_SHAPE)
 
   def test_random_uniform(self):
+      """
+      Generate a random integer.
+
+      Args:
+          self: (todo): write your description
+      """
     f = tl.RandomUniformInitializer()
     init_value = f(INPUT_SHAPE, rng())
     self.assertEqual(init_value.shape, INPUT_SHAPE)
 
   def test_glorot_normal(self):
+      """
+      Initialize glor polynomial.
+
+      Args:
+          self: (todo): write your description
+      """
     f = tl.GlorotNormalInitializer()
     init_value = f(INPUT_SHAPE, rng())
     self.assertEqual(init_value.shape, INPUT_SHAPE)
 
   def test_glorot_uniform(self):
+      """
+      Test if gqualotot polynomial coefficients of the polynomial.
+
+      Args:
+          self: (todo): write your description
+      """
     f = tl.GlorotUniformInitializer()
     init_value = f(INPUT_SHAPE, rng())
     self.assertEqual(init_value.shape, INPUT_SHAPE)
 
   def test_lecun_normal(self):
+      """
+      Initialize normalization.
+
+      Args:
+          self: (todo): write your description
+      """
     f = tl.LeCunNormalInitializer()
     init_value = f(INPUT_SHAPE, rng())
     self.assertEqual(init_value.shape, INPUT_SHAPE)
 
   def test_kaiming_normal(self):
+      """
+      Kaim normalization normalization.
+
+      Args:
+          self: (todo): write your description
+      """
     f = tl.KaimingNormalInitializer()
     init_value = f(INPUT_SHAPE, rng())
     self.assertEqual(init_value.shape, INPUT_SHAPE)
 
   def test_kaiming_uniform(self):
+      """
+      Test if kaiming random samples.
+
+      Args:
+          self: (todo): write your description
+      """
     f = tl.KaimingUniformInitializer()
     init_value = f(INPUT_SHAPE, rng())
     self.assertEqual(init_value.shape, INPUT_SHAPE)
 
   def test_orthogonal(self):
+      """
+      Initialize orthogonal orthogonal
+
+      Args:
+          self: (todo): write your description
+      """
     f = tl.OrthogonalInitializer()
     init_value = f(INPUT_SHAPE, rng())
     self.assertEqual(init_value.shape, INPUT_SHAPE)
 
   def test_from_file(self):
+      """
+      Initialize a new dataset from file.
+
+      Args:
+          self: (todo): write your description
+      """
     params = np.array([[0.0, 0.1], [0.2, 0.3], [0.4, 0.5]])
     # `create_tempfile` needs access to --test_tmpdir, however in the OSS world
     # pytest doesn't run `absltest.main`, so we need to manually parse the flags

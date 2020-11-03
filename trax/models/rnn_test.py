@@ -30,6 +30,13 @@ from trax.models import rnn
 class RNNTest(parameterized.TestCase):
 
   def test_rnnlm_forward_shape(self, backend):
+      """
+      Test forward forward shape.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+      """
     with fastmath.use_backend(backend):
       model = rnn.RNNLM(vocab_size=20, d_model=16)
       x = np.ones((3, 28)).astype(np.int32)
@@ -38,6 +45,13 @@ class RNNTest(parameterized.TestCase):
       self.assertEqual(y.shape, (3, 28, 20))
 
   def test_grulm_forward_shape(self, backend):
+      """
+      Test for the model.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+      """
     with fastmath.use_backend(backend):
       model = rnn.GRULM(vocab_size=20, d_model=16)
       x = np.ones((3, 28)).astype(np.int32)
@@ -46,6 +60,13 @@ class RNNTest(parameterized.TestCase):
       self.assertEqual(y.shape, (3, 28, 20))
 
   def test_lstmseq2seqattn_forward_shape(self, backend):
+      """
+      Test for lstm model.
+
+      Args:
+          self: (todo): write your description
+          backend: (str): write your description
+      """
     with fastmath.use_backend(backend):
       model = rnn.LSTMSeq2SeqAttn(
           input_vocab_size=20, target_vocab_size=20, d_model=16)

@@ -40,6 +40,12 @@ _CONFIG_DIR = os.path.join(pkg_dir, 'configs/')
 class DecodingTest(test.TestCase):
 
   def test_autoregressive_sample_transformerlm(self):
+      """
+      Test for discrete autoregressive model.
+
+      Args:
+          self: (todo): write your description
+      """
     model = models.TransformerLM(10, d_model=32, d_ff=64, n_layers=1,
                                  n_heads=2, mode='predict')
     model.init(shapes.ShapeDtype((1, 1), dtype=np.int32))
@@ -61,6 +67,12 @@ class DecodingTest(test.TestCase):
     self.assertEqual(s3.shape[1], 10)
 
   def _lsh_self_attention_fn(self):
+      """
+      Lshared attention.
+
+      Args:
+          self: (todo): write your description
+      """
     return functools.partial(
         tl.LSHSelfAttention,
         attention_dropout=0.0,
@@ -75,6 +87,14 @@ class DecodingTest(test.TestCase):
     )
 
   def _timebin_self_attention_fn(self, use_reference_code=False, chunk_len=64):
+      """
+      Calculate self attention.
+
+      Args:
+          self: (todo): write your description
+          use_reference_code: (bool): write your description
+          chunk_len: (int): write your description
+      """
     return functools.partial(
         tl.SelfAttention,
         attention_dropout=0.05,
@@ -87,6 +107,12 @@ class DecodingTest(test.TestCase):
     )
 
   def test_autoregressive_sample_reformerlm(self):
+      """
+      Autore learning isochgressive.
+
+      Args:
+          self: (todo): write your description
+      """
     lsh_self_attention = self._lsh_self_attention_fn()
     timebin_self_attention = self._timebin_self_attention_fn()
 
@@ -114,6 +140,12 @@ class DecodingTest(test.TestCase):
     self.assertEqual(s1.shape[1], 10)
 
   def test_autoregressive_sample_transformer(self):
+      """
+      Autoregressive autore_transformer.
+
+      Args:
+          self: (todo): write your description
+      """
     model = models.Transformer(10, d_model=32, d_ff=64, n_encoder_layers=1,
                                n_decoder_layers=1, n_heads=2, mode='predict')
     inputs = np.ones((1, 3), dtype=np.int32)
@@ -125,6 +157,12 @@ class DecodingTest(test.TestCase):
     self.assertEqual(s.shape[1], 10)
 
   def test_autoregressive_sample_transformerlm_quality(self):
+      """
+      Sample autore_autore_transformer.
+
+      Args:
+          self: (todo): write your description
+      """
     pred_model = models.TransformerLM(
         d_model=64, d_ff=128, dropout=0.05, max_len=256, n_heads=2,
         n_layers=2, vocab_size=13, mode='predict')
@@ -138,6 +176,12 @@ class DecodingTest(test.TestCase):
     self.assertEqual(str(s[0]), '[3 7 5 3 2 4]')
 
   def test_autoregressive_sample_transformer_quality(self):
+      """
+      Autoregressive autore autore model.
+
+      Args:
+          self: (todo): write your description
+      """
     pred_model = models.Transformer(
         d_model=64, d_ff=128, dropout=0.05, max_len=256, n_heads=2,
         n_encoder_layers=2, n_decoder_layers=2, input_vocab_size=13,
@@ -152,6 +196,12 @@ class DecodingTest(test.TestCase):
     self.assertEqual(str(s[0]), '[3 7 5 3 2 4 1]')
 
   def test_autoregressive_sample_reformer2_lsh(self):
+      """
+      Autore autore.
+
+      Args:
+          self: (todo): write your description
+      """
     max_len = 128
 
     pred_model = models.Reformer2(
@@ -189,6 +239,12 @@ class DecodingTest(test.TestCase):
     self.assertEqual(s.shape[1], 10)
 
   def test_autoregressive_sample_reformer2_lsh_attn_quality(self):
+      """
+      Autoregressive lsh_sample_attn.
+
+      Args:
+          self: (todo): write your description
+      """
     gin.add_config_file_search_path(_CONFIG_DIR)
     max_len = 32  # 32 is the max length we trained the checkpoint for.
     test_lengths = [8, 16, 32]
@@ -225,9 +281,20 @@ class DecodingTest(test.TestCase):
     gin.clear_config()  # Make sure to not affect other tests.
 
   def test_autoregressive_sample_reformer2_copy_self_attn_quality(self):
+      """
+      Test for autoregressive attention.
+
+      Args:
+          self: (todo): write your description
+      """
     max_len = 32
 
     def _self_attention_fn():
+        """
+        Predict attention.
+
+        Args:
+        """
       return functools.partial(
           tl.SelfAttention,
           predict_drop_len=2 * max_len,
@@ -272,6 +339,12 @@ class DecodingTest(test.TestCase):
     np.testing.assert_equal(s[0], inputs[0, :inp_len])
 
   def test_autoregressive_sample_reformerlm_lsh(self):
+      """
+      Autore autoregressive model.
+
+      Args:
+          self: (todo): write your description
+      """
     max_len = 32
 
     pred_model = models.ReformerLM(
@@ -311,6 +384,12 @@ class DecodingTest(test.TestCase):
     self.assertEqual(s.shape[1], 10)
 
   def test_autoregressive_sample_reformerlm_lsh_quality(self):
+      """
+      Autore_autoregressive model.
+
+      Args:
+          self: (todo): write your description
+      """
     max_len = 32
 
     pred_model = models.ReformerLM(

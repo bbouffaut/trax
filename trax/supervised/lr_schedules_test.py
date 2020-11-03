@@ -26,6 +26,12 @@ from trax.supervised import lr_schedules
 class LRFunctionsTest(absltest.TestCase):
 
   def test_warmup(self):
+      """
+      Assigns the learning.
+
+      Args:
+          self: (todo): write your description
+      """
     lr_fn = lr_schedules.warmup(9, .01)
 
     # Linear warm-up.
@@ -42,6 +48,12 @@ class LRFunctionsTest(absltest.TestCase):
     self.assertAlmostEqual(.01, lr_fn(4000))
 
   def test_constant(self):
+      """
+      Assigns a constant.
+
+      Args:
+          self: (todo): write your description
+      """
     lr_fn = lr_schedules.constant(.02)
     self.assertEqual(.02, lr_fn(1))
     self.assertEqual(.02, lr_fn(20))
@@ -54,6 +66,12 @@ class LRFunctionsTest(absltest.TestCase):
     self.assertEqual(.02, lr_fn(900000000))
 
   def test_warmup_and_rsqrt_decay(self):
+      """
+      Calculate the roc.
+
+      Args:
+          self: (todo): write your description
+      """
     lr_fn = lr_schedules.warmup_and_rsqrt_decay(24, .25)
 
     # Warm-up.
@@ -71,6 +89,12 @@ class LRFunctionsTest(absltest.TestCase):
     self.assertAlmostEqual(.25 * (5 / math.sqrt(50000)), lr_fn(50000))
 
   def test_cosine_sawtooth(self):
+      """
+      Test if the cosine to make the cosine.
+
+      Args:
+          self: (todo): write your description
+      """
     tail_fn = lr_schedules._CosineSawtoothTail(180, min_value=.1)
     lr_fn = lr_schedules._BodyAndTail(.3, tail_start=0, tail_fn=tail_fn)
 

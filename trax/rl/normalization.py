@@ -24,32 +24,71 @@ from trax import layers as tl
 
 
 def running_mean_init(shape, fill_value=0):
+    """
+    Initialize the mean of a set.
+
+    Args:
+        shape: (int): write your description
+        fill_value: (todo): write your description
+    """
   return (np.full(shape, fill_value), np.array(0))
 
 
 def running_mean_update(x, state):
+    """
+    Update the mean of the mean
+
+    Args:
+        x: (int): write your description
+        state: (str): write your description
+    """
   (mean, n) = state
   mean = n.astype(np.float32) / (n + 1) * mean + x / (n + 1)
   return (mean, n + 1)
 
 
 def running_mean_get_mean(state):
+    """
+    Return the mean of a state.
+
+    Args:
+        state: (str): write your description
+    """
   (mean, _) = state
   return mean
 
 
 def running_mean_get_count(state):
+    """
+    Return the number of running jobs
+
+    Args:
+        state: (str): write your description
+    """
   (_, count) = state
   return count
 
 
 def running_mean_and_variance_init(shape):
+    """
+    Initialize a state.
+
+    Args:
+        shape: (int): write your description
+    """
   mean_state = running_mean_init(shape, fill_value=0.0)
   var_state = running_mean_init(shape, fill_value=1.0)
   return (mean_state, var_state)
 
 
 def running_mean_and_variance_update(x, state):
+    """
+    Compute the mean and variance.
+
+    Args:
+        x: (array): write your description
+        state: (todo): write your description
+    """
   (mean_state, var_state) = state
   old_mean = running_mean_get_mean(mean_state)
   mean_state = running_mean_update(x, mean_state)
@@ -61,16 +100,34 @@ def running_mean_and_variance_update(x, state):
 
 
 def running_mean_and_variance_get_mean(state):
+    """
+    Return the mean and mean and mean mean.
+
+    Args:
+        state: (todo): write your description
+    """
   (mean_state, _) = state
   return running_mean_get_mean(mean_state)
 
 
 def running_mean_and_variance_get_count(state):
+    """
+    Return the number of running running running running running running running state.
+
+    Args:
+        state: (todo): write your description
+    """
   (mean_state, _) = state
   return running_mean_get_count(mean_state)
 
 
 def running_mean_and_variance_get_variance(state):
+    """
+    Return the mean mean of a var.
+
+    Args:
+        state: (todo): write your description
+    """
   (_, var_state) = state
   return running_mean_get_mean(var_state)
 
@@ -80,15 +137,39 @@ class Normalize(tl.Layer):
   """Numerically stable normalization layer."""
 
   def __init__(self, sample_limit=float('+inf'), epsilon=1e-5, mode='train'):
+      """
+      Initialize the sample.
+
+      Args:
+          self: (todo): write your description
+          sample_limit: (int): write your description
+          float: (todo): write your description
+          epsilon: (float): write your description
+          mode: (todo): write your description
+      """
     super().__init__()
     self._sample_limit = sample_limit
     self._epsilon = epsilon
     self._mode = mode
 
   def init_weights_and_state(self, input_signature):
+      """
+      Initialize weights and weights.
+
+      Args:
+          self: (todo): write your description
+          input_signature: (bool): write your description
+      """
     self.state = running_mean_and_variance_init(input_signature.shape[2:])
 
   def forward(self, inputs):
+      """
+      Perform forward pass
+
+      Args:
+          self: (todo): write your description
+          inputs: (todo): write your description
+      """
     state = self.state
     observations = inputs
     if self._mode == 'collect':

@@ -110,6 +110,12 @@ def SmoothL1Loss():
 def BinaryClassifier(threshold=0.5):
   """Returns a layer that performs binary classification of the model output."""
   def f(model_output):  # pylint: disable=invalid-name
+      """
+      R compute the model output.
+
+      Args:
+          model_output: (todo): write your description
+      """
     predicted_category = (model_output > threshold).astype(jnp.int32)
     return predicted_category
   return Fn('BinaryClassifier', f)
@@ -118,6 +124,12 @@ def BinaryClassifier(threshold=0.5):
 def MulticlassClassifier(axis=-1):
   """Multiclass classification of the model output."""
   def f(model_output):  # pylint: disable=invalid-name
+      """
+      R compute the f - measure.
+
+      Args:
+          model_output: (todo): write your description
+      """
     predicted_category = jnp.argmax(model_output, axis=axis)
     return predicted_category
   return Fn('MulticlassClassifier', f)
@@ -172,6 +184,13 @@ def SumOfWeights():
 def _Accuracy():
   """Returns a layer that scores predicted versus target category."""
   def f(predicted_category, target_category):  # pylint: disable=invalid-name
+      """
+      Evaluates the predicted category category of category category category.
+
+      Args:
+          predicted_category: (todo): write your description
+          target_category: (todo): write your description
+      """
     # TODO(pkozakowski): This assertion breaks some tests. Fix and uncomment.
     # shapes.assert_same_shape(predicted_category, target_category)
     return jnp.equal(predicted_category, target_category).astype(jnp.float32)
@@ -181,6 +200,13 @@ def _Accuracy():
 def _BinaryCrossEntropy():
   """Returns a layer that computes prediction-target cross entropies."""
   def f(model_output, target_category):  # pylint: disable=invalid-name
+      """
+      Compute the f ( f ) of a model.
+
+      Args:
+          model_output: (todo): write your description
+          target_category: (todo): write your description
+      """
     shapes.assert_same_shape(model_output, target_category)
     batch_size = model_output.shape[0]
     j = jnp.dot(jnp.transpose(target_category), jnp.log(model_output))
@@ -193,6 +219,13 @@ def _BinaryCrossEntropy():
 def _CrossEntropy():
   """Returns a layer that computes prediction-target cross entropies."""
   def f(model_output, target_category):  # pylint: disable=invalid-name
+      """
+      Calculate the f ( f ( f ( f ( f )
+
+      Args:
+          model_output: (todo): write your description
+          target_category: (todo): write your description
+      """
     # TODO(pkozakowski): This assertion breaks some tests. Fix and uncomment.
     # shapes.assert_shape_equals(target_category, model_output.shape[:-1])
     target_distribution = one_hot(target_category, model_output.shape[-1])
@@ -203,6 +236,13 @@ def _CrossEntropy():
 def _WeightedMean():
   """Returns a layer that computes a weighted mean of the given values."""
   def f(values, weights):  # pylint: disable=invalid-name
+      """
+      Calculate the f - measure ).
+
+      Args:
+          values: (str): write your description
+          weights: (array): write your description
+      """
     return jnp.sum(values * weights) / jnp.sum(weights)
   return Fn('_WeightedMean', f)
 
@@ -210,6 +250,13 @@ def _WeightedMean():
 def WeightedSum():
   """Returns a layer that computes a weighted sum of the given values."""
   def f(values, weights):  # pylint: disable=invalid-name
+      """
+      Calculate the sum of - score.
+
+      Args:
+          values: (str): write your description
+          weights: (array): write your description
+      """
     return jnp.sum(values * weights)
   return Fn('WeightedSum', f)
 
@@ -217,6 +264,13 @@ def WeightedSum():
 def _WeightedSequenceMean():
   """Returns a layer that computes a weighted sequence accuracy mean."""
   def f(values, weights):  # pylint: disable=invalid-name
+      """
+      Compute the f ( f ( x ).
+
+      Args:
+          values: (str): write your description
+          weights: (array): write your description
+      """
     # This function assumes weights are 0 or 1.
     # Then compute 1: not-correct, 0: correct or masked
     not_correct = (1.0 - values) * weights

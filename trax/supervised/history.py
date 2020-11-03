@@ -39,6 +39,12 @@ class History(object):
   """
 
   def __init__(self):
+      """
+      Initialize the internal state.
+
+      Args:
+          self: (todo): write your description
+      """
     # Structure is
     # values = {
     #   'mode1': {
@@ -75,4 +81,10 @@ class History(object):
     return sorted(list(self._values[mode].keys()))
 
   def __str__(self):
+      """
+      Returns the string representation of the string.
+
+      Args:
+          self: (todo): write your description
+      """
     return str(self._values)

@@ -33,6 +33,12 @@ from trax.tf_numpy.numpy_impl import math_ops
 class MathTest(tf.test.TestCase, parameterized.TestCase):
 
   def setUp(self):
+      """
+      Resetches the tensor to the op.
+
+      Args:
+          self: (todo): write your description
+      """
     super().setUp()
     self.array_transforms = [
         lambda x: x,  # Identity,
@@ -50,8 +56,28 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
                     extra_operands=None,
                     check_promotion=True,
                     check_promotion_result_type=True):
+      """
+      Perform operations.
+
+      Args:
+          self: (todo): write your description
+          math_fun: (str): write your description
+          np_fun: (todo): write your description
+          name: (str): write your description
+          operands: (todo): write your description
+          extra_operands: (todo): write your description
+          check_promotion: (bool): write your description
+          check_promotion_result_type: (todo): write your description
+      """
 
     def run_test(a, b):
+        """
+        Perform of the test.
+
+        Args:
+            a: (str): write your description
+            b: (str): write your description
+        """
       for fn in self.array_transforms:
         arg1 = fn(a)
         arg2 = fn(b)
@@ -85,6 +111,12 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
         run_test(operand1, operand2)
 
   def testDot(self):
+      """
+      Return the test test
+
+      Args:
+          self: (todo): write your description
+      """
     extra_operands = [
         ([1, 2], [[5, 6, 7], [8, 9, 10]]),
         (np.arange(2 * 3 * 5).reshape([2, 3, 5]).tolist(),
@@ -93,6 +125,12 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
         math_ops.dot, np.dot, 'dot', extra_operands=extra_operands)
 
   def testMinimum(self):
+      """
+      Test if the minimum value.
+
+      Args:
+          self: (todo): write your description
+      """
     # The numpy version has strange result type when promotion happens,
     # so set check_promotion_result_type to False.
     return self._testBinaryOp(
@@ -102,6 +140,12 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
         check_promotion_result_type=False)
 
   def testMaximum(self):
+      """
+      Returns the sum of the test.
+
+      Args:
+          self: (todo): write your description
+      """
     # The numpy version has strange result type when promotion happens,
     # so set check_promotion_result_type to False.
     return self._testBinaryOp(
@@ -111,11 +155,23 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
         check_promotion_result_type=False)
 
   def testMatmul(self):
+      """
+      Test if the operation is a matlab matrix.
+
+      Args:
+          self: (todo): write your description
+      """
     operands = [([[1, 2]], [[3, 4, 5], [6, 7, 8]])]
     return self._testBinaryOp(
         math_ops.matmul, np.matmul, 'matmul', operands=operands)
 
   def testMatmulError(self):
+      """
+      Test if the rotation matrix matches.
+
+      Args:
+          self: (todo): write your description
+      """
     with self.assertRaisesRegex(ValueError, r''):
       math_ops.matmul(
           array_ops.ones([], np.int32), array_ops.ones([2, 3], np.int32))
@@ -124,8 +180,23 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
           array_ops.ones([2, 3], np.int32), array_ops.ones([], np.int32))
 
   def _testUnaryOp(self, math_fun, np_fun, name):
+      """
+      Test for the test functions.
+
+      Args:
+          self: (todo): write your description
+          math_fun: (str): write your description
+          np_fun: (todo): write your description
+          name: (str): write your description
+      """
 
     def run_test(a):
+        """
+        Run the test function.
+
+        Args:
+            a: (str): write your description
+        """
       for fn in self.array_transforms:
         arg1 = fn(a)
         self.match(math_fun(arg1), np_fun(arg1),
@@ -136,18 +207,52 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
     run_test([[2, -3], [-6, 7]])
 
   def testLog(self):
+      """
+      Test if the log - likelihood.
+
+      Args:
+          self: (todo): write your description
+      """
     self._testUnaryOp(math_ops.log, np.log, 'log')
 
   def testExp(self):
+      """
+      Sets : py : math : numpy. ndarray is a : math : attr : ndarray.
+
+      Args:
+          self: (todo): write your description
+      """
     self._testUnaryOp(math_ops.exp, np.exp, 'exp')
 
   def testTanh(self):
+      """
+      Sets the test test to use of the test.
+
+      Args:
+          self: (todo): write your description
+      """
     self._testUnaryOp(math_ops.tanh, np.tanh, 'tanh')
 
   def testSqrt(self):
+      """
+      Test if the current : math : mathbf { ndarray.
+
+      Args:
+          self: (todo): write your description
+      """
     self._testUnaryOp(math_ops.sqrt, np.sqrt, 'sqrt')
 
   def match(self, actual, expected, msg='', check_dtype=True):
+      """
+      Matches expected expected array.
+
+      Args:
+          self: (todo): write your description
+          actual: (todo): write your description
+          expected: (todo): write your description
+          msg: (str): write your description
+          check_dtype: (bool): write your description
+      """
     self.assertIsInstance(actual, arrays.ndarray)
     if check_dtype:
       self.assertEqual(
@@ -161,6 +266,12 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
     np.testing.assert_almost_equal(actual.tolist(), expected.tolist())
 
   def testArgsort(self):
+      """
+      Test if the test arguments.
+
+      Args:
+          self: (todo): write your description
+      """
     self._testUnaryOp(math_ops.argsort, np.argsort, 'argsort')
 
     # Test stability
@@ -169,6 +280,12 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
     np.testing.assert_equal(math_ops.argsort(a, kind='stable'), r)
 
   def testArgMaxArgMin(self):
+      """
+      Return the indices of the values.
+
+      Args:
+          self: (todo): write your description
+      """
     data = [
         0,
         5,
@@ -196,6 +313,13 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
 
   @parameterized.parameters([False, True])
   def testIsCloseEqualNan(self, equal_nan):
+      """
+      Compare two matrices.
+
+      Args:
+          self: (todo): write your description
+          equal_nan: (bool): write your description
+      """
     a = np.asarray([1, 1, np.nan, 1, np.nan], np.float32)
     b = np.asarray([1, 2, 1, np.nan, np.nan], np.float32)
     self.match(
@@ -203,6 +327,12 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
         np.isclose(a, b, equal_nan=equal_nan))
 
   def testAverageWrongShape(self):
+      """
+      Perform the cross - entropy.
+
+      Args:
+          self: (todo): write your description
+      """
     with self.assertRaisesWithPredicateMatch(
         tf.errors.InvalidArgumentError, r''):
       math_ops.average(np.ones([2, 3]), weights=np.ones([2, 4]))
@@ -217,8 +347,20 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
       math_ops.average(np.ones([2, 3]), axis=0, weights=np.ones([5]))
 
   def testClip(self):
+      """
+      Test whether arr is_transforms.
+
+      Args:
+          self: (todo): write your description
+      """
 
     def run_test(arr, *args, **kwargs):
+        """
+        Run the given arr.
+
+        Args:
+            arr: (array): write your description
+        """
       check_dtype = kwargs.pop('check_dtype', True)
       for fn in self.array_transforms:
         arr = fn(arr)
@@ -253,8 +395,20 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
     run_test([[1, 2, 3], [4, 5, 6]], 0, [5, 3, 1], check_dtype=False)
 
   def testPtp(self):
+      """
+      Test for test test test.
+
+      Args:
+          self: (todo): write your description
+      """
 
     def run_test(arr, *args, **kwargs):
+        """
+        Run the test.
+
+        Args:
+            arr: (array): write your description
+        """
       for fn in self.array_transforms:
         arg = fn(arr)
         self.match(
@@ -268,6 +422,12 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
     run_test([[1, 2], [3, 4]], axis=-2)
 
   def testLinSpace(self):
+      """
+      Perform the tensor.
+
+      Args:
+          self: (todo): write your description
+      """
     array_transforms = [
         lambda x: x,  # Identity,
         tf.convert_to_tensor,
@@ -280,6 +440,13 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
     ]
 
     def run_test(start, stop, **kwargs):
+        """
+        Run a single test.
+
+        Args:
+            start: (todo): write your description
+            stop: (str): write your description
+        """
       for fn1 in array_transforms:
         for fn2 in array_transforms:
           arg1 = fn1(start)
@@ -297,6 +464,12 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
     run_test(0, -1, endpoint=False)
 
   def testLogSpace(self):
+      """
+      Test for the tensor of a tensors.
+
+      Args:
+          self: (todo): write your description
+      """
     array_transforms = [
         lambda x: x,  # Identity,
         tf.convert_to_tensor,
@@ -309,6 +482,13 @@ class MathTest(tf.test.TestCase, parameterized.TestCase):
     ]
 
     def run_test(start, stop, **kwargs):
+        """
+        Run the test.
+
+        Args:
+            start: (todo): write your description
+            stop: (str): write your description
+        """
       for fn1 in array_transforms:
         for fn2 in array_transforms:
           arg1 = fn1(start)

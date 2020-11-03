@@ -27,6 +27,12 @@ from trax.models import resnet
 class ResnetTest(absltest.TestCase):
 
   def test_resnet(self):
+      """
+      Test if the network.
+
+      Args:
+          self: (todo): write your description
+      """
     model = resnet.Resnet50(d_hidden=8, n_output_classes=10)
     x = np.ones((3, 256, 256, 3)).astype(np.float32)
     _, _ = model.init(shapes.signature(x))
@@ -34,6 +40,12 @@ class ResnetTest(absltest.TestCase):
     self.assertEqual(y.shape, (3, 10))
 
   def test_wide_resnet(self):
+      """
+      Test if a gaussian model.
+
+      Args:
+          self: (todo): write your description
+      """
     model = resnet.WideResnet(n_blocks=1, n_output_classes=10)
     x = np.ones((3, 32, 32, 3)).astype(np.float32)
     _, _ = model.init(shapes.signature(x))

@@ -85,6 +85,12 @@ class Model(object):
     """
 
     def sigmoid(x):
+        """
+        Return the sigmoid
+
+        Args:
+            x: (float): write your description
+        """
       return 1.0 / (1.0 + np.exp(-x))
 
     for w, b in zip(self.weights, self.biases):
@@ -103,6 +109,13 @@ class Model(object):
     y = np.array(y, copy=False)
 
     def mean_squared_error(x, y):
+        """
+        Calculate the mean error.
+
+        Args:
+            x: (array): write your description
+            y: (array): write your description
+        """
       diff = x - y
       return np.sum(diff * diff) / len(x)
 

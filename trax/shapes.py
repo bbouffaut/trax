@@ -50,14 +50,34 @@ class ShapeDtype(object):
     self.dtype = dtype
 
   def __eq__(self, other):
+      """
+      Returns true if other is equal to other.
+
+      Args:
+          self: (todo): write your description
+          other: (todo): write your description
+      """
     return (isinstance(other, self.__class__)
             and self.shape == other.shape
             and self.dtype == other.dtype)
 
   def __ne__(self, other):
+      """
+      Determine if self objects.
+
+      Args:
+          self: (todo): write your description
+          other: (todo): write your description
+      """
     return not self == other
 
   def __repr__(self):
+      """
+      Return a human - qualified representation.
+
+      Args:
+          self: (todo): write your description
+      """
     return 'ShapeDtype{{shape:{}, dtype:{}}}'.format(self.shape, self.dtype)
 
   def __len__(self):
@@ -65,6 +85,12 @@ class ShapeDtype(object):
     return 1
 
   def as_tuple(self):
+      """
+      Return a tuple of this array.
+
+      Args:
+          self: (todo): write your description
+      """
     return self.shape, self.dtype
 
   def replace(self, **kwargs):

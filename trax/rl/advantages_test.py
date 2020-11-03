@@ -24,6 +24,13 @@ from trax.rl import advantages
 
 
 def calc_bias_and_variance(x, true_mean):
+    """
+    Calculate the mean and variance.
+
+    Args:
+        x: (array): write your description
+        true_mean: (todo): write your description
+    """
   sample_mean = np.mean(x)
   bias = np.abs(sample_mean - true_mean)
   variance = np.mean((x - sample_mean) ** 2)
@@ -31,6 +38,13 @@ def calc_bias_and_variance(x, true_mean):
 
 
 def calc_returns(rewards, gamma):
+    """
+    Calculate the return errors.
+
+    Args:
+        rewards: (todo): write your description
+        gamma: (todo): write your description
+    """
   returns = np.zeros_like(rewards)
   current_return = np.zeros_like(rewards[:, 0])
   for t in reversed(range(rewards.shape[1])):
@@ -49,6 +63,19 @@ def estimate_advantage_bias_and_variance(
     margin=0,
     **advantage_kwargs
 ):
+    """
+    R calculate the variance.
+
+    Args:
+        advantage_fn: (todo): write your description
+        mean_reward: (todo): write your description
+        reward_noise: (todo): write your description
+        n_samples: (int): write your description
+        length: (int): write your description
+        gamma: (todo): write your description
+        margin: (todo): write your description
+        advantage_kwargs: (dict): write your description
+    """
   advantage_fn = advantage_fn(gamma, margin, **advantage_kwargs)
   rewards = np.random.normal(
       loc=mean_reward, scale=reward_noise, size=(n_samples, length)
@@ -72,6 +99,13 @@ class AdvantagesTest(parameterized.TestCase):
       ('gae', advantages.gae),
   )
   def test_shapes(self, advantage_fn):
+      """
+      Return the shapes of the shapes.
+
+      Args:
+          self: (todo): write your description
+          advantage_fn: (todo): write your description
+      """
     rewards = np.array([[1, 1, 1]], dtype=np.float32)
     returns = np.array([[3, 2, 1]], dtype=np.float32)
     values = np.array([[2, 2, 2]], dtype=np.float32)
@@ -82,12 +116,24 @@ class AdvantagesTest(parameterized.TestCase):
     self.assertEqual(adv2.shape, (1, 1))
 
   def test_monte_carlo_bias_is_zero(self):
+      """
+      Determine if the convex is a sparse matrix.
+
+      Args:
+          self: (todo): write your description
+      """
     (bias, _) = estimate_advantage_bias_and_variance(
         advantages.monte_carlo, margin=3
     )
     np.testing.assert_allclose(bias, 0, atol=0.1)
 
   def test_td_k_variance_lower_than_monte_carlo(self):
+      """
+      Test if k variance of k variance is - variance.
+
+      Args:
+          self: (todo): write your description
+      """
     (_, var_td_3) = estimate_advantage_bias_and_variance(
         advantages.td_k, margin=3
     )
@@ -96,6 +142,14 @@ class AdvantagesTest(parameterized.TestCase):
 
   @parameterized.named_parameters(('1_2', 1, 2), ('2_3', 2, 3))
   def test_td_k_bias_decreases_with_k(self, k1, k2):
+      """
+      R compute the k - variance k_bias.
+
+      Args:
+          self: (todo): write your description
+          k1: (todo): write your description
+          k2: (todo): write your description
+      """
     (bias1, _) = estimate_advantage_bias_and_variance(
         advantages.td_k, margin=k1
     )
@@ -106,6 +160,14 @@ class AdvantagesTest(parameterized.TestCase):
 
   @parameterized.named_parameters(('1_2', 1, 2), ('2_3', 2, 3))
   def test_td_k_variance_increases_with_k(self, k1, k2):
+      """
+      Evaluate k variance.
+
+      Args:
+          self: (todo): write your description
+          k1: (todo): write your description
+          k2: (todo): write your description
+      """
     (_, var1) = estimate_advantage_bias_and_variance(
         advantages.td_k, margin=k1
     )
@@ -115,6 +177,12 @@ class AdvantagesTest(parameterized.TestCase):
     self.assertLess(var1, var2)
 
   def test_td_lambda_variance_lower_than_monte_carlo(self):
+      """
+      Determine the variance of a variance.
+
+      Args:
+          self: (todo): write your description
+      """
     (_, var_td_095) = estimate_advantage_bias_and_variance(
         advantages.td_lambda, lambda_=0.95
     )
@@ -128,6 +196,15 @@ class AdvantagesTest(parameterized.TestCase):
       ('gae_0.7_0.9', advantages.gae, 0.7, 0.9),
   )
   def test_bias_decreases_with_lambda(self, advantage_fn, lambda1, lambda2):
+      """
+      Test if bias bias.
+
+      Args:
+          self: (todo): write your description
+          advantage_fn: (todo): write your description
+          lambda1: (todo): write your description
+          lambda2: (todo): write your description
+      """
     (bias1, _) = estimate_advantage_bias_and_variance(
         advantage_fn, lambda_=lambda1
     )
@@ -138,6 +215,14 @@ class AdvantagesTest(parameterized.TestCase):
 
   @parameterized.named_parameters(('0.5_0.7', 0.5, 0.7), ('0.7_0.9', 0.7, 0.9))
   def test_variance_increases_with_lambda(self, lambda1, lambda2):
+      """
+      Estimate the variance.
+
+      Args:
+          self: (todo): write your description
+          lambda1: (array): write your description
+          lambda2: (float): write your description
+      """
     (_, var1) = estimate_advantage_bias_and_variance(
         advantages.td_lambda, lambda_=lambda1
     )
@@ -153,6 +238,13 @@ class AdvantagesTest(parameterized.TestCase):
       ('gae', advantages.gae),
   )
   def test_advantage_future_return_is_zero_at_done(self, advantage_fn):
+      """
+      Determine if the return value is zero false otherwise.
+
+      Args:
+          self: (todo): write your description
+          advantage_fn: (todo): write your description
+      """
     rewards = np.array([[1, 1, 1]], dtype=np.float32)
     returns = np.array([[3, 2, 1]], dtype=np.float32)
     values = np.array([[2, 2, 2]], dtype=np.float32)
